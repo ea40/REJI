@@ -123,7 +123,7 @@ curl -X GET http://localhost:8000/
 **Response:**
 ```json
 {
-  "status": "online",
+  "status": "ok",
   "service": "Digital Bridge Accessibility API",
   "version": "1.0.0"
 }
