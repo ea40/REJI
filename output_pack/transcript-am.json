@@ -1,0 +1,386 @@
+{
+  "title": "ድሩ (The Web) ምንድን ነው እና እንዴት ይሰራል? — ዌብ ዲሚስቲፋይድ",
+  "language": "am",
+  "source": "Machine-translated draft (Ethiopic fidäl) pending native speaker co-design review",
+  "reviewed": false,
+  "cues": [
+    {
+      "id": 1,
+      "start": 0.52,
+      "end": 3.326,
+      "text": "ሰላም! ወደ ዌብ ዲሚስቲፋይድ (Web Demystified) በደህና መጡ።",
+      "speaker": "ጄሬሚ ፓቶኒየር",
+      "reviewed": false,
+      "review_status": "unreviewed draft (machine translated)"
+    },
+    {
+      "id": 2,
+      "start": 3.326,
+      "end": 8.031,
+      "text": "እኔ ጄሬሚ ነኝ፤ በዚህ የቪዲዮ ተከታታይ ድሩን ቀላል ለማድረግ እንሞክራለን።",
+      "speaker": "ጄሬሚ ፓቶኒየር",
+      "reviewed": false,
+      "review_status": "unreviewed draft (machine translated)"
+    },
+    {
+      "id": 3,
+      "start": 8.031,
+      "end": 13.358,
+      "text": "ስለዚህ ዛሬ በዚህ ልዩ ክፍል፣ ድር ምን እንደሆነ እና እንዴት እንደሚሰራ አጭር አጠቃላይ እይታ እሰጣችኋለሁ።",
+      "speaker": "ጄሬሚ ፓቶኒየር",
+      "reviewed": false,
+      "review_status": "unreviewed draft (machine translated)"
+    },
+    {
+      "id": 4,
+      "start": 13.358,
+      "end": 14.908,
+      "text": "ቀልድ የሌለው!",
+      "speaker": "ጄሬሚ ፓቶኒየር",
+      "reviewed": false,
+      "review_status": "unreviewed draft (machine translated)"
+    },
+    {
+      "id": 5,
+      "start": 15.698,
+      "end": 21.157,
+      "text": "አዎ! ምናልባት አስቀድመው የሚያውቋቸው ነገሮች ሊኖሩ ይችላሉ፣ ግን ሊደነቁ ይችላሉ።",
+      "speaker": "ጄሬሚ ፓቶኒየር",
+      "reviewed": false,
+      "review_status": "unreviewed draft (machine translated)"
+    },
+    {
+      "id": 6,
+      "start": 21.157,
+      "end": 24.417,
+      "text": "ካልተደነቁ ደግሞ፣ ሊደነቅ ለሚችል ሰው ይህን ቪዲዮ አሳዩት!",
+      "speaker": "ጄሬሚ ፓቶኒየር",
+      "reviewed": false,
+      "review_status": "unreviewed draft (machine translated)"
+    },
+    {
+      "id": 7,
+      "start": 24.417,
+      "end": 26.92,
+      "text": "ያም ሆነ ይህ፣ ከአንድ ቦታ መጀመር አለብን… ስለዚህ እንጀምር!",
+      "speaker": "ጄሬሚ ፓቶኒየር",
+      "reviewed": false,
+      "review_status": "unreviewed draft (machine translated)"
+    },
+    {
+      "id": 8,
+      "start": 32.348,
+      "end": 35.667,
+      "text": "ሁሉም ነገር የሚጀምረው የድር አድራሻ በሚተይቡበት ተወዳጅ አሳሽዎ (Browser) ነው።",
+      "speaker": "ጄሬሚ ፓቶኒየር",
+      "reviewed": false,
+      "review_status": "unreviewed draft (machine translated)"
+    },
+    {
+      "id": 9,
+      "start": 35.667,
+      "end": 37.64,
+      "text": "አይደለም! እኔ ጎግልን (Google) ነው የምጠቀመው።",
+      "speaker": "ጄሬሚ ፓቶኒየር",
+      "reviewed": false,
+      "review_status": "unreviewed draft (machine translated)"
+    },
+    {
+      "id": 10,
+      "start": 38.5,
+      "end": 46.3,
+      "text": "አዎ… ጎግል እንደማንኛውም የፍለጋ ሞተር፣ የድር አድራሻውን መተየብ ያለብዎት አንድ ድረ-ገጽ ብቻ ነው።",
+      "speaker": "ጄሬሚ ፓቶኒየር",
+      "reviewed": false,
+      "review_status": "unreviewed draft (machine translated)"
+    },
+    {
+      "id": 11,
+      "start": 46.303,
+      "end": 53.276,
+      "text": "እሺ አትጨነቁ፣ ይህ አጠቃላይ እይታ ብቻ ነው። ስለ ፍለጋ ሞተሮች እና ድር ፍለጋ በሌላ ቪዲዮ እንነጋገራለን።",
+      "speaker": "ጄሬሚ ፓቶኒየር",
+      "reviewed": false,
+      "review_status": "unreviewed draft (machine translated)"
+    },
+    {
+      "id": 12,
+      "start": 53.276,
+      "end": 55.101,
+      "text": "ስለዚህ የድር አድራሻ ሲተይቡ…",
+      "speaker": "ጄሬሚ ፓቶኒየር",
+      "reviewed": false,
+      "review_status": "unreviewed draft (machine translated)"
+    },
+    {
+      "id": 13,
+      "start": 55.101,
+      "end": 61.619,
+      "text": "የድር አድራሻ ቴክኒካዊ ስም ዩአርኤል (URL - Uniform Resource Locator) ይባላል…",
+      "speaker": "ጄሬሚ ፓቶኒየር",
+      "reviewed": false,
+      "review_status": "unreviewed draft (machine translated)"
+    },
+    {
+      "id": 14,
+      "start": 61.636,
+      "end": 66.777,
+      "text": "እና ምናልባት ያንን ለሌላ ቪዲዮ ማቆየት ይሻላል።",
+      "speaker": "ጄሬሚ ፓቶኒየር",
+      "reviewed": false,
+      "review_status": "unreviewed draft (machine translated)"
+    },
+    {
+      "id": 15,
+      "start": 66.777,
+      "end": 69.146,
+      "text": "አጠቃላይ እይታ… አስታውሱ፣ አጠቃላይ እይታ።",
+      "speaker": "ጄሬሚ ፓቶኒየር",
+      "reviewed": false,
+      "review_status": "unreviewed draft (machine translated)"
+    },
+    {
+      "id": 16,
+      "start": 69.146,
+      "end": 72.19,
+      "text": "ስለዚህ የድር አድራሻ ተይበው የኢንተር (Enter) ቁልፍን ሲጫኑ",
+      "speaker": "ጄሬሚ ፓቶኒየር",
+      "reviewed": false,
+      "review_status": "unreviewed draft (machine translated)"
+    },
+    {
+      "id": 17,
+      "start": 72.19,
+      "end": 73.887,
+      "text": "ወይም ከፍለጋ ገጽ ላይ አገናኝ (Link) ሲጫኑ",
+      "speaker": "ጄሬሚ ፓቶኒየር",
+      "reviewed": false,
+      "review_status": "unreviewed draft (machine translated)"
+    },
+    {
+      "id": 18,
+      "start": 73.887,
+      "end": 79.816,
+      "text": "አሳሽዎ በዚያ አድራሻ ላይ የሚገኘውን ድረ-ገጽ ወደሚያስተናግደው አገልጋይ (Server) ጥያቄ ይልካል።",
+      "speaker": "ጄሬሚ ፓቶኒየር",
+      "reviewed": false,
+      "review_status": "unreviewed draft (machine translated)"
+    },
+    {
+      "id": 19,
+      "start": 79.816,
+      "end": 84.285,
+      "text": "እዚያም አገልጋዩ አድራሻውን ያካሂዳል እና የኤችቲኤምኤል (HTML) ሰነድ መልሶ ይልክልዎታል።",
+      "speaker": "ጄሬሚ ፓቶኒየር",
+      "reviewed": false,
+      "review_status": "unreviewed draft (machine translated)"
+    },
+    {
+      "id": 20,
+      "start": 85.142,
+      "end": 93.804,
+      "text": "እና አዎ፣ አገልጋይ እና ጥያቄ እንዴት እንደሚሰሩ ዝርዝር ውስጥ… በሌላ ቪዲዮ እንገባለን።",
+      "speaker": "ጄሬሚ ፓቶኒየር",
+      "reviewed": false,
+      "review_status": "unreviewed draft (machine translated)"
+    },
+    {
+      "id": 21,
+      "start": 93.804,
+      "end": 97.92,
+      "text": "ቀጥሎ፣ አሳሹ የኤችቲኤምኤል ሰነዱን ያመጣል እና ያነበዋል።",
+      "speaker": "ጄሬሚ ፓቶኒየር",
+      "reviewed": false,
+      "review_status": "unreviewed draft (machine translated)"
+    },
+    {
+      "id": 22,
+      "start": 97.92,
+      "end": 105.694,
+      "text": "ብዙውን ጊዜ፣ የኤችቲኤምኤል ሰነዱ ሙሉውን ገጽ ለማሳየት ተጨማሪ ግብዓቶች እንደሚያስፈልጉ ለአሳሹ ይነግራል።",
+      "speaker": "ጄሬሚ ፓቶኒየር",
+      "reviewed": false,
+      "review_status": "unreviewed draft (machine translated)"
+    },
+    {
+      "id": 23,
+      "start": 105.694,
+      "end": 108.971,
+      "text": "ለምሳሌ፦ የቅጥ ሉሆች (Stylesheets - ሰነዱን እንዴት ማሳየት እንዳለበት ለማወቅ)",
+      "speaker": "ጄሬሚ ፓቶኒየር",
+      "reviewed": false,
+      "review_status": "unreviewed draft (machine translated)"
+    },
+    {
+      "id": 24,
+      "start": 108.971,
+      "end": 109.971,
+      "text": "ምስሎች (Images)",
+      "speaker": "ጄሬሚ ፓቶኒየር",
+      "reviewed": false,
+      "review_status": "unreviewed draft (machine translated)"
+    },
+    {
+      "id": 25,
+      "start": 109.971,
+      "end": 112.751,
+      "text": "ወይም ደግሞ ስክሪፕቶች (Scripts - ልዩ ተፅዕኖዎችን ለማያያዝ)።",
+      "speaker": "ጄሬሚ ፓቶኒየር",
+      "reviewed": false,
+      "review_status": "unreviewed draft (machine translated)"
+    },
+    {
+      "id": 26,
+      "start": 112.751,
+      "end": 118.767,
+      "text": "አዎ ልክ ገምተዋል… ያንን ሁሉ የሚሸፍኑ ሌሎች ቪዲዮዎች ይመጣሉ።",
+      "speaker": "ጄሬሚ ፓቶኒየር",
+      "reviewed": false,
+      "review_status": "unreviewed draft (machine translated)"
+    },
+    {
+      "id": 27,
+      "start": 118.767,
+      "end": 122.714,
+      "text": "አሳሽዎ እነዚያን ሁሉ ተጨማሪ ግብዓቶች ይጠይቃል",
+      "speaker": "ጄሬሚ ፓቶኒየር",
+      "reviewed": false,
+      "review_status": "unreviewed draft (machine translated)"
+    },
+    {
+      "id": 28,
+      "start": 122.714,
+      "end": 129.704,
+      "text": "እና ሁሉንም ግብዓቶች ካገኘ በኋላ፣ ሲጠብቁት የነበረውን ድረ-ገጽ በመጨረሻ ለማሳየት ያዋህዳቸዋል።",
+      "speaker": "ጄሬሚ ፓቶኒየር",
+      "reviewed": false,
+      "review_status": "unreviewed draft (machine translated)"
+    },
+    {
+      "id": 29,
+      "start": 130.023,
+      "end": 131.536,
+      "text": "እሺ፣ እስቲ እናጠቃልል!",
+      "speaker": "ጄሬሚ ፓቶኒየር",
+      "reviewed": false,
+      "review_status": "unreviewed draft (machine translated)"
+    },
+    {
+      "id": 30,
+      "start": 131.536,
+      "end": 136.963,
+      "text": "ድሩ (The Web) በአሳሽ ከአገልጋይ የሚጠየቁ የሰነዶች ስብስብ ነው።",
+      "speaker": "ጄሬሚ ፓቶኒየር",
+      "reviewed": false,
+      "review_status": "unreviewed draft (machine translated)"
+    },
+    {
+      "id": 31,
+      "start": 136.963,
+      "end": 140.697,
+      "text": "እያንዳንዱ ሰነድ በድር አድራሻ በኩል ይገኛል።",
+      "speaker": "ጄሬሚ ፓቶኒየር",
+      "reviewed": false,
+      "review_status": "unreviewed draft (machine translated)"
+    },
+    {
+      "id": 32,
+      "start": 140.697,
+      "end": 147.25,
+      "text": "አሳሹ ማንኛውንም የኤችቲኤምኤል ሰነድ ወደ ውብ ድረ-ገጽ ለመቀየር ሁሉንም አስፈላጊ ሰነዶች ያዋህዳል።",
+      "speaker": "ጄሬሚ ፓቶኒየር",
+      "reviewed": false,
+      "review_status": "unreviewed draft (machine translated)"
+    },
+    {
+      "id": 33,
+      "start": 147.25,
+      "end": 149.943,
+      "text": "አዎ፣ ድር ከዚህ ውጪ ሌላ ምንም አይደለም።",
+      "speaker": "ጄሬሚ ፓቶኒየር",
+      "reviewed": false,
+      "review_status": "unreviewed draft (machine translated)"
+    },
+    {
+      "id": 34,
+      "start": 149.943,
+      "end": 154.749,
+      "text": "በእርግጥ ያ ቀላልነት ብዙ ረቂቅ ነገሮችን ይደብቃል። የምንመረምራቸው ነገሮች…",
+      "speaker": "ጄሬሚ ፓቶኒየር",
+      "reviewed": false,
+      "review_status": "unreviewed draft (machine translated)"
+    },
+    {
+      "id": 35,
+      "start": 154.749,
+      "end": 156.185,
+      "text": "በሌላ ቪዲዮ ውስጥ!",
+      "speaker": "ጄሬሚ ፓቶኒየር",
+      "reviewed": false,
+      "review_status": "unreviewed draft (machine translated)"
+    },
+    {
+      "id": 36,
+      "start": 157.059,
+      "end": 159.319,
+      "text": "ምናልባት… ከአንድ በላይ በሆኑ።",
+      "speaker": "ጄሬሚ ፓቶኒየር",
+      "reviewed": false,
+      "review_status": "unreviewed draft (machine translated)"
+    },
+    {
+      "id": 37,
+      "start": 160.142,
+      "end": 162.437,
+      "text": "የመጀመሪያውን ቪዲዮችንን ስለተመለከቱ እናመሰግናለን።",
+      "speaker": "ጄሬሚ ፓቶኒየር",
+      "reviewed": false,
+      "review_status": "unreviewed draft (machine translated)"
+    },
+    {
+      "id": 38,
+      "start": 162.437,
+      "end": 166.46,
+      "text": "እንደሚገምቱት፣ ሌሎች በርካታ ቪዲዮዎች በመዘጋጀት ላይ ናቸው እና በቅርቡ ይደርሳሉ።",
+      "speaker": "ጄሬሚ ፓቶኒየር",
+      "reviewed": false,
+      "review_status": "unreviewed draft (machine translated)"
+    },
+    {
+      "id": 39,
+      "start": 166.46,
+      "end": 168.937,
+      "text": "ከወደዱት ለጓደኞችዎ ያጋሩት።",
+      "speaker": "ጄሬሚ ፓቶኒየር",
+      "reviewed": false,
+      "review_status": "unreviewed draft (machine translated)"
+    },
+    {
+      "id": 40,
+      "start": 168.937,
+      "end": 173.978,
+      "text": "ካልወደዱት ደግሞ… እንጃ፣ ለምሳሌ ለቀንደኛ ጠላትዎ ያጋሩት?",
+      "speaker": "ጄሬሚ ፓቶኒየር",
+      "reviewed": false,
+      "review_status": "unreviewed draft (machine translated)"
+    },
+    {
+      "id": 41,
+      "start": 173.978,
+      "end": 179.725,
+      "text": "ውይይቱን ለመቀጠል ከፈለጉ ከታች አስተያየት ይስጡ ወይም በትዊተር (Twitter) ይቀላቀሉን።",
+      "speaker": "ጄሬሚ ፓቶኒየር",
+      "reviewed": false,
+      "review_status": "unreviewed draft (machine translated)"
+    },
+    {
+      "id": 42,
+      "start": 179.725,
+      "end": 183.455,
+      "text": "እና እስከሚቀጥለው ጊዜ ድረስ… ክፍት ድር ለዘላለም ይኑር! ደህና ሁኑ!",
+      "speaker": "ጄሬሚ ፓቶኒየር",
+      "reviewed": false,
+      "review_status": "unreviewed draft (machine translated)"
+    }
+  ]
+}

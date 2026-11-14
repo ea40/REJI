@@ -1,0 +1,169 @@
+WEBVTT
+
+1
+00:00:00.520 --> 00:00:03.326
+Hello!. Welcome to Web Demystified.
+
+2
+00:00:03.326 --> 00:00:08.031
+I’m Jeremie and in this series of videos we are gonna try to make the web easy.
+
+3
+00:00:08.031 --> 00:00:13.358
+So today, in this special episode, I’m gonna give you a quick overview of what the web is and how it works.
+
+4
+00:00:13.358 --> 00:00:14.908
+Lame!
+
+5
+00:00:15.698 --> 00:00:21.157
+Yeah! Maybe there will be stuff you already know, but you could be surprised.
+
+6
+00:00:21.157 --> 00:00:24.417
+And if you’re not, show this video to someone who will be!
+
+7
+00:00:24.417 --> 00:00:26.920
+Anyway, we have to start somewhere… so let’s go!
+
+8
+00:00:32.348 --> 00:00:35.667
+Everything starts with your favorite browser where you type a web address.
+
+9
+00:00:35.667 --> 00:00:37.640
+Nope! I use Google.
+
+10
+00:00:38.500 --> 00:00:46.300
+Yes… and Google, like any other search engine that you could use, is nothing but a web site for which you have to type its web address.
+
+11
+00:00:46.303 --> 00:00:53.276
+Ok don’t worry, this is just an overview. We will talk about search engines and searching the web in another video.
+
+12
+00:00:53.276 --> 00:00:55.101
+So as you type a web address…
+
+13
+00:00:55.101 --> 00:01:01.619
+The technical name for a web address is a URL (Uniform Resource Locator)…
+
+14
+00:01:01.636 --> 00:01:06.777
+and it’s maybe better to save that for another video.
+
+15
+00:01:06.777 --> 00:01:09.146
+Overview… remember, overview.
+
+16
+00:01:09.146 --> 00:01:12.190
+So as you type a web address and hit the “Enter” key
+
+17
+00:01:12.190 --> 00:01:13.887
+OR click a link from a search page
+
+18
+00:01:13.887 --> 00:01:19.816
+your browser will send a request to the server that hosts the web site that lives at that address.
+
+19
+00:01:19.816 --> 00:01:24.285
+There, the server will process the address and it will send you back an HTML document.
+
+20
+00:01:25.142 --> 00:01:33.804
+And, yes, we will get into the details of how server and request work… in another video.
+
+21
+00:01:33.804 --> 00:01:37.920
+Next, the browser retrieves the HTML document and it reads it.
+
+22
+00:01:37.920 --> 00:01:45.694
+Usually, the HTML document contains further information telling the web browser that it needs some extra resources to render the full page.
+
+23
+00:01:45.694 --> 00:01:48.971
+For example: stylesheets (to know how to display the document)
+
+24
+00:01:48.971 --> 00:01:49.971
+images
+
+25
+00:01:49.971 --> 00:01:52.751
+or even scripts (to attach special effects).
+
+26
+00:01:52.751 --> 00:01:58.767
+Yes, you got it right… other videos to cover all of that.
+
+27
+00:01:58.767 --> 00:02:02.714
+Your browser will request all those extra ressources
+
+28
+00:02:02.714 --> 00:02:09.704
+and, once it gets all the resources, it will mix them all together to, at last, display the web page you were expecting.
+
+29
+00:02:10.023 --> 00:02:11.536
+Okay, let's recap!
+
+30
+00:02:11.536 --> 00:02:16.963
+The web is a collection of documents that will be requested by a browser from a server.
+
+31
+00:02:16.963 --> 00:02:20.697
+Each document is accessible through a web address.
+
+32
+00:02:20.697 --> 00:02:27.250
+The browser will mix all the necessary documents to turn any HTML document into a nice web page.
+
+33
+00:02:27.250 --> 00:02:29.943
+Yes, the web is nothing else than that.
+
+34
+00:02:29.943 --> 00:02:34.749
+Of course that simplicity hides many subtle things. Things that we will explore…
+
+35
+00:02:34.749 --> 00:02:36.185
+In another video!
+
+36
+00:02:37.059 --> 00:02:39.319
+Well… maybe more than one.
+
+37
+00:02:40.142 --> 00:02:42.437
+Thank you for watching our very first video.
+
+38
+00:02:42.437 --> 00:02:46.460
+As you might guess, many others are in the pipe and they should arrive very soon.
+
+39
+00:02:46.460 --> 00:02:48.937
+If you liked it, share it with your friends.
+
+40
+00:02:48.937 --> 00:02:53.978
+If you didn’t… I don't know, share it with your… arch enemy for example?
+
+41
+00:02:53.978 --> 00:02:59.725
+If you want to continue the discussion feel free to comment down below or join me and my colleagues on Twitter.
+
+42
+00:02:59.725 --> 00:03:03.455
+And until next time… Long live the open web! Bye!

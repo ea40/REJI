@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>What is 'The Web' and how does it work? — Web Demystified, Ep 0 — Digital Bridge Offline Reader</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans Ethiopic', sans-serif;
+      background: #060A13; color: #F8FAFC; line-height: 1.6; padding: 16px; max-width: 760px; margin: 0 auto;
+    }
+    header { border-bottom: 2px solid #1E293B; padding-bottom: 16px; margin-bottom: 20px; }
+    h1 { font-size: 1.4rem; color: #00FF88; margin-bottom: 8px; }
+    .badge { display: inline-block; font-size: 0.75rem; background: #0F172A; border: 1px solid #38BDF8; color: #38BDF8; border-radius: 4px; padding: 2px 8px; margin-right: 6px; }
+    .audio-section { background: #0B1120; border: 1px solid #1E293B; border-radius: 8px; padding: 16px; margin-bottom: 24px; }
+    audio { width: 100%; margin-top: 8px; }
+    .cue-card {
+      background: #0F172A; border: 1px solid #1E293B; border-radius: 8px; padding: 14px; margin-bottom: 12px; transition: border-color 0.2s;
+    }
+    .cue-card:focus-visible { outline: 3px solid #00FF88; outline-offset: 2px; }
+    .cue-meta { display: flex; justify-content: space-between; font-size: 0.75rem; color: #94A3B8; margin-bottom: 6px; }
+    .time-badge { font-family: monospace; color: #38BDF8; font-weight: 700; }
+    .cue-text-en { font-size: 1rem; color: #F8FAFC; margin-bottom: 6px; }
+    .cue-text-am { font-size: 1.05rem; color: #00FF88; line-height: 1.6; font-family: 'Noto Sans Ethiopic', 'Nyala', sans-serif; }
+    .notice { font-size: 0.75rem; color: #94A3B8; margin-top: 24px; text-align: center; border-top: 1px solid #1E293B; padding-top: 12px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="badge">Offline Pack</div>
+    <div class="badge">Track 2: Accessible Media</div>
+    <div class="badge">Amharic + English</div>
+    <h1>What is 'The Web' and how does it work? — Web Demystified, Ep 0</h1>
+    <p style="font-size: 0.85rem; color: #94A3B8;">Self-contained lightweight educational media reader for low-cost Android phones on 3G networks.</p>
+  </header>
+
+  <section class="audio-section" aria-label="Lesson Audio Player">
+    <h2>Listen to Audio Stream (28kbps Opus)</h2>
+    <audio controls preload="metadata" src="lesson_audio.opus">
+      Your browser does not support audio playback.
+    </audio>
+  </section>
+
+  <main id="transcript-flow" aria-label="Multilingual Transcript">
+    
+        <article class="cue-card" id="cue-1" tabindex="0">
+          <div class="cue-meta">
+            <span class="time-badge">00:00:00.520</span>
+            <span class="speaker-badge">Jeremie Patonnier</span>
+          </div>
+          <p class="cue-text-en" lang="en">Hello!. Welcome to Web Demystified.</p>
+          <p class="cue-text-am" lang="am">ሰላም! ወደ ዌብ ዲሚስቲፋይድ (Web Demystified) በደህና መጡ።</p>
+        </article>
+        
+        <article class="cue-card" id="cue-2" tabindex="0">
+          <div class="cue-meta">
+            <span class="time-badge">00:00:03.326</span>
+            <span class="speaker-badge">Jeremie Patonnier</span>
+          </div>
+          <p class="cue-text-en" lang="en">I’m Jeremie and in this series of videos we are gonna try to make the web easy.</p>
+          <p class="cue-text-am" lang="am">እኔ ጄሬሚ ነኝ፤ በዚህ የቪዲዮ ተከታታይ ድሩን ቀላል ለማድረግ እንሞክራለን።</p>
+        </article>
+        
+        <article class="cue-card" id="cue-3" tabindex="0">
+          <div class="cue-meta">
+            <span class="time-badge">00:00:08.031</span>
+            <span class="speaker-badge">Jeremie Patonnier</span>
+          </div>
+          <p class="cue-text-en" lang="en">So today, in this special episode, I’m gonna give you a quick overview of what the web is and how it works.</p>
+          <p class="cue-text-am" lang="am">ስለዚህ ዛሬ በዚህ ልዩ ክፍል፣ ድር ምን እንደሆነ እና እንዴት እንደሚሰራ አጭር አጠቃላይ እይታ እሰጣችኋለሁ።</p>
+        </article>
+        
+        <article class="cue-card" id="cue-4" tabindex="0">
+          <div class="cue-meta">
+            <span class="time-badge">00:00:13.358</span>
+            <span class="speaker-badge">Jeremie Patonnier</span>
+          </div>
+          <p class="cue-text-en" lang="en">Lame!</p>
+          <p class="cue-text-am" lang="am">ቀልድ የሌለው!</p>
+        </article>
+        
+        <article class="cue-card" id="cue-5" tabindex="0">
+          <div class="cue-meta">
+            <span class="time-badge">00:00:15.698</span>
+            <span class="speaker-badge">Jeremie Patonnier</span>
+          </div>
+          <p class="cue-text-en" lang="en">Yeah! Maybe there will be stuff you already know, but you could be surprised.</p>
+          <p class="cue-text-am" lang="am">አዎ! ምናልባት አስቀድመው የሚያውቋቸው ነገሮች ሊኖሩ ይችላሉ፣ ግን ሊደነቁ ይችላሉ።</p>
+        </article>
+        
+        <article class="cue-card" id="cue-6" tabindex="0">
+          <div class="cue-meta">
+            <span class="time-badge">00:00:21.157</span>
+            <span class="speaker-badge">Jeremie Patonnier</span>
+          </div>
+          <p class="cue-text-en" lang="en">And if you’re not, show this video to someone who will be!</p>
+          <p class="cue-text-am" lang="am">ካልተደነቁ ደግሞ፣ ሊደነቅ ለሚችል ሰው ይህን ቪዲዮ አሳዩት!</p>
+        </article>
+        
+        <article class="cue-card" id="cue-7" tabindex="0">
+          <div class="cue-meta">
+            <span class="time-badge">00:00:24.417</span>
+            <span class="speaker-badge">Jeremie Patonnier</span>
+          </div>
+          <p class="cue-text-en" lang="en">Anyway, we have to start somewhere… so let’s go!</p>
+          <p class="cue-text-am" lang="am">ያም ሆነ ይህ፣ ከአንድ ቦታ መጀመር አለብን… ስለዚህ እንጀምር!</p>
+        </article>
+        
+        <article class="cue-card" id="cue-8" tabindex="0">
+          <div class="cue-meta">
+            <span class="time-badge">00:00:32.348</span>
+            <span class="speaker-badge">Jeremie Patonnier</span>
+          </div>
+          <p class="cue-text-en" lang="en">Everything starts with your favorite browser where you type a web address.</p>
+          <p class="cue-text-am" lang="am">ሁሉም ነገር የሚጀምረው የድር አድራሻ በሚተይቡበት ተወዳጅ አሳሽዎ (Browser) ነው።</p>
+        </article>
+        
+        <article class="cue-card" id="cue-9" tabindex="0">
+          <div class="cue-meta">
+            <span class="time-badge">00:00:35.667</span>
+            <span class="speaker-badge">Jeremie Patonnier</span>
+          </div>
+          <p class="cue-text-en" lang="en">Nope! I use Google.</p>
+          <p class="cue-text-am" lang="am">አይደለም! እኔ ጎግልን (Google) ነው የምጠቀመው።</p>
+        </article>
+        
+        <article class="cue-card" id="cue-10" tabindex="0">
+          <div class="cue-meta">
+            <span class="time-badge">00:00:38.500</span>
+            <span class="speaker-badge">Jeremie Patonnier</span>
+          </div>
+          <p class="cue-text-en" lang="en">Yes… and Google, like any other search engine that you could use, is nothing but a web site for which you have to type its web address.</p>
+          <p class="cue-text-am" lang="am">አዎ… ጎግል እንደማንኛውም የፍለጋ ሞተር፣ የድር አድራሻውን መተየብ ያለብዎት አንድ ድረ-ገጽ ብቻ ነው።</p>
+        </article>
+        
+        <article class="cue-card" id="cue-11" tabindex="0">
+          <div class="cue-meta">
+            <span class="time-badge">00:00:46.303</span>
+            <span class="speaker-badge">Jeremie Patonnier</span>
+          </div>
+          <p class="cue-text-en" lang="en">Ok don’t worry, this is just an overview. We will talk about search engines and searching the web in another video.</p>
+          <p class="cue-text-am" lang="am">እሺ አትጨነቁ፣ ይህ አጠቃላይ እይታ ብቻ ነው። ስለ ፍለጋ ሞተሮች እና ድር ፍለጋ በሌላ ቪዲዮ እንነጋገራለን።</p>
+        </article>
+        
+        <article class="cue-card" id="cue-12" tabindex="0">
+          <div class="cue-meta">
+            <span class="time-badge">00:00:53.276</span>
+            <span class="speaker-badge">Jeremie Patonnier</span>
+          </div>
+          <p class="cue-text-en" lang="en">So as you type a web address…</p>
+          <p class="cue-text-am" lang="am">ስለዚህ የድር አድራሻ ሲተይቡ…</p>
+        </article>
+        
+        <article class="cue-card" id="cue-13" tabindex="0">
+          <div class="cue-meta">
+            <span class="time-badge">00:00:55.101</span>
+            <span class="speaker-badge">Jeremie Patonnier</span>
+          </div>
+          <p class="cue-text-en" lang="en">The technical name for a web address is a URL (Uniform Resource Locator)…</p>
+          <p class="cue-text-am" lang="am">የድር አድራሻ ቴክኒካዊ ስም ዩአርኤል (URL - Uniform Resource Locator) ይባላል…</p>
+        </article>
+        
+        <article class="cue-card" id="cue-14" tabindex="0">
+          <div class="cue-meta">
+            <span class="time-badge">00:01:01.636</span>
+            <span class="speaker-badge">Jeremie Patonnier</span>
+          </div>
+          <p class="cue-text-en" lang="en">and it’s maybe better to save that for another video.</p>
+          <p class="cue-text-am" lang="am">እና ምናልባት ያንን ለሌላ ቪዲዮ ማቆየት ይሻላል።</p>
+        </article>
+        
+        <article class="cue-card" id="cue-15" tabindex="0">
+          <div class="cue-meta">
+            <span class="time-badge">00:01:06.777</span>
+            <span class="speaker-badge">Jeremie Patonnier</span>
+          </div>
+          <p class="cue-text-en" lang="en">Overview… remember, overview.</p>
+          <p class="cue-text-am" lang="am">አጠቃላይ እይታ… አስታውሱ፣ አጠቃላይ እይታ።</p>
+        </article>
+        
+        <article class="cue-card" id="cue-16" tabindex="0">
+          <div class="cue-meta">
+            <span class="time-badge">00:01:09.146</span>
+            <span class="speaker-badge">Jeremie Patonnier</span>
+          </div>
+          <p class="cue-text-en" lang="en">So as you type a web address and hit the “Enter” key</p>
+          <p class="cue-text-am" lang="am">ስለዚህ የድር አድራሻ ተይበው የኢንተር (Enter) ቁልፍን ሲጫኑ</p>
+        </article>
+        
+        <article class="cue-card" id="cue-17" tabindex="0">
+          <div class="cue-meta">
+            <span class="time-badge">00:01:12.190</span>
+            <span class="speaker-badge">Jeremie Patonnier</span>
+          </div>
+          <p class="cue-text-en" lang="en">OR click a link from a search page</p>
+          <p class="cue-text-am" lang="am">ወይም ከፍለጋ ገጽ ላይ አገናኝ (Link) ሲጫኑ</p>
+        </article>
+        
+        <article class="cue-card" id="cue-18" tabindex="0">
+          <div class="cue-meta">
+            <span class="time-badge">00:01:13.887</span>
+            <span class="speaker-badge">Jeremie Patonnier</span>
+          </div>
+          <p class="cue-text-en" lang="en">your browser will send a request to the server that hosts the web site that lives at that address.</p>
+          <p class="cue-text-am" lang="am">አሳሽዎ በዚያ አድራሻ ላይ የሚገኘውን ድረ-ገጽ ወደሚያስተናግደው አገልጋይ (Server) ጥያቄ ይልካል።</p>
+        </article>
+        
+        <article class="cue-card" id="cue-19" tabindex="0">
+          <div class="cue-meta">
+            <span class="time-badge">00:01:19.816</span>
+            <span class="speaker-badge">Jeremie Patonnier</span>
+          </div>
+          <p class="cue-text-en" lang="en">There, the server will process the address and it will send you back an HTML document.</p>
+          <p class="cue-text-am" lang="am">እዚያም አገልጋዩ አድራሻውን ያካሂዳል እና የኤችቲኤምኤል (HTML) ሰነድ መልሶ ይልክልዎታል።</p>
+        </article>
+        
+        <article class="cue-card" id="cue-20" tabindex="0">
+          <div class="cue-meta">
+            <span class="time-badge">00:01:25.142</span>
+            <span class="speaker-badge">Jeremie Patonnier</span>
+          </div>
+          <p class="cue-text-en" lang="en">And, yes, we will get into the details of how server and request work… in another video.</p>
+          <p class="cue-text-am" lang="am">እና አዎ፣ አገልጋይ እና ጥያቄ እንዴት እንደሚሰሩ ዝርዝር ውስጥ… በሌላ ቪዲዮ እንገባለን።</p>
+        </article>
+        
+        <article class="cue-card" id="cue-21" tabindex="0">
+          <div class="cue-meta">
+            <span class="time-badge">00:01:33.804</span>
+            <span class="speaker-badge">Jeremie Patonnier</span>
+          </div>
+          <p class="cue-text-en" lang="en">Next, the browser retrieves the HTML document and it reads it.</p>
+          <p class="cue-text-am" lang="am">ቀጥሎ፣ አሳሹ የኤችቲኤምኤል ሰነዱን ያመጣል እና ያነበዋል።</p>
+        </article>
+        
+        <article class="cue-card" id="cue-22" tabindex="0">
+          <div class="cue-meta">
+            <span class="time-badge">00:01:37.920</span>
+            <span class="speaker-badge">Jeremie Patonnier</span>
+          </div>
+          <p class="cue-text-en" lang="en">Usually, the HTML document contains further information telling the web browser that it needs some extra resources to render the full page.</p>
+          <p class="cue-text-am" lang="am">ብዙውን ጊዜ፣ የኤችቲኤምኤል ሰነዱ ሙሉውን ገጽ ለማሳየት ተጨማሪ ግብዓቶች እንደሚያስፈልጉ ለአሳሹ ይነግራል።</p>
+        </article>
+        
+        <article class="cue-card" id="cue-23" tabindex="0">
+          <div class="cue-meta">
+            <span class="time-badge">00:01:45.694</span>
+            <span class="speaker-badge">Jeremie Patonnier</span>
+          </div>
+          <p class="cue-text-en" lang="en">For example: stylesheets (to know how to display the document)</p>
+          <p class="cue-text-am" lang="am">ለምሳሌ፦ የቅጥ ሉሆች (Stylesheets - ሰነዱን እንዴት ማሳየት እንዳለበት ለማወቅ)</p>
+        </article>
+        
+        <article class="cue-card" id="cue-24" tabindex="0">
+          <div class="cue-meta">
+            <span class="time-badge">00:01:48.971</span>
+            <span class="speaker-badge">Jeremie Patonnier</span>
+          </div>
+          <p class="cue-text-en" lang="en">images</p>
+          <p class="cue-text-am" lang="am">ምስሎች (Images)</p>
+        </article>
+        
+        <article class="cue-card" id="cue-25" tabindex="0">
+          <div class="cue-meta">
+            <span class="time-badge">00:01:49.971</span>
+            <span class="speaker-badge">Jeremie Patonnier</span>
+          </div>
+          <p class="cue-text-en" lang="en">or even scripts (to attach special effects).</p>
+          <p class="cue-text-am" lang="am">ወይም ደግሞ ስክሪፕቶች (Scripts - ልዩ ተፅዕኖዎችን ለማያያዝ)።</p>
+        </article>
+        
+        <article class="cue-card" id="cue-26" tabindex="0">
+          <div class="cue-meta">
+            <span class="time-badge">00:01:52.751</span>
+            <span class="speaker-badge">Jeremie Patonnier</span>
+          </div>
+          <p class="cue-text-en" lang="en">Yes, you got it right… other videos to cover all of that.</p>
+          <p class="cue-text-am" lang="am">አዎ ልክ ገምተዋል… ያንን ሁሉ የሚሸፍኑ ሌሎች ቪዲዮዎች ይመጣሉ።</p>
+        </article>
+        
+        <article class="cue-card" id="cue-27" tabindex="0">
+          <div class="cue-meta">
+            <span class="time-badge">00:01:58.767</span>
+            <span class="speaker-badge">Jeremie Patonnier</span>
+          </div>
+          <p class="cue-text-en" lang="en">Your browser will request all those extra ressources</p>
+          <p class="cue-text-am" lang="am">አሳሽዎ እነዚያን ሁሉ ተጨማሪ ግብዓቶች ይጠይቃል</p>
+        </article>
+        
+        <article class="cue-card" id="cue-28" tabindex="0">
+          <div class="cue-meta">
+            <span class="time-badge">00:02:02.714</span>
+            <span class="speaker-badge">Jeremie Patonnier</span>
+          </div>
+          <p class="cue-text-en" lang="en">and, once it gets all the resources, it will mix them all together to, at last, display the web page you were expecting.</p>
+          <p class="cue-text-am" lang="am">እና ሁሉንም ግብዓቶች ካገኘ በኋላ፣ ሲጠብቁት የነበረውን ድረ-ገጽ በመጨረሻ ለማሳየት ያዋህዳቸዋል።</p>
+        </article>
+        
+        <article class="cue-card" id="cue-29" tabindex="0">
+          <div class="cue-meta">
+            <span class="time-badge">00:02:10.023</span>
+            <span class="speaker-badge">Jeremie Patonnier</span>
+          </div>
+          <p class="cue-text-en" lang="en">Okay, let's recap!</p>
+          <p class="cue-text-am" lang="am">እሺ፣ እስቲ እናጠቃልል!</p>
+        </article>
+        
+        <article class="cue-card" id="cue-30" tabindex="0">
+          <div class="cue-meta">
+            <span class="time-badge">00:02:11.536</span>
+            <span class="speaker-badge">Jeremie Patonnier</span>
+          </div>
+          <p class="cue-text-en" lang="en">The web is a collection of documents that will be requested by a browser from a server.</p>
+          <p class="cue-text-am" lang="am">ድሩ (The Web) በአሳሽ ከአገልጋይ የሚጠየቁ የሰነዶች ስብስብ ነው።</p>
+        </article>
+        
+        <article class="cue-card" id="cue-31" tabindex="0">
+          <div class="cue-meta">
+            <span class="time-badge">00:02:16.963</span>
+            <span class="speaker-badge">Jeremie Patonnier</span>
+          </div>
+          <p class="cue-text-en" lang="en">Each document is accessible through a web address.</p>
+          <p class="cue-text-am" lang="am">እያንዳንዱ ሰነድ በድር አድራሻ በኩል ይገኛል።</p>
+        </article>
+        
+        <article class="cue-card" id="cue-32" tabindex="0">
+          <div class="cue-meta">
+            <span class="time-badge">00:02:20.697</span>
+            <span class="speaker-badge">Jeremie Patonnier</span>
+          </div>
+          <p class="cue-text-en" lang="en">The browser will mix all the necessary documents to turn any HTML document into a nice web page.</p>
+          <p class="cue-text-am" lang="am">አሳሹ ማንኛውንም የኤችቲኤምኤል ሰነድ ወደ ውብ ድረ-ገጽ ለመቀየር ሁሉንም አስፈላጊ ሰነዶች ያዋህዳል።</p>
+        </article>
+        
+        <article class="cue-card" id="cue-33" tabindex="0">
+          <div class="cue-meta">
+            <span class="time-badge">00:02:27.250</span>
+            <span class="speaker-badge">Jeremie Patonnier</span>
+          </div>
+          <p class="cue-text-en" lang="en">Yes, the web is nothing else than that.</p>
+          <p class="cue-text-am" lang="am">አዎ፣ ድር ከዚህ ውጪ ሌላ ምንም አይደለም።</p>
+        </article>
+        
+        <article class="cue-card" id="cue-34" tabindex="0">
+          <div class="cue-meta">
+            <span class="time-badge">00:02:29.943</span>
+            <span class="speaker-badge">Jeremie Patonnier</span>
+          </div>
+          <p class="cue-text-en" lang="en">Of course that simplicity hides many subtle things. Things that we will explore…</p>
+          <p class="cue-text-am" lang="am">በእርግጥ ያ ቀላልነት ብዙ ረቂቅ ነገሮችን ይደብቃል። የምንመረምራቸው ነገሮች…</p>
+        </article>
+        
+        <article class="cue-card" id="cue-35" tabindex="0">
+          <div class="cue-meta">
+            <span class="time-badge">00:02:34.749</span>
+            <span class="speaker-badge">Jeremie Patonnier</span>
+          </div>
+          <p class="cue-text-en" lang="en">In another video!</p>
+          <p class="cue-text-am" lang="am">በሌላ ቪዲዮ ውስጥ!</p>
+        </article>
+        
+        <article class="cue-card" id="cue-36" tabindex="0">
+          <div class="cue-meta">
+            <span class="time-badge">00:02:37.059</span>
+            <span class="speaker-badge">Jeremie Patonnier</span>
+          </div>
+          <p class="cue-text-en" lang="en">Well… maybe more than one.</p>
+          <p class="cue-text-am" lang="am">ምናልባት… ከአንድ በላይ በሆኑ።</p>
+        </article>
+        
+        <article class="cue-card" id="cue-37" tabindex="0">
+          <div class="cue-meta">
+            <span class="time-badge">00:02:40.142</span>
+            <span class="speaker-badge">Jeremie Patonnier</span>
+          </div>
+          <p class="cue-text-en" lang="en">Thank you for watching our very first video.</p>
+          <p class="cue-text-am" lang="am">የመጀመሪያውን ቪዲዮችንን ስለተመለከቱ እናመሰግናለን።</p>
+        </article>
+        
+        <article class="cue-card" id="cue-38" tabindex="0">
+          <div class="cue-meta">
+            <span class="time-badge">00:02:42.437</span>
+            <span class="speaker-badge">Jeremie Patonnier</span>
+          </div>
+          <p class="cue-text-en" lang="en">As you might guess, many others are in the pipe and they should arrive very soon.</p>
+          <p class="cue-text-am" lang="am">እንደሚገምቱት፣ ሌሎች በርካታ ቪዲዮዎች በመዘጋጀት ላይ ናቸው እና በቅርቡ ይደርሳሉ።</p>
+        </article>
+        
+        <article class="cue-card" id="cue-39" tabindex="0">
+          <div class="cue-meta">
+            <span class="time-badge">00:02:46.460</span>
+            <span class="speaker-badge">Jeremie Patonnier</span>
+          </div>
+          <p class="cue-text-en" lang="en">If you liked it, share it with your friends.</p>
+          <p class="cue-text-am" lang="am">ከወደዱት ለጓደኞችዎ ያጋሩት።</p>
+        </article>
+        
+        <article class="cue-card" id="cue-40" tabindex="0">
+          <div class="cue-meta">
+            <span class="time-badge">00:02:48.937</span>
+            <span class="speaker-badge">Jeremie Patonnier</span>
+          </div>
+          <p class="cue-text-en" lang="en">If you didn’t… I don't know, share it with your… arch enemy for example?</p>
+          <p class="cue-text-am" lang="am">ካልወደዱት ደግሞ… እንጃ፣ ለምሳሌ ለቀንደኛ ጠላትዎ ያጋሩት?</p>
+        </article>
+        
+        <article class="cue-card" id="cue-41" tabindex="0">
+          <div class="cue-meta">
+            <span class="time-badge">00:02:53.978</span>
+            <span class="speaker-badge">Jeremie Patonnier</span>
+          </div>
+          <p class="cue-text-en" lang="en">If you want to continue the discussion feel free to comment down below or join me and my colleagues on Twitter.</p>
+          <p class="cue-text-am" lang="am">ውይይቱን ለመቀጠል ከፈለጉ ከታች አስተያየት ይስጡ ወይም በትዊተር (Twitter) ይቀላቀሉን።</p>
+        </article>
+        
+        <article class="cue-card" id="cue-42" tabindex="0">
+          <div class="cue-meta">
+            <span class="time-badge">00:02:59.725</span>
+            <span class="speaker-badge">Jeremie Patonnier</span>
+          </div>
+          <p class="cue-text-en" lang="en">And until next time… Long live the open web! Bye!</p>
+          <p class="cue-text-am" lang="am">እና እስከሚቀጥለው ጊዜ ድረስ… ክፍት ድር ለዘላለም ይኑር! ደህና ሁኑ!</p>
+        </article>
+        
+  </main>
+
+  <footer class="notice">
+    Digital Bridge Accessibility Hackathon · Addis Ababa 2026 · Built for Ethiopia · 100% Offline
+  </footer>
+</body>
+</html>

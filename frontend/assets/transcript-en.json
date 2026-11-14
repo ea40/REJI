@@ -1,0 +1,344 @@
+{
+  "title": "What is 'The Web' and how does it work? — Web Demystified, Ep 0",
+  "language": "en",
+  "source": "Mozilla Hacks / Jeremie Patonnier (CC-BY-SA 3.0 / 4.0)",
+  "reviewed": true,
+  "cues": [
+    {
+      "id": 1,
+      "start": 0.52,
+      "end": 3.326,
+      "text": "Hello!. Welcome to Web Demystified.",
+      "speaker": "Jeremie Patonnier",
+      "reviewed": true
+    },
+    {
+      "id": 2,
+      "start": 3.326,
+      "end": 8.031,
+      "text": "I’m Jeremie and in this series of videos we are gonna try to make the web easy.",
+      "speaker": "Jeremie Patonnier",
+      "reviewed": true
+    },
+    {
+      "id": 3,
+      "start": 8.031,
+      "end": 13.358,
+      "text": "So today, in this special episode, I’m gonna give you a quick overview of what the web is and how it works.",
+      "speaker": "Jeremie Patonnier",
+      "reviewed": true
+    },
+    {
+      "id": 4,
+      "start": 13.358,
+      "end": 14.908,
+      "text": "Lame!",
+      "speaker": "Jeremie Patonnier",
+      "reviewed": true
+    },
+    {
+      "id": 5,
+      "start": 15.698,
+      "end": 21.157,
+      "text": "Yeah! Maybe there will be stuff you already know, but you could be surprised.",
+      "speaker": "Jeremie Patonnier",
+      "reviewed": true
+    },
+    {
+      "id": 6,
+      "start": 21.157,
+      "end": 24.417,
+      "text": "And if you’re not, show this video to someone who will be!",
+      "speaker": "Jeremie Patonnier",
+      "reviewed": true
+    },
+    {
+      "id": 7,
+      "start": 24.417,
+      "end": 26.92,
+      "text": "Anyway, we have to start somewhere… so let’s go!",
+      "speaker": "Jeremie Patonnier",
+      "reviewed": true
+    },
+    {
+      "id": 8,
+      "start": 32.348,
+      "end": 35.667,
+      "text": "Everything starts with your favorite browser where you type a web address.",
+      "speaker": "Jeremie Patonnier",
+      "reviewed": true
+    },
+    {
+      "id": 9,
+      "start": 35.667,
+      "end": 37.64,
+      "text": "Nope! I use Google.",
+      "speaker": "Jeremie Patonnier",
+      "reviewed": true
+    },
+    {
+      "id": 10,
+      "start": 38.5,
+      "end": 46.3,
+      "text": "Yes… and Google, like any other search engine that you could use, is nothing but a web site for which you have to type its web address.",
+      "speaker": "Jeremie Patonnier",
+      "reviewed": true
+    },
+    {
+      "id": 11,
+      "start": 46.303,
+      "end": 53.276,
+      "text": "Ok don’t worry, this is just an overview. We will talk about search engines and searching the web in another video.",
+      "speaker": "Jeremie Patonnier",
+      "reviewed": true
+    },
+    {
+      "id": 12,
+      "start": 53.276,
+      "end": 55.101,
+      "text": "So as you type a web address…",
+      "speaker": "Jeremie Patonnier",
+      "reviewed": true
+    },
+    {
+      "id": 13,
+      "start": 55.101,
+      "end": 61.619,
+      "text": "The technical name for a web address is a URL (Uniform Resource Locator)…",
+      "speaker": "Jeremie Patonnier",
+      "reviewed": true
+    },
+    {
+      "id": 14,
+      "start": 61.636,
+      "end": 66.777,
+      "text": "and it’s maybe better to save that for another video.",
+      "speaker": "Jeremie Patonnier",
+      "reviewed": true
+    },
+    {
+      "id": 15,
+      "start": 66.777,
+      "end": 69.146,
+      "text": "Overview… remember, overview.",
+      "speaker": "Jeremie Patonnier",
+      "reviewed": true
+    },
+    {
+      "id": 16,
+      "start": 69.146,
+      "end": 72.19,
+      "text": "So as you type a web address and hit the “Enter” key",
+      "speaker": "Jeremie Patonnier",
+      "reviewed": true
+    },
+    {
+      "id": 17,
+      "start": 72.19,
+      "end": 73.887,
+      "text": "OR click a link from a search page",
+      "speaker": "Jeremie Patonnier",
+      "reviewed": true
+    },
+    {
+      "id": 18,
+      "start": 73.887,
+      "end": 79.816,
+      "text": "your browser will send a request to the server that hosts the web site that lives at that address.",
+      "speaker": "Jeremie Patonnier",
+      "reviewed": true
+    },
+    {
+      "id": 19,
+      "start": 79.816,
+      "end": 84.285,
+      "text": "There, the server will process the address and it will send you back an HTML document.",
+      "speaker": "Jeremie Patonnier",
+      "reviewed": true
+    },
+    {
+      "id": 20,
+      "start": 85.142,
+      "end": 93.804,
+      "text": "And, yes, we will get into the details of how server and request work… in another video.",
+      "speaker": "Jeremie Patonnier",
+      "reviewed": true
+    },
+    {
+      "id": 21,
+      "start": 93.804,
+      "end": 97.92,
+      "text": "Next, the browser retrieves the HTML document and it reads it.",
+      "speaker": "Jeremie Patonnier",
+      "reviewed": true
+    },
+    {
+      "id": 22,
+      "start": 97.92,
+      "end": 105.694,
+      "text": "Usually, the HTML document contains further information telling the web browser that it needs some extra resources to render the full page.",
+      "speaker": "Jeremie Patonnier",
+      "reviewed": true
+    },
+    {
+      "id": 23,
+      "start": 105.694,
+      "end": 108.971,
+      "text": "For example: stylesheets (to know how to display the document)",
+      "speaker": "Jeremie Patonnier",
+      "reviewed": true
+    },
+    {
+      "id": 24,
+      "start": 108.971,
+      "end": 109.971,
+      "text": "images",
+      "speaker": "Jeremie Patonnier",
+      "reviewed": true
+    },
+    {
+      "id": 25,
+      "start": 109.971,
+      "end": 112.751,
+      "text": "or even scripts (to attach special effects).",
+      "speaker": "Jeremie Patonnier",
+      "reviewed": true
+    },
+    {
+      "id": 26,
+      "start": 112.751,
+      "end": 118.767,
+      "text": "Yes, you got it right… other videos to cover all of that.",
+      "speaker": "Jeremie Patonnier",
+      "reviewed": true
+    },
+    {
+      "id": 27,
+      "start": 118.767,
+      "end": 122.714,
+      "text": "Your browser will request all those extra ressources",
+      "speaker": "Jeremie Patonnier",
+      "reviewed": true
+    },
+    {
+      "id": 28,
+      "start": 122.714,
+      "end": 129.704,
+      "text": "and, once it gets all the resources, it will mix them all together to, at last, display the web page you were expecting.",
+      "speaker": "Jeremie Patonnier",
+      "reviewed": true
+    },
+    {
+      "id": 29,
+      "start": 130.023,
+      "end": 131.536,
+      "text": "Okay, let's recap!",
+      "speaker": "Jeremie Patonnier",
+      "reviewed": true
+    },
+    {
+      "id": 30,
+      "start": 131.536,
+      "end": 136.963,
+      "text": "The web is a collection of documents that will be requested by a browser from a server.",
+      "speaker": "Jeremie Patonnier",
+      "reviewed": true
+    },
+    {
+      "id": 31,
+      "start": 136.963,
+      "end": 140.697,
+      "text": "Each document is accessible through a web address.",
+      "speaker": "Jeremie Patonnier",
+      "reviewed": true
+    },
+    {
+      "id": 32,
+      "start": 140.697,
+      "end": 147.25,
+      "text": "The browser will mix all the necessary documents to turn any HTML document into a nice web page.",
+      "speaker": "Jeremie Patonnier",
+      "reviewed": true
+    },
+    {
+      "id": 33,
+      "start": 147.25,
+      "end": 149.943,
+      "text": "Yes, the web is nothing else than that.",
+      "speaker": "Jeremie Patonnier",
+      "reviewed": true
+    },
+    {
+      "id": 34,
+      "start": 149.943,
+      "end": 154.749,
+      "text": "Of course that simplicity hides many subtle things. Things that we will explore…",
+      "speaker": "Jeremie Patonnier",
+      "reviewed": true
+    },
+    {
+      "id": 35,
+      "start": 154.749,
+      "end": 156.185,
+      "text": "In another video!",
+      "speaker": "Jeremie Patonnier",
+      "reviewed": true
+    },
+    {
+      "id": 36,
+      "start": 157.059,
+      "end": 159.319,
+      "text": "Well… maybe more than one.",
+      "speaker": "Jeremie Patonnier",
+      "reviewed": true
+    },
+    {
+      "id": 37,
+      "start": 160.142,
+      "end": 162.437,
+      "text": "Thank you for watching our very first video.",
+      "speaker": "Jeremie Patonnier",
+      "reviewed": true
+    },
+    {
+      "id": 38,
+      "start": 162.437,
+      "end": 166.46,
+      "text": "As you might guess, many others are in the pipe and they should arrive very soon.",
+      "speaker": "Jeremie Patonnier",
+      "reviewed": true
+    },
+    {
+      "id": 39,
+      "start": 166.46,
+      "end": 168.937,
+      "text": "If you liked it, share it with your friends.",
+      "speaker": "Jeremie Patonnier",
+      "reviewed": true
+    },
+    {
+      "id": 40,
+      "start": 168.937,
+      "end": 173.978,
+      "text": "If you didn’t… I don't know, share it with your… arch enemy for example?",
+      "speaker": "Jeremie Patonnier",
+      "reviewed": true
+    },
+    {
+      "id": 41,
+      "start": 173.978,
+      "end": 179.725,
+      "text": "If you want to continue the discussion feel free to comment down below or join me and my colleagues on Twitter.",
+      "speaker": "Jeremie Patonnier",
+      "reviewed": true
+    },
+    {
+      "id": 42,
+      "start": 179.725,
+      "end": 183.455,
+      "text": "And until next time… Long live the open web! Bye!",
+      "speaker": "Jeremie Patonnier",
+      "reviewed": true
+    }
+  ]
+}
