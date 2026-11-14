@@ -129,8 +129,8 @@ test.describe('Player Component — Keyboard Navigation', () => {
       return btn?.getAttribute('aria-pressed') === 'false' || (video && video.paused);
     });
 
-    // At least one state change should have occurred
-    expect(isPlaying !== isPaused || isPlaying === true || isPaused === true).toBeTruthy();
+    expect(isPlaying, 'Player should be playing after first Space').toBe(true);
+    expect(isPaused, 'Player should be paused after second Space').toBe(true);
   });
 
   test('should support J/K/L keyboard shortcuts', async ({ page }) => {

@@ -5,9 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Digital Bridge Docs &amp; Academy — Accessible Learning Media | ALX Ethiopia</title>
   <meta name="description" content="Production-ready, accessible learning media player and career gateway built for the Digital Bridge Accessibility Hackathon 2026. Zero external paid API lock-in.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Ethiopic:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     /* ============ Reset & Base Theme (Inspired by Arc Docs) ============ */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -26,8 +23,8 @@
       --color-text-main: #F8FAFC;        /* Crisp white text (16:1 contrast) */
       --color-text-muted: #94A3B8;       /* Slate muted text (6.2:1 contrast) */
       --color-text-dim: #CBD5E1;         /* Readable subtitle text (11.5:1 contrast) */
-      --font-sans: 'Inter', 'Noto Sans Ethiopic', system-ui, -apple-system, sans-serif;
-      --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+      --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans Ethiopic', 'Nyala', Roboto, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
     }
 
     html {
@@ -648,13 +645,19 @@
     }
     .job-cards-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
       gap: 20px;
       width: 100%;
+    }
+    .job-cards-grid > * {
+      min-width: 0;
+      max-width: 100%;
     }
     digital-bridge-job-card {
       display: block;
       width: 100%;
+      max-width: 100%;
+      min-width: 0;
       border-radius: 12px;
     }
 
@@ -796,8 +799,8 @@
   <a href="#main-content" class="skip-link">Skip to main content</a>
 
   <!-- ============ Arc-Style Announcement Banner ============ -->
-  <aside class="announcement-banner" aria-label="ECC Compliance and Deployment Notice">
-    <span>ECC digital inclusion standards for Ethiopian academic &amp; telecom networks are active. <a href="#career-section">Review ECC offline 3G bundles &amp; EthSL compliance</a> before deployment.</span>
+  <aside class="announcement-banner" aria-label="ECA Inclusion Guidelines Notice">
+    <span>Ethiopian Communications Authority (ECA) digital inclusion principles for academic networks are active. <a href="#career-section">Review offline 3G bundles &amp; EthSL compliance</a> before deployment.</span>
   </aside>
 
   <!-- ============ Site Header ============ -->
@@ -806,7 +809,7 @@
       <div class="brand-icon" aria-hidden="true">DB</div>
       <div class="brand-title">
         <span class="main-name">Digital Bridge</span>
-        <span class="badge-docs">DOCS &amp; ACADEMY</span>
+        <span class="badge-docs">SAVANNA MODULE</span>
       </div>
     </a>
     <nav class="header-nav" aria-label="Primary navigation">
@@ -814,8 +817,7 @@
       <a href="#use-cases">Use Cases</a>
       <a href="#career-section">Career Gateway</a>
       <a href="#install-section">Integration</a>
-      <span class="sparkle-icon" aria-hidden="true" title="Accessibility AI Powered">✦</span>
-      <button class="avatar-btn" aria-label="User profile menu" title="Abebe Tadesse">AT</button>
+      <button class="avatar-btn" aria-label="Learner profile: Abebe Tadesse" title="Learner: Abebe Tadesse (ALX Ethiopia)">AT</button>
     </nav>
   </header>
 
@@ -823,11 +825,11 @@
   <div class="subheader-bar" role="navigation" aria-label="Secondary navigation">
     <div class="subheader-left">
       <span class="menu-icon" aria-hidden="true">☰</span>
-      <span>Welcome to Digital Bridge developer &amp; learner documentation</span>
+      <span>Digital Bridge Accessible Learning Module &mdash; ALX Ethiopia</span>
     </div>
-    <div class="status-badge" aria-label="Status: WCAG 2.2 Level AA Verified">
+    <div class="status-badge" aria-label="Status: WCAG 2.2 Level AA Self-Audited Candidate">
       <span class="status-dot" aria-hidden="true"></span>
-      <span>WCAG 2.2 AA Verified</span>
+      <span>WCAG 2.2 AA Candidate (Self-Audited)</span>
     </div>
   </div>
 
@@ -837,23 +839,23 @@
 
       <!-- Breadcrumb -->
       <nav class="breadcrumb" aria-label="Breadcrumb">
-        <a href="#">Docs</a>
+        <a href="#">ALX Savanna</a>
         <span class="sep" aria-hidden="true">/</span>
-        <a href="#">Track 2: Accessible Media</a>
+        <a href="#">Track 2: Accessible Learning Media</a>
         <span class="sep" aria-hidden="true">/</span>
-        <span aria-current="page">Savanna Course &amp; Career Gateway</span>
+        <span aria-current="page">Course Player &amp; Career Gateway</span>
       </nav>
 
       <!-- ============ Arc Hero Section ============ -->
       <section class="hero-section" aria-labelledby="hero-heading">
         <h1 id="hero-heading" class="course-title">Digital Bridge developer documentation</h1>
-        <p class="course-subtitle">Everything you need to deliver fully accessible onchain &amp; web education with dual captions, EthSL, and zero API lock-in: start fast, scale reliably.</p>
+        <p class="course-subtitle">Everything needed to deliver fully accessible educational media with dual captions, EthSL, and zero paid API lock-in: built for Ethiopian learners on ALX Savanna.</p>
 
         <!-- Search Bar -->
         <div class="hero-search" role="search">
           <div class="search-input-box">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            <input type="search" placeholder="Search docs, lessons, or ask AI..." aria-label="Search documentation, lessons, or transcripts">
+            <input type="search" id="doc-search-input" placeholder="Search documentation, lessons, or transcripts..." aria-label="Search documentation, lessons, or transcripts">
             <span class="kbd-shortcut" aria-hidden="true">⌘K</span>
           </div>
         </div>
@@ -972,7 +974,7 @@
                 <line x1="12" y1="20" x2="12.01" y2="20"></line>
               </svg>
             </div>
-            <h3 class="use-case-title">ECC 3G &amp; Low-Bandwidth Mode</h3>
+            <h3 class="use-case-title">Low-Bandwidth 3G Mode (Ethio Telecom / Safaricom)</h3>
             <p class="use-case-body">
               Passively interrogates network connection APIs to halt high-bitrate video streaming on Ethio Telecom / Safaricom 2G/3G tiers, serving compressed speech audio, interactive synchronized text, and zero-data offline ZIP bundles.
             </p>
@@ -1058,7 +1060,7 @@
               </li>
               <li class="feed-item">
                 <span class="feed-date">Nov 14</span>
-                <span class="feed-tag">ECC STD</span>
+                <span class="feed-tag">ECA STD</span>
                 <span class="feed-title">Amharic Noto typography &amp; Ethiopian calendar support</span>
               </li>
               <li class="feed-item">
@@ -1182,9 +1184,28 @@
     </nav>
   </footer>
 
-  <!-- ============ Web Components ============ -->
+  <!-- ============ Web Components & Search Script ============ -->
   <script src="digital-bridge-player.js"></script>
   <script src="digital-bridge-job-card.js"></script>
+  <script>
+    // Interactive search filter & Cmd+K / Ctrl+K shortcut
+    const searchInput = document.getElementById('doc-search-input');
+    window.addEventListener('keydown', (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        searchInput?.focus();
+      }
+    });
+
+    searchInput?.addEventListener('input', (e) => {
+      const q = e.target.value.toLowerCase().trim();
+      const searchable = document.querySelectorAll('.use-case-card, .access-card, .ai-feature-card, digital-bridge-job-card');
+      searchable.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        card.style.opacity = (!q || text.includes(q)) ? '1' : '0.25';
+      });
+    });
+  </script>
 
 </body>
 </html>

@@ -2030,13 +2030,33 @@ class DigitalBridgePlayer extends HTMLElement {
       btn.setAttribute('role', 'listitem');
       btn.dataset.index = i;
       btn.dataset.start = cue.startTime;
+      btn.tabIndex = (i === 0) ? 0 : -1; // Roving tabindex: single tab stop for entire transcript
       btn.innerHTML = `
         <span class="transcript-cue-time">${formatTime(cue.startTime)}</span>
         <span>${this._escapeHTML(cue.text)}</span>
       `;
       btn.addEventListener('click', () => this._seekToCue(cue.startTime));
       btn.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') this._seekToCue(cue.startTime);
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          this._seekToCue(cue.startTime);
+        } else if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          const next = btn.nextElementSibling;
+          if (next && next.classList.contains('transcript-cue')) {
+            btn.tabIndex = -1;
+            next.tabIndex = 0;
+            next.focus();
+          }
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          const prev = btn.previousElementSibling;
+          if (prev && prev.classList.contains('transcript-cue')) {
+            btn.tabIndex = -1;
+            prev.tabIndex = 0;
+            prev.focus();
+          }
+        }
       });
       list.appendChild(btn);
     }
@@ -2060,9 +2080,11 @@ class DigitalBridgePlayer extends HTMLElement {
       const cue = cues[idx];
       if (cue && time >= cue.startTime && time <= cue.endTime) {
         el.classList.add('active');
+        el.tabIndex = 0;
         activeEl = el;
       } else {
         el.classList.remove('active');
+        el.tabIndex = -1;
       }
     }
     // Auto-scroll into view
@@ -2292,23 +2314,41 @@ class DigitalBridgePlayer extends HTMLElement {
     const dlProgress = this._els.dlProgress;
     dlProgress.textContent = 'Preparing…';
 
-    // Attempt server bundle first
-    try {
-      const resp = await fetch('/api/bundle');
-      if (resp.ok) {
-        const blob = await resp.blob();
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'offline-pack.zip';
-        a.click();
-        URL.revokeObjectURL(url);
-        dlProgress.textContent = 'Download complete!';
-        this._announceToSR('Offline pack downloaded from server');
-        return;
+    // Prepare transcript text
+    const enText = this._captionsEN.map(c => `${formatTime(c.startTime)} - ${formatTime(c.endTime)}\n${c.text}`).join('\n\n');
+    const amText = this._captionsAM.map(c => `${formatTime(c.startTime)} - ${formatTime(c.endTime)}\n${c.text}`).join('\n\n');
+
+    const bundlePayload = {
+      title: this.getAttribute('lesson-title') || 'Web Accessibility 101',
+      transcript_en: enText || 'Introduction to Web Accessibility Lesson Transcript',
+      transcript_am: amText || 'የድር ተደራሽነት መግቢያ ትምህርት ሙሉ ጽሑፍ',
+      include_audio: true,
+      include_pdf: true
+    };
+
+    // Attempt server bundle first (via nginx /api/bundle or direct :8000 backend)
+    for (const endpoint of ['/api/bundle', 'http://localhost:8000/api/bundle']) {
+      try {
+        const resp = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(bundlePayload)
+        });
+        if (resp.ok) {
+          const blob = await resp.blob();
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'digital-bridge-offline-pack.zip';
+          a.click();
+          URL.revokeObjectURL(url);
+          dlProgress.textContent = 'Server bundle downloaded!';
+          this._announceToSR('Offline pack downloaded from server');
+          return;
+        }
+      } catch (_) {
+        // Fall through to next endpoint or client-side fallback
       }
-    } catch (_) {
-      // Server bundle unavailable — fall through to client-side
     }
 
     // Client-side fallback: build a ZIP with transcript

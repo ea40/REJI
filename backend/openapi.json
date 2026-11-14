@@ -1,0 +1,469 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Digital Bridge Accessibility API",
+    "description": "Generate accessible offline lesson bundles, Braille transcriptions, and tagged PDFs for learners with disabilities.",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/": {
+      "get": {
+        "tags": [
+          "Health"
+        ],
+        "summary": "Health Check",
+        "description": "Service health check.",
+        "operationId": "health_check__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/bundle": {
+      "get": {
+        "tags": [
+          "Bundle"
+        ],
+        "summary": "Get Bundle",
+        "description": "Download default 3G-optimised offline lesson bundle (.zip).",
+        "operationId": "get_bundle_api_bundle_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Bundle"
+        ],
+        "summary": "Create Bundle",
+        "description": "Generate a 3G-optimised offline lesson bundle (.zip).\n\nThe zip contains:\n- `audio/narration.wav` — synthesized audible intro audio\n- `reader.html` — self-contained offline HTML reader\n- `transcript.txt` — plain-text transcript (EN + AM)\n- `lesson.pdf` — tagged accessible PDF with embedded Ethiopic font\n- `metadata.json` — bundle metadata",
+        "operationId": "create_bundle_api_bundle_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BundleRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/verify-badge": {
+      "post": {
+        "tags": [
+          "Badges"
+        ],
+        "summary": "Verify Badge",
+        "description": "Perform SHA-256 integrity check and credential inspection on Open Badges 3.0 JSON.",
+        "operationId": "verify_badge_api_verify_badge_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BadgeVerifyRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/braille": {
+      "post": {
+        "tags": [
+          "Braille"
+        ],
+        "summary": "Create Braille",
+        "description": "Convert text to Grade 1 Braille ASCII (.brf format).",
+        "operationId": "create_braille_api_braille_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BrailleRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/pdf": {
+      "post": {
+        "tags": [
+          "PDF"
+        ],
+        "summary": "Create Pdf",
+        "description": "Generate a tagged, accessible PDF document.",
+        "operationId": "create_pdf_api_pdf_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PDFRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/assets/{filename}": {
+      "get": {
+        "tags": [
+          "Assets"
+        ],
+        "summary": "Serve Asset",
+        "description": "Serve static sample assets from the frontend assets directory.",
+        "operationId": "serve_asset_api_assets__filename__get",
+        "parameters": [
+          {
+            "name": "filename",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Filename"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "BadgeVerifyRequest": {
+        "properties": {
+          "badge_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Badge Url",
+            "description": "URL of badge JSON"
+          },
+          "badge_data": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Badge Data",
+            "description": "Direct badge JSON payload"
+          }
+        },
+        "type": "object",
+        "title": "BadgeVerifyRequest",
+        "description": "Request body for Open Badges 3.0 SHA-256 integrity verification."
+      },
+      "BrailleRequest": {
+        "properties": {
+          "text": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Text",
+            "description": "Text to convert to Braille"
+          },
+          "line_width": {
+            "type": "integer",
+            "maximum": 80.0,
+            "minimum": 10.0,
+            "title": "Line Width",
+            "description": "Characters per Braille line",
+            "default": 40
+          }
+        },
+        "type": "object",
+        "required": [
+          "text"
+        ],
+        "title": "BrailleRequest",
+        "description": "Request body for Braille transcription."
+      },
+      "BundleRequest": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "title": "Title",
+            "description": "Lesson title",
+            "default": "Web Accessibility 101"
+          },
+          "transcript": {
+            "type": "string",
+            "title": "Transcript",
+            "description": "Full transcript text",
+            "default": "Introduction to Web Accessibility for Ethiopian learners."
+          },
+          "transcript_en": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Transcript En",
+            "description": "Optional alias for transcript"
+          },
+          "transcript_am": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Transcript Am",
+            "description": "Amharic transcript text"
+          },
+          "captions_en": {
+            "type": "string",
+            "title": "Captions En",
+            "description": "English captions (VTT format)",
+            "default": ""
+          },
+          "captions_am": {
+            "type": "string",
+            "title": "Captions Am",
+            "description": "Amharic captions (VTT format)",
+            "default": ""
+          },
+          "include_audio": {
+            "type": "boolean",
+            "title": "Include Audio",
+            "description": "Whether to include lightweight audio",
+            "default": true
+          },
+          "include_pdf": {
+            "type": "boolean",
+            "title": "Include Pdf",
+            "description": "Whether to include tagged PDF",
+            "default": true
+          },
+          "image_descriptions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Image Descriptions",
+            "description": "Alt-text descriptions for lesson images"
+          }
+        },
+        "type": "object",
+        "title": "BundleRequest",
+        "description": "Request body for generating a 3G offline lesson pack."
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "PDFRequest": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Title",
+            "description": "Document title"
+          },
+          "content": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Content",
+            "description": "Main body text"
+          },
+          "headings": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Headings",
+            "description": "Section headings"
+          },
+          "image_descriptions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Image Descriptions",
+            "description": "Alt-text descriptions for images"
+          }
+        },
+        "type": "object",
+        "required": [
+          "title",
+          "content"
+        ],
+        "title": "PDFRequest",
+        "description": "Request body for accessible PDF generation."
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}

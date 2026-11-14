@@ -30,6 +30,46 @@
    * @param {number} gDay   – Gregorian day (1-31)
    * @returns {{ year: number, month: number, day: number, monthName: string }}
    */
+  /**
+   * Converts a positive integer to Ge'ez numerals (፩, ፪, ፫ ... ፲ ... ፻ ... ፼).
+   * @param {number} num
+   * @returns {string}
+   */
+  function toGeez(num) {
+    if (typeof num !== 'number' || num <= 0 || !Number.isInteger(num)) return String(num);
+    const ones = ['', '፩', '፪', '፫', '፬', '፭', '፮', '፯', '፰', '፱'];
+    const tens = ['', '፲', '፳', '፴', '፵', '፶', '፷', '፸', '፹', '፺'];
+    
+    function convertGroup(n) {
+      const t = Math.floor(n / 10);
+      const o = n % 10;
+      return tens[t] + ones[o];
+    }
+
+    if (num < 100) return convertGroup(num);
+    if (num < 10000) {
+      const h = Math.floor(num / 100);
+      const rem = num % 100;
+      const hStr = (h === 1) ? '፻' : (convertGroup(h) + '፻');
+      const remStr = rem > 0 ? convertGroup(rem) : '';
+      return hStr + remStr;
+    }
+    const myr = Math.floor(num / 10000);
+    const rem = num % 10000;
+    const myrStr = (myr === 1 ? '' : toGeez(myr)) + '፼';
+    const remStr = rem > 0 ? toGeez(rem) : '';
+    return myrStr + remStr;
+  }
+
+  /**
+   * Converts a Gregorian date to the Ethiopian calendar using JDN astronomical conversion.
+   * Accurately handles 4-year leap cycles and year offsets (e.g. 14 Nov 2026 -> Hidar 5, 2019 EC).
+   *
+   * @param {number} gYear  – Gregorian year
+   * @param {number} gMonth – Gregorian month (1-12)
+   * @param {number} gDay   – Gregorian day (1-31)
+   * @returns {{ year: number, month: number, day: number, monthName: string, monthNameAmharic: string, yearGeez: string, dayGeez: string }}
+   */
   function gregorianToEthiopian(gYear, gMonth, gDay) {
     const ETHIOPIAN_MONTHS = [
       'Meskerem', 'Tikimt', 'Hidar', 'Tahsas', 'Tir', 'Yekatit',
@@ -40,33 +80,22 @@
       'መጋቢት', 'ሚያዝያ', 'ግንቦት', 'ሰኔ', 'ሐምሌ', 'ነሐሴ', 'ጳጉሜ'
     ];
 
-    // Julian Day Number for the Gregorian date
     const jdn = gregorianToJDN(gYear, gMonth, gDay);
-
-    // Ethiopian epoch in JDN (August 29, 8 AD Gregorian = Meskerem 1, 1 EC)
-    const ETHIOPIAN_EPOCH_JDN = 1724221;
-
-    // Days since Ethiopian epoch
-    const offset = jdn - ETHIOPIAN_EPOCH_JDN;
-
-    // Ethiopian year (each year has 365 or 366 days)
-    // 4-year cycle = 365*4 + 1 = 1461 days
-    const eYear = Math.floor((4 * offset + 3) / 1461);
-
-    // Day-of-year within the Ethiopian year (0-indexed)
-    const startOfYearJDN = ETHIOPIAN_EPOCH_JDN + 365 * eYear + Math.floor(eYear / 4);
-    let dayOfYear = jdn - startOfYearJDN;
-
-    // Month (0-indexed) and day
-    const eMonth = Math.floor(dayOfYear / 30);
-    const eDay = (dayOfYear % 30) + 1;
+    const EPOCH = 1723856;
+    const r = (jdn - EPOCH) % 1461;
+    const n = (r % 365) + 365 * Math.floor(r / 1460);
+    const year = 4 * Math.floor((jdn - EPOCH) / 1461) + Math.floor(r / 365) - Math.floor(r / 1460);
+    const month = Math.floor(n / 30) + 1;
+    const day = (n % 30) + 1;
 
     return {
-      year: eYear,
-      month: eMonth + 1,
-      day: eDay,
-      monthName: ETHIOPIAN_MONTHS[eMonth] || 'Pagume',
-      monthNameAmharic: ETHIOPIAN_AMHARIC_MONTHS[eMonth] || 'ጳጉሜ'
+      year,
+      month,
+      day,
+      monthName: ETHIOPIAN_MONTHS[month - 1] || 'Pagume',
+      monthNameAmharic: ETHIOPIAN_AMHARIC_MONTHS[month - 1] || 'ጳጉሜ',
+      yearGeez: toGeez(year),
+      dayGeez: toGeez(day)
     };
   }
 
@@ -89,8 +118,8 @@
   }
 
   /**
-   * Format a Gregorian date string alongside its Ethiopian equivalent.
-   * e.g. "December 15, 2026 (Tahsas 6, 2019 EC)"
+   * Format a Gregorian date string alongside its Ethiopian equivalent in both Arabic and Ge'ez digits.
+   * e.g. "November 14, 2026 (Hidar 5, 2019 EC · ኅዳር ፭ ቀን ፳፻፲፱ ዓ.ም.)"
    */
   function formatDualDate(isoString) {
     if (!isoString) return '';
@@ -102,7 +131,7 @@
     });
 
     const eth = gregorianToEthiopian(d.getUTCFullYear(), d.getUTCMonth() + 1, d.getUTCDate());
-    return `${gregFormatted} (${eth.monthName} ${eth.day}, ${eth.year} EC · ${eth.monthNameAmharic} ${eth.day} ቀን ${eth.year} ዓ.ም.)`;
+    return `${gregFormatted} (${eth.monthName} ${eth.day}, ${eth.year} EC · ${eth.monthNameAmharic} ${eth.dayGeez} ቀን ${eth.yearGeez} ዓ.ም.)`;
   }
 
   /* ================================================================
@@ -151,6 +180,10 @@
   const STYLES = /* css */ `
     :host {
       display: block;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
       contain: content;
       font-family: 'Segoe UI', 'Noto Sans Ethiopic', system-ui, -apple-system, sans-serif;
       --bg: #0A192F;
@@ -245,13 +278,22 @@
 
     .meta-item {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: 6px;
       min-width: 0;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .meta-item span {
+      min-width: 0;
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
 
     .meta-item svg {
       flex-shrink: 0;
+      margin-top: 3px;
       color: var(--accent);
     }
 

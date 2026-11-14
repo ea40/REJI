@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Minimal Integration — Digital Bridge Accessible Web Components</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+      line-height: 1.6;
+      background: #060A13;
+      color: #F8FAFC;
+    }
+    h1 { font-size: 1.5rem; margin-bottom: 8px; }
+    p { color: #94A3B8; margin-bottom: 24px; }
+    digital-bridge-player {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid #1E293B;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>ALX Savanna — Minimal Integration Demo</h1>
+  <p>Single &lt;script&gt; tag embed. Zero build step, zero external CSS dependencies.</p>
+
+  <!-- Plug and Play Web Component -->
+  <digital-bridge-player
+    lesson-title="Introduction to Web Accessibility"
+    captions-en="assets/captions-en.vtt"
+    captions-am="assets/captions-am.vtt"
+    chat-log="assets/chat-log.json"
+  ></digital-bridge-player>
+
+  <!-- Embed Script -->
+  <script src="digital-bridge-player.js"></script>
+
+</body>
+</html>

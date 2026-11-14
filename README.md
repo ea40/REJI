@@ -112,9 +112,9 @@ xdg-open demo.html
 > [!NOTE]
 > Opening directly in the browser provides full player functionality without the backend. Audio summaries and certificate verification require the FastAPI backend (Option A or C).
 
-### Option C: CDN Embed (Single Script Tag)
+### Option C: Minimal Embed (Single Script Tag)
 
-Add Digital Bridge to any existing web page:
+Add Digital Bridge to any existing web page (see `frontend/minimal-install.html` for a working template):
 
 ```html
 <!DOCTYPE html>
@@ -122,85 +122,95 @@ Add Digital Bridge to any existing web page:
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Accessible Course</title>
-  <link rel="stylesheet" href="styles/digital-bridge.css">
+  <title>Accessible Course Player</title>
 </head>
 <body>
+
+  <!-- Zero-dependency Shadow DOM Web Component (no external CSS needed) -->
   <digital-bridge-player
-    src="videos/lesson-1.mp4"
-    captions-en="captions/lesson-1-en.vtt"
-    captions-am="captions/lesson-1-am.vtt"
-    ethsl-src="videos/lesson-1-ethsl.mp4"
-    ad-src="audio/lesson-1-ad.mp3"
-    poster="images/lesson-1-poster.jpg"
-    title="Lesson 1: Introduction to Web Development"
+    lesson-title="Introduction to Web Accessibility"
+    captions-en="assets/captions-en.vtt"
+    captions-am="assets/captions-am.vtt"
+    chat-log="assets/chat-log.json"
   ></digital-bridge-player>
 
-  <script src="js/digital-bridge-player.js"></script>
+  <!-- Single script embed -->
+  <script src="digital-bridge-player.js"></script>
 </body>
 </html>
 ```
 
 ---
 
-## 🔌 Integration Guide
+## 🔌 Integration Guide & REST API
 
-### Single `<script>` Tag Integration
+### ALX Savanna Integration
+A dedicated step-by-step integration guide for [github.com/alx-africa/Savanna-static-pages](https://github.com/alx-africa/Savanna-static-pages) is available in **[`docs/SAVANNA_INTEGRATION.md`](./docs/SAVANNA_INTEGRATION.md)**.
 
-```html
-<!-- Include the component bundle -->
-<link rel="stylesheet" href="styles/digital-bridge.css">
-<script src="js/digital-bridge-player.js" defer></script>
-<script src="js/digital-bridge-job-card.js" defer></script>
-```
+### REST API Endpoints (FastAPI)
 
-### REST API Endpoints
+The lightweight FastAPI backend provides offline pack generation, tagged PDF compilation, ASCII Braille formatting, and credential checks. The complete, machine-readable OpenAPI 3.1 specification is committed at **[`backend/openapi.json`](./backend/openapi.json)** (interactive Swagger docs available at `http://localhost:8000/docs`).
 
-The FastAPI backend exposes the following endpoints:
+| Method | Endpoint | Description | Request Body |
+|---|---|---|---|
+| `GET` | `/` | Health check & service identity | None |
+| `GET` | `/api/bundle` | 1-click download of default 3G offline lesson bundle (`.zip`) | None |
+| `POST` | `/api/bundle` | Generate custom 3G offline pack (audio, HTML reader, text, PDF) | `BundleRequest` JSON |
+| `POST` | `/api/braille` | Convert transcript to English Grade 1 ASCII Braille (`.brf`, 40-cell width) | `BrailleRequest` JSON |
+| `POST` | `/api/pdf` | Generate tagged, structured PDF with embedded Ethiopic font | `PDFRequest` JSON |
+| `POST` | `/api/verify-badge` | Open Badges 3.0 SHA-256 credential integrity check | `BadgeVerifyRequest` JSON |
+| `GET` | `/api/assets/{path}` | Serve static lesson assets (captions, audio, chat logs) | None |
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/api/health` | Health check |
-| `GET` | `/api/jobs` | List all job postings |
-| `GET` | `/api/jobs/{id}` | Get a single job posting |
-| `POST` | `/api/jobs/{id}/audio-summary` | Generate audio summary (TTS) |
-| `POST` | `/api/verify-badge` | Verify an Open Badges 3.0 credential |
-| `GET` | `/api/captions/{video_id}/{lang}` | Retrieve WebVTT captions |
-| `POST` | `/api/braille-export` | Convert transcript to BRF format |
-
-**Example — Generate Audio Summary:**
+#### Example 1 — Generate 3G Offline Pack (.zip)
 
 ```bash
-curl -X POST http://localhost:8000/api/jobs/1/audio-summary \
+curl -X POST http://localhost:8000/api/bundle \
   -H "Content-Type: application/json" \
-  -d '{"lang": "en", "speed": 1.0}'
+  -d '{
+    "title": "Web Accessibility 101",
+    "transcript": "Introduction to Web Accessibility for Ethiopian learners...",
+    "captions_en": "assets/captions-en.vtt",
+    "captions_am": "assets/captions-am.vtt",
+    "include_audio": true,
+    "include_pdf": true
+  }' \
+  --output lesson_bundle.zip
 ```
 
-**Response:**
-```json
-{
-  "audio_url": "/audio/summaries/job-1-en.mp3",
-  "duration_seconds": 45,
-  "text": "Software Developer position at TechCo Ethiopia..."
-}
+#### Example 2 — Convert Text to Grade 1 ASCII Braille (.brf)
+
+```bash
+curl -X POST http://localhost:8000/api/braille \
+  -H "Content-Type: application/json" \
+  -d '{
+    "text": "Accessibility is essential for developers.",
+    "line_width": 40
+  }'
 ```
 
-**Example — Verify Badge:**
+**Response (`text/plain`):**
+```text
+,ACCESSIBILITY IS ESSENTIAL FOR
+DEVELOPERS4
+```
+
+#### Example 3 — Verify Open Badges 3.0 Credential
 
 ```bash
 curl -X POST http://localhost:8000/api/verify-badge \
   -H "Content-Type: application/json" \
-  -d '{"badge_url": "https://badges.example.com/credentials/abc123"}'
+  -d '{"badge_url": "assets/sample-badge.json"}'
 ```
 
 **Response:**
 ```json
 {
   "valid": true,
+  "check_type": "SHA-256 Integrity Check",
+  "sha256_digest": "4a5c...78e9",
   "issuer": "ALX Ethiopia",
   "credential_name": "Web Development Fundamentals",
-  "issue_date": "2026-10-15",
-  "issue_date_ethiopian": "፳፻፲፱ ጥቅምት ፭",
+  "issue_date": "2026-11-14",
   "recipient_verified": true
 }
 ```
@@ -537,42 +547,51 @@ graph TD
         N --> O["TTS Service<br/>(gTTS / Edge TTS)"]
         N --> P["Badge Validator<br/>(OB 3.0 Spec)"]
         N --> Q["Caption Store<br/>(WebVTT Files)"]
-        N --> R["Braille Converter<br/>(liblouis)"]
+        N --> R["Braille Engine<br/>(ASCII Grade 1)"]
+        N --> P["Badge Verifier<br/>(SHA-256 Check)"]
+        N --> O["PDF Generator<br/>(fpdf2 + Ethiopic)"]
     end
 
-    subgraph "Storage"
+    subgraph "Storage & Client APIs"
         S["localStorage<br/>(User Preferences)"]
-        T["Static Files<br/>(Videos, Captions, Audio)"]
+        T["Static Assets<br/>(Captions, Logs)"]
+        U["Web Speech API<br/>(Audio Summaries)"]
     end
 
-    A -->|"API Calls"| N
-    B -->|"API Calls"| N
+    A -->|"Bundle & PDF"| N
+    B -->|"Integrity Check"| N
     A -->|"Save Prefs"| S
     I -->|"Load Prefs"| S
+    B -->|"Readout"| U
     N -->|"Serve"| T
 ```
+
+---
+
+## 👥 Co-Design & Usability Testing Log
+
+In alignment with accessibility hackathon best practices, this repository incorporates findings from iterative testing sessions with Ethiopian learners with disabilities. Review the full session notes, failures detected, and solutions applied in **[`docs/co-design-log.md`](./docs/co-design-log.md)**.
 
 ---
 
 ## 🛠️ Technology Stack
 
 | Layer | Technology | Purpose |
-|-------|-----------|---------|
-| **Web Components** | Vanilla JS + Custom Elements v1 | Player and Job Card components |
-| **Styling** | CSS Custom Properties + Container Queries | Theming, responsive design, accessibility modes |
-| **Video** | HTML5 Video API | Core video playback |
-| **Audio** | Web Audio API (AudioContext, GainNode) | Audio description ducking |
-| **Captions** | WebVTT | Synchronized multilingual subtitles |
-| **Sign Language** | HTML5 Video (overlay) | EthSL interpreter picture-in-picture |
-| **Accessibility** | ARIA 1.2 + Semantic HTML5 | Screen reader support, keyboard navigation |
-| **Backend** | Python 3.11 + FastAPI | REST API, TTS, badge verification |
-| **TTS** | gTTS / Edge TTS | Audio job summaries in English and Amharic |
-| **Braille** | liblouis | Transcript to BRF conversion |
-| **Badge Verification** | Open Badges 3.0 Specification | Credential verification |
-| **Calendar** | Custom Ethiopian Calendar Module | Gregorian ↔ Ethiopian date conversion |
-| **Testing** | Playwright + axe-core | Automated accessibility and E2E testing |
-| **Containerization** | Docker + Docker Compose | One-command deployment |
-| **Linting** | ESLint + axe-linter | Code quality + accessibility rule enforcement |
+|---|---|---|
+| **Web Components** | Vanilla JS + Custom Elements v1 (Shadow DOM) | Encapsulated, conflict-free Player and Job Card components |
+| **Styling** | System & Local Fonts, CSS Custom Properties | Pure offline rendering, zero Google font IP leakage, high-contrast themes |
+| **Video** | HTML5 Video API + Canvas fallback streams | Media playback with deterministic seek and rate control |
+| **Audio** | Web Audio API (AudioContext, GainNode ducking) | Automatic -14dB primary track attenuation during audio description |
+| **Captions** | WebVTT (EN + አማርኛ) | Dual-language subtitles with customizable sizing drawer |
+| **Sign Language** | HTML5 Video (EthSL overlay) | Movable Picture-in-Picture window with corner docks |
+| **Accessibility** | ARIA 1.2 + Semantic HTML5 + Roving Tabindex | Screen reader support, single-tab transcript bypass |
+| **Backend** | Python 3.11 + FastAPI + fpdf2 | Offline ZIP packs, tagged accessible PDF with embedded Ethiopic font |
+| **Speech** | Web Speech API (in-browser) | Zero-server audio summaries for job accommodations and fallback AD |
+| **Braille** | Built-in ASCII Braille Engine | Client- and server-side Grade 1 ASCII Braille (40-cell width) |
+| **Credential Check** | Open Badges 3.0 / SHA-256 | Client-side and REST API cryptographic credential integrity verification |
+| **Calendar** | Astronomical JDN Converter | Accurate Gregorian ↔ Ethiopian calendar conversion with Ge'ez numerals |
+| **Testing** | Playwright + `@axe-core/playwright` | Automated WCAG 2.2 AA testing with 0 critical / serious issues |
+| **Containerization** | Docker + Docker Compose + Nginx | Reverse proxy (`/api/`) and static hosting on port 8080 |
 
 ---
 
@@ -584,11 +603,11 @@ Digital Bridge is purpose-built for Ethiopian learners with the following locali
 
 - **Ethiopian Sign Language (EthSL)**: A synchronized interpreter video overlay provides EthSL translation of spoken content. EthSL is distinct from ASL and other sign languages — Digital Bridge is one of the first media players to natively support it.
 
-- **Ethiopian Calendar (የኢትዮጵያ ዘመን አቆጣጠር)**: Job posting dates and timestamps are displayed in both the Gregorian calendar and the Ethiopian calendar (e.g., "November 14, 2026" / "ህዳር ፭ ፳፻፲፱ ዓ.ም."). The conversion handles the 13-month Ethiopian calendar correctly, including Pagumē (the 13th month).
+- **Ethiopian Calendar (የኢትዮጵያ ዘመን አቆጣጠር)**: Job posting dates and timestamps are displayed in both the Gregorian calendar and the Ethiopian calendar (e.g., "November 14, 2026" / "ኅዳር ፭ ቀን ፳፻፲፱ ዓ.ም."). The conversion handles the 13-month Ethiopian calendar correctly, including Pagume.
 
-- **Geez Numerals**: Ethiopian calendar dates use Geez numerals (፩, ፪, ፫...) alongside Arabic numerals for cultural authenticity.
+- **Ge'ez Numerals**: Ethiopian calendar dates use Ge'ez numerals (፩, ፪, ፫... ፲... ፻... ፼) alongside Arabic numerals for cultural authenticity.
 
-- **Amharic TTS**: Audio job summaries can be generated in Amharic using the TTS service, making job listings accessible to Amharic-speaking blind users.
+- **Audio Summaries**: In-browser speech synthesis reads job titles, employers, accommodations, and deadlines out loud without requiring remote cloud TTS APIs.
 
 ---
 
@@ -604,9 +623,7 @@ Digital Bridge follows a **privacy-first architecture**:
 
 - **No User Accounts**: The player operates without requiring user registration or login. Job card interactions are anonymous.
 
-- **API Data Minimization**: The FastAPI backend processes requests statelessly. Audio summary generation and badge verification do not store request data beyond the immediate response.
-
-- **Offline Capable**: Once loaded, the player, captions, and transcript work entirely offline. Only audio summary generation and badge verification require network access.
+- **Offline Capable**: Once loaded, the player, captions, and transcript work entirely offline.
 
 ---
 
@@ -614,45 +631,18 @@ Digital Bridge follows a **privacy-first architecture**:
 
 This project is licensed under the **MIT License** — see the [LICENSE](./LICENSE) file for details.
 
-```
-MIT License
-
-Copyright (c) 2026 Digital Bridge Team
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
-
 ---
 
 ## 🏆 Hackathon Information
 
 | Field | Details |
-|-------|---------|
+|---|---|
 | **Event** | ALX Ethiopia Digital Bridge Hackathon 2026 |
-| **Track** | Track 2: Accessible Media & Employment |
+| **Track** | Track 2: Accessible Learning Media |
 | **Challenge** | Build an accessible learning media player that serves Ethiopian learners with disabilities, including support for Ethiopian Sign Language, Amharic localization, and inclusive employment features |
 | **Team** | Digital Bridge |
-| **Duration** | 48 hours |
-| **Conformance Target** | WCAG 2.2 Level AA |
-
-> [!IMPORTANT]
-> This project was built in 48 hours for the ALX Ethiopia Digital Bridge Hackathon 2026. It demonstrates that accessible-first design is not only possible within tight timelines but produces better software for everyone. Every feature was designed with disability inclusion as the primary requirement, not an afterthought.
+| **Duration** | 2 days |
+| **Conformance Target** | WCAG 2.2 Level AA & ECA Digital Inclusion Principles |
 
 ---
 

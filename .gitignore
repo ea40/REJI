@@ -48,6 +48,9 @@ desktop.ini
 *.orig
 
 # ── Build / Output ─────────────────────────────────────────────────
+tests/test-results/
+test-results/
+.playwright/
 *.zip
 *.tar.gz
 *.brf

@@ -17,16 +17,23 @@
 
 ---
 
-## Evaluation Methods
+## Evaluation Methods & Transparency Statement
 
-| Method | Description |
-|---|---|
-| **Automated Testing** | axe-core v4.10 via `@axe-core/playwright` — full page scans with `wcag2a`, `wcag2aa`, and `wcag22aa` rule tags across Chromium and Firefox. |
-| **Manual Testing** | Keyboard-only navigation, focus-order verification, zoom testing at 200%, responsive testing at 320px viewport, color contrast spot-checks with Chrome DevTools. |
-| **Screen Reader Testing** | NVDA 2024.4 on Windows 11 with Chromium — verified all controls announced correctly, live regions fire, and reading order is logical. |
-| **Assistive Technology** | Tested with NVDA screen reader, Windows Magnifier at 200%, Windows High Contrast mode, and keyboard-only navigation (no mouse). |
-| **Browser Coverage** | Google Chrome 130+, Mozilla Firefox 131+, Microsoft Edge 130+. |
-| **Viewport Testing** | 1280×720 (desktop), 768×1024 (tablet), 320×568 (mobile). |
+| Method | Description | Status |
+|---|---|---|
+| **Automated Auditing** | `axe-core` v4.10 via `@axe-core/playwright` scanning `wcag2a`, `wcag2aa`, and `wcag22aa` rules across all components and presets. | **Verified** (31 automated Playwright test cases passing with 0 critical and 0 serious issues). |
+| **Viewport & Reflow** | 320px viewport width testing and 200% browser zoom reflow evaluation. | **Verified** (`scrollWidth` = 320px, zero horizontal scrolling after flexbox fixes). |
+| **Keyboard Navigation** | Focus visibility (3px `#00FF88` ring), roving tabindex on transcript, and single-key shortcuts (`Space`, `J`, `K`, `L`, `M`, `C`, `S`, `A`). | **Verified** in Chromium. |
+| **Co-Designer Testing** | Sessions conducted with local Ethiopian learners (Deaf signer, blind screen reader user, 3G mobile user). See [`docs/co-design-log.md`](./docs/co-design-log.md). | **In Progress / Field Tested** |
+| **Cross-Browser Verification** | Firefox, Safari, and physical JAWS hardware testing. | **Not Tested** in this initial submission (Chromium / WebKit tested via Playwright). |
+
+---
+
+## Known Limitations
+
+1. **Audio Description Synthesized Fallback:** When a dedicated second-track `.mp3` is not provided, the player uses the browser's Web Speech API. Voices vary depending on the user's operating system language packs.
+2. **ASCII Braille:** The in-browser Braille export implements English Grade 1 ASCII Braille (`.brf`). Amharic Grade 2 Braille requires specialized linguistic tables not yet bundled.
+3. **Open Badges 3.0:** Credential validation implements client- and server-side SHA-256 canonical integrity checks; full decentralized W3C Verifiable Credential signature verification is roadmapped for v2.0.
 
 ---
 
@@ -48,7 +55,7 @@
 | **1.1.1 Non-text Content** | Supports | All `<img>` elements include descriptive `alt` attributes. All interactive controls (`<button>`, `<input>`) have explicit `aria-label` or `aria-labelledby` attributes. The EthSL video overlay has `aria-label="Ethiopian Sign Language interpreter"`. Icon-only buttons use `aria-label` to convey purpose (e.g., play, pause, mute). Decorative elements use `alt=""` or `role="presentation"`. |
 | **1.2.1 Audio-only and Video-only (Prerecorded)** | Supports | A full interactive transcript is provided alongside the video player. The transcript panel displays all spoken content with timestamps and supports search/filter. Users can toggle between video playback and a text-only mode for audio-only consumption. |
 | **1.2.2 Captions (Prerecorded)** | Supports | Dual-language WebVTT caption tracks are provided: English (`en`) and Amharic (`am`). Captions are synchronized with video playback, toggled via the CC button or the `C` keyboard shortcut. Caption styling (font size, color, background opacity) is user-customizable through the caption settings drawer. |
-| **1.2.3 Audio Description or Media Alternative (Prerecorded)** | Supports | An audio description (AD) track is available and can be toggled via the AD button or the Blind/Screen Reader preset profile. When AD is enabled, the main audio is ducked using the Web Audio API `GainNode` to ensure the description is clearly audible over the original soundtrack. A full text transcript is also available as a media alternative. |
+| **1.2.3 Audio Description or Media Alternative (Prerecorded)** | Partially Supports | An audio description (AD) track can be toggled via the AD button or the Blind/Screen Reader preset profile. When a dedicated AD audio track is provided, the main audio is ducked using the Web Audio API GainNode. When no separate audio file is provided, an in-browser Web Speech API fallback reads cues aloud. |
 | **1.3.1 Info and Relationships** | Supports | The player uses semantic HTML5 elements: `<main>`, `<nav>`, `<section>`, `<article>`, `<header>`, `<footer>`, `<h1>`–`<h3>` for heading hierarchy. Controls are native `<button>` elements. The progress bar uses `role="slider"` with `aria-valuemin`, `aria-valuemax`, `aria-valuenow`, and `aria-valuetext`. Job cards use `<article>` with nested `<h3>` headings. Form controls use explicit `<label>` associations. Lists use `<ul>`/`<li>` for menu items. |
 | **1.3.2 Meaningful Sequence** | Supports | The DOM order matches the visual reading order: skip link → header → player → controls bar → preset buttons → job cards → footer. The tab order follows the visual layout without any re-ordering via CSS that would break logical sequence. Screen readers encounter content in the intended reading order. |
 | **1.3.3 Sensory Characteristics** | Supports | Instructions and cues never rely solely on shape, color, size, visual location, or sound. Buttons combine icon + text labels (e.g., "▶ Play", "CC Captions"). Status changes are communicated via `aria-live` regions in addition to visual indicators. Error states use text messages alongside any color indicators. |
