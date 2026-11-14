@@ -1,0 +1,79 @@
+{
+  "@context": [
+    "https://www.w3.org/ns/credentials/v2",
+    "https://purl.imsglobal.org/spec/ob/v3p0/context-3.0.3.json"
+  ],
+  "id": "urn:uuid:a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "type": ["VerifiableCredential", "OpenBadgeCredential"],
+  "name": "Web Development Foundations Certificate",
+  "issuer": {
+    "id": "https://alx-ethiopia.example.org/issuers/1",
+    "type": ["Profile"],
+    "name": "ALX Ethiopia",
+    "url": "https://www.alxafrica.com/ethiopia",
+    "description": "ALX Ethiopia is a technology training program empowering young Africans with in-demand digital skills through project-based, peer-learning experiences.",
+    "email": "certificates@alx-ethiopia.example.org",
+    "image": {
+      "id": "https://alx-ethiopia.example.org/images/logo.png",
+      "type": "Image",
+      "caption": "ALX Ethiopia official logo"
+    }
+  },
+  "issuanceDate": "2026-10-01T00:00:00Z",
+  "expirationDate": "2029-10-01T00:00:00Z",
+  "credentialSubject": {
+    "id": "did:example:learner123",
+    "type": ["AchievementSubject"],
+    "name": "Abebe Kebede",
+    "achievement": {
+      "id": "https://alx-ethiopia.example.org/achievements/web-dev-101",
+      "type": ["Achievement"],
+      "name": "Web Development Foundations",
+      "description": "Completed the ALX Ethiopia Web Development Foundations program covering HTML5, CSS3, JavaScript ES2025+, responsive design, accessibility (WCAG 2.2 AA), and introductory back-end development with Node.js.",
+      "criteria": {
+        "type": "Criteria",
+        "narrative": "Learner completed all 12 modules of the Web Development Foundations program, including capstone project peer reviews, weekly sprint assessments, and a final portfolio submission demonstrating proficiency in semantic HTML, modern CSS layout, vanilla JavaScript DOM manipulation, REST API consumption, and WCAG 2.2 AA accessibility compliance."
+      },
+      "image": {
+        "id": "https://alx-ethiopia.example.org/images/badges/web-dev-101.png",
+        "type": "Image",
+        "caption": "Web Development Foundations badge icon"
+      },
+      "tag": [
+        "HTML5",
+        "CSS3",
+        "JavaScript",
+        "Accessibility",
+        "Responsive Design",
+        "Node.js"
+      ],
+      "alignment": [
+        {
+          "type": "Alignment",
+          "targetName": "Web Development - Entry Level",
+          "targetUrl": "https://skills.emsi.com/skills/KS1200B62W5ZF38RJ7TD",
+          "targetDescription": "Entry-level web development competency aligned with industry standards.",
+          "targetFramework": "Lightcast Open Skills"
+        }
+      ]
+    }
+  },
+  "proof": {
+    "type": "Ed25519Signature2020",
+    "created": "2026-10-01T12:00:00Z",
+    "verificationMethod": "https://alx-ethiopia.example.org/issuers/1#key-1",
+    "proofPurpose": "assertionMethod",
+    "proofValue": "z58DAdFfa9SkqZMVPxAQpic76UmLkGtLQsDBbF2MqSKbiYCkGF3vmYpFLQcUs8gLSYyWarXhqs2VddSHEj8LGnDqK"
+  },
+  "credentialStatus": {
+    "id": "https://alx-ethiopia.example.org/credentials/status/1#42",
+    "type": "BitstringStatusListEntry",
+    "statusPurpose": "revocation",
+    "statusListIndex": "42",
+    "statusListCredential": "https://alx-ethiopia.example.org/credentials/status/1"
+  },
+  "refreshService": {
+    "id": "https://alx-ethiopia.example.org/credentials/refresh/a1b2c3d4",
+    "type": "ManualRefreshService2018"
+  }
+}
