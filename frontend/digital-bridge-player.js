@@ -867,7 +867,7 @@ const COMPONENT_HTML = /* html */ `
     <div class="video-area">
       <div class="video-wrapper" id="video-wrapper">
         <video id="main-video" playsinline preload="metadata" tabindex="-1">
-          <track kind="subtitles" srclang="en" label="English" src="assets/captions-en.vtt" default>
+          <track kind="subtitles" srclang="en" label="English" src="assets/captions-en.vtt">
           <track kind="subtitles" srclang="am" label="Amharic (አማርኛ)" src="assets/captions-am.vtt">
         </video>
 
@@ -1035,7 +1035,8 @@ class DigitalBridgePlayer extends HTMLElement {
   /* ---- Observed attributes ---- */
   static get observedAttributes() {
     return [
-      'src', 'src-low', 'audio-src', 'ethsl-src', 'ad-src',
+      'src', 'captions', 'sign', 'describe', 'lang', 'theme', 'api',
+      'src-low', 'audio-src', 'ethsl-src', 'ad-src',
       'captions-en', 'captions-am',
       'chat-log', 'lesson-title', 'poster', 'data-ad-cues'
     ];
@@ -1065,6 +1066,9 @@ class DigitalBridgePlayer extends HTMLElement {
     this._captionSize = 100;
     this._captionFont = 'default';
     this._captionTheme = 'wob';
+    this._currentLang = 'en';
+    this._ethslPosition = 'br';
+    this._apiUrl = '';
     this._ethslOpen = false;
     this._adOn = false;
     this._currentPreset = 'standard';
@@ -1085,6 +1089,34 @@ class DigitalBridgePlayer extends HTMLElement {
     this._srcLow = null;
     this._audioSrc = null;
     this._lastAnnouncedCaption = '';
+
+    /* ---- Built-in i18n dictionaries for resilient offline/fallback operation ---- */
+    this._i18n = {
+      en: {
+        play: 'Play', pause: 'Pause', back10: 'Back 10 seconds', fwd10: 'Forward 10 seconds',
+        back15: 'Back 15 seconds', fwd15: 'Forward 15 seconds', seek: 'Seek', mute: 'Mute',
+        unmute: 'Unmute', volume: 'Volume', captions: 'Toggle captions', captionSettings: 'Caption settings',
+        signLanguage: 'Toggle sign language', audioDescription: 'Toggle audio description',
+        fullscreen: 'Enter fullscreen', exitFullscreen: 'Exit fullscreen',
+        size: 'Size', font: 'Font', theme: 'Theme', track: 'Track',
+        transcript: 'Transcript', chatReplay: 'Chat Replay', searchTranscript: 'Search transcript…',
+        brailleExport: '⠿ Braille Export', offlinePack: '💾 Offline Pack',
+        lowbwNotice: 'Low-bandwidth mode active. Video is paused to conserve data. You can listen to the audio or read the transcript.',
+        audioOnly: '▶ Audio Only', resumeVideo: 'Resume Video'
+      },
+      am: {
+        play: 'አጫውት', pause: 'አቁም', back10: '10 ሰከንድ ወደ ኋላ', fwd10: '10 ሰከንድ ወደ ፊት',
+        back15: '15 ሰከንድ ወደ ኋላ', fwd15: '15 ሰከንድ ወደ ፊት', seek: 'ፈልግ', mute: 'ድምፅ አጥፋ',
+        unmute: 'ድምፅ ክፈት', volume: 'ድምፅ መጠን', captions: 'የትርጉም ጽሑፍ', captionSettings: 'የትርጉም ጽሑፍ ቅንብሮች',
+        signLanguage: 'የምልክት ቋንቋ', audioDescription: 'የድምፅ መግለጫ',
+        fullscreen: 'ሙሉ ማያ ገጽ', exitFullscreen: 'ሙሉ ማያ ውጣ',
+        size: 'መጠን', font: 'ፊደል ቅጥ', theme: 'ቀለም', track: 'ቋንቋ',
+        transcript: 'ጽሑፍ ቅጂ', chatReplay: 'ውይይት ድጋሜ', searchTranscript: 'ጽሑፍ ፈልግ…',
+        brailleExport: '⠿ የብሬይል ፋይል', offlinePack: '💾 ከመስመር ውጭ ጥቅል',
+        lowbwNotice: 'አነስተኛ ዳታ ሁነታ። ዳታ ለመቆጠብ ቪዲዮው ቆሟል። ድምፁን ማዳመጥ ወይም ጽሑፉን ማንበብ ይችላሉ።',
+        audioOnly: '▶ ድምፅ ብቻ', resumeVideo: 'ቪዲዮ ቀጥል'
+      }
+    };
 
     /* ---- Cache element references ---- */
     this.$ = (sel) => this.shadowRoot.querySelector(sel);
@@ -1215,14 +1247,89 @@ class DigitalBridgePlayer extends HTMLElement {
       case 'data-ad-cues':
         try { this._adCues = JSON.parse(val); } catch (_) { this._adCues = []; }
         break;
-      case 'ethsl-src':   this._setEthslSrc(val); break;
-      case 'ad-src':      this._setAdSrc(val); break;
+      case 'ethsl-src':
+      case 'sign':        this._setEthslSrc(val); break;
+      case 'ad-src':
+      case 'describe':    this._setAdSrc(val); break;
+      case 'captions':    this._setCaptionsAttr(val); break;
       case 'captions-en': this._loadCaptions(val, 'en'); break;
       case 'captions-am': this._loadCaptions(val, 'am'); break;
       case 'chat-log':    this._loadChatLog(val); break;
       case 'lesson-title':this._setLessonTitle(val); break;
       case 'poster':      this._setPoster(val); break;
+      case 'lang':        this._setLang(val); break;
+      case 'theme':       this._setThemeAttr(val); break;
+      case 'api':         this._apiUrl = val; break;
     }
+  }
+
+  _setCaptionsAttr(val) {
+    if (!val) return;
+    const parts = val.split(',').map(s => s.trim()).filter(Boolean);
+    parts.forEach((path, idx) => {
+      const lower = path.toLowerCase();
+      if (lower.includes('.am.') || lower.endsWith('-am.vtt') || lower.endsWith('am.vtt') || lower.includes('/am/')) {
+        this._loadCaptions(path, 'am');
+      } else if (lower.includes('.en.') || lower.endsWith('-en.vtt') || lower.endsWith('en.vtt') || lower.includes('/en/')) {
+        this._loadCaptions(path, 'en');
+      } else if (idx === 0) {
+        this._loadCaptions(path, 'en');
+      } else if (idx === 1) {
+        this._loadCaptions(path, 'am');
+      } else {
+        this._loadCaptions(path, `track-${idx}`);
+      }
+    });
+  }
+
+  _setThemeAttr(val) {
+    if (!val) return;
+    this._captionTheme = val;
+    if (this._els && this._els.capTheme) {
+      this._els.capTheme.value = val;
+    }
+    this._savePreferences();
+    if (this._captionsOn && this._els.video) {
+      this._renderCaptions(this._els.video.currentTime || 0);
+    }
+  }
+
+  _setLang(lang) {
+    if (!lang) return;
+    this._currentLang = lang;
+    if (lang === 'am') {
+      this._captionTrack = 'am';
+      if (this._els && this._els.capTrack) this._els.capTrack.value = 'am';
+    } else if (lang === 'en') {
+      this._captionTrack = 'en';
+      if (this._els && this._els.capTrack) this._els.capTrack.value = 'en';
+    }
+    this._applyI18n(lang);
+  }
+
+  _applyI18n(lang) {
+    const dict = (this._i18n && this._i18n[lang]) ? this._i18n[lang] : (this._i18n && this._i18n.en);
+    if (!dict || !this._els) return;
+    const els = this._els;
+    if (els.playBtn) els.playBtn.setAttribute('aria-label', dict.play);
+    if (els.back10Btn) els.back10Btn.setAttribute('aria-label', dict.back10);
+    if (els.fwd10Btn) els.fwd10Btn.setAttribute('aria-label', dict.fwd10);
+    if (els.back15Btn) els.back15Btn.setAttribute('aria-label', dict.back15);
+    if (els.fwd15Btn) els.fwd15Btn.setAttribute('aria-label', dict.fwd15);
+    if (els.muteBtn) els.muteBtn.setAttribute('aria-label', dict.mute);
+    if (els.captionsBtn) els.captionsBtn.setAttribute('aria-label', dict.captions);
+    if (els.capStyleBtn) els.capStyleBtn.setAttribute('aria-label', dict.captionSettings);
+    if (els.ethslBtn) els.ethslBtn.setAttribute('aria-label', dict.signLanguage);
+    if (els.adBtn) els.adBtn.setAttribute('aria-label', dict.audioDescription);
+    if (els.fsBtn) els.fsBtn.setAttribute('aria-label', dict.fullscreen);
+    if (els.tabTranscript) els.tabTranscript.textContent = dict.transcript;
+    if (els.tabChat) els.tabChat.textContent = dict.chatReplay;
+    if (els.transcriptFilter) {
+      els.transcriptFilter.placeholder = dict.searchTranscript;
+      els.transcriptFilter.setAttribute('aria-label', dict.searchTranscript);
+    }
+    if (els.brailleBtn) els.brailleBtn.textContent = dict.brailleExport;
+    if (els.offlineBtn) els.offlineBtn.textContent = dict.offlinePack;
   }
 
   /* ---- Lifecycle: disconnected ---- */
@@ -1332,6 +1439,17 @@ class DigitalBridgePlayer extends HTMLElement {
         volume: parseFloat(this._els.volumeSlider.value),
       }));
     } catch (_) { /* quota exceeded — ignore */ }
+
+    // Dispatch composed bubbling db-player:prefs event per guide contract
+    this.dispatchEvent(new CustomEvent('db-player:prefs', {
+      bubbles: true,
+      composed: true,
+      detail: {
+        captionSize: this._captionSize,
+        captionColor: this._captionTheme,
+        signPosition: this._ethslPosition || 'bottom-right'
+      }
+    }));
   }
 
   /** Detect user environment and auto-apply presets. */
@@ -1394,7 +1512,29 @@ class DigitalBridgePlayer extends HTMLElement {
     vid.addEventListener('timeupdate', () => this._onTimeUpdate());
     vid.addEventListener('loadedmetadata', () => this._onMetadataLoaded());
     vid.addEventListener('volumechange', () => this._onVolumeChange());
-    vid.addEventListener('ended', () => this._onPlayState(false));
+    vid.addEventListener('ended', () => {
+      this._onPlayState(false);
+      this.dispatchEvent(new CustomEvent('db-player:complete', {
+        bubbles: true,
+        composed: true,
+        detail: {}
+      }));
+    });
+
+    // Ensure all native text tracks have track.mode = 'hidden' to prevent browser default rendering
+    const hideNativeTracks = () => {
+      if (vid.textTracks) {
+        for (let i = 0; i < vid.textTracks.length; i++) {
+          const track = vid.textTracks[i];
+          track.mode = 'hidden';
+          track.addEventListener('cuechange', () => {
+            if (this._captionsOn) this._renderCaptions(vid.currentTime || 0);
+          });
+        }
+      }
+    };
+    hideNativeTracks();
+    vid.addEventListener('loadedmetadata', hideNativeTracks);
 
     /* ---- Progress bar click/keyboard ---- */
     els.progressBar.addEventListener('click', (e) => this._onProgressClick(e));
@@ -1596,6 +1736,13 @@ class DigitalBridgePlayer extends HTMLElement {
     if (this._adOn && !this.getAttribute('ad-src') && this._adCues.length) {
       this._speakADCue(vid.currentTime);
     }
+
+    // Composed bubbling db-player:progress event per guide contract
+    this.dispatchEvent(new CustomEvent('db-player:progress', {
+      bubbles: true,
+      composed: true,
+      detail: { seconds: cur, percent: pct }
+    }));
   }
 
   /* ---- Progress bar interaction ---- */
@@ -1956,6 +2103,8 @@ class DigitalBridgePlayer extends HTMLElement {
 
     // Clear transition after animation
     setTimeout(() => { overlay.style.transition = ''; }, 250);
+    this._ethslPosition = position;
+    this._savePreferences();
     this._announceToSR(`Sign language window docked: ${position}`);
   }
 
@@ -2658,4 +2807,7 @@ class DigitalBridgePlayer extends HTMLElement {
 
 if (!customElements.get('digital-bridge-player')) {
   customElements.define('digital-bridge-player', DigitalBridgePlayer);
+}
+if (!customElements.get('db-player')) {
+  customElements.define('db-player', class extends DigitalBridgePlayer {});
 }

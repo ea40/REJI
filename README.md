@@ -1,248 +1,226 @@
-# 🌉 Digital Bridge — Accessible Learning Media Player
+# Digital Bridge — Accessible Learning Media & Career Gateway
 
-**ALX Ethiopia Digital Bridge Hackathon 2026 — Track 2: Accessible Media & Employment**
+**ALX Ethiopia Digital Bridge Accessibility Hackathon (Addis Ababa, 14–15 Nov 2026)**  
+**Track 2: Accessible Learning Media**
 
-[![WCAG 2.2 AA](https://img.shields.io/badge/WCAG-2.2_AA-green?style=flat-square&logo=w3c)](./WCAG_CONFORMANCE_REPORT.md)
+[![WCAG 2.2 AA](https://img.shields.io/badge/WCAG-2.2_AA-green?style=flat-square&logo=w3c)](./CONFORMANCE.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](./LICENSE)
-[![Playwright Tests](https://img.shields.io/badge/Tests-31_Passed-purple?style=flat-square)](./tests/)
-[![Python 3.11+](https://img.shields.io/badge/Python-3.11+-yellow?style=flat-square&logo=python)](https://python.org)
+[![Playwright Suite](https://img.shields.io/badge/Playwright-31_Passed-purple?style=flat-square)](./tests/)
+[![FastAPI Pytest](https://img.shields.io/badge/Pytest-21_Passed-darkgreen?style=flat-square)](./backend/test_api.py)
 [![Docker Ready](https://img.shields.io/badge/Docker-Compose-blue?style=flat-square&logo=docker)](./docker-compose.yml)
 
 ---
 
-## Overview
+## Name, Track, Team, and Co-Designer
 
-**Digital Bridge** is an accessible, embeddable learning media player and career discovery platform built for Ethiopian learners with disabilities. It delivers WCAG 2.2 Level AA–conformant video playback with dual-language captions (English and Amharic), an Ethiopian Sign Language (EthSL) interpreter overlay, audio description architecture with Web Audio ducking, Braille transcript export, and one-click accessibility preset profiles.
-
-The platform also includes accessible job-listing cards with audio summaries, Open Badges 3.0 certificate verification, and support for the Ethiopian calendar — all designed with a privacy-first architecture that stores user preferences locally and never sends analytics or personal disability telemetry to remote servers.
-
----
-
-## ✨ Verified Features & Components
-
-### 🎬 Accessible Media Player (`<digital-bridge-player>`)
-- 🔤 **Dual-Language Captions** — WebVTT tracks in English and Amharic with customizable styling (font size, color, background opacity)
-- 🤟 **Ethiopian Sign Language (EthSL) Overlay** — Resizable, repositionable interpreter window with dock positions and keyboard arrow-key movement
-- 🔊 **Audio Description Architecture** — AD track support with Web Audio API ducking (main audio drops to 30% during descriptions; Web Speech fallback)
-- ⌨️ **Full Keyboard Control** — Space/K (play/pause), J/L (seek), M (mute), C (captions), S (sign language), arrow keys, Escape to close panels
-- 📋 **Interactive Transcript** — Timestamped, searchable, clickable cues that seek the video; roving tabindex bypass for screen readers
-- ⠿ **Braille Export** — One-click download of the transcript in English Grade 1 ASCII Braille (`.brf`, 40 cells/line)
-- 🎯 **Preset Accessibility Profiles**:
-  - 🦻 Deaf / Hard of Hearing → Captions + EthSL enabled
-  - 👁️ Blind / Screen Reader → Audio description + simplified UI
-  - 🤚 One-Hand / Motor → ≥48px touch targets, single-click dock alternatives
-  - 📶 3G / Low-Bandwidth → Video paused, text-only transcript mode
-
-### 💼 Accessible Job Cards (`<digital-bridge-job-card>`)
-- 🔊 **Audio Summary** — Spoken job description and workplace accommodations (Web Speech API / audio asset fallback)
-- 🏅 **Open Badges 3.0 Verification** — Client-side and server-side cryptographic credential integrity check
-- 📱 **Responsive Design** — Single-column reflow at 320px viewport, zero horizontal scroll
-- 📅 **Astronomical Ethiopian Calendar** — Dates displayed in both Gregorian and Ethiopian calendar formats with Ge'ez numerals (`፳፻፲፱ ዓ.ም.`)
+- **Project Name:** Digital Bridge Accessible Learning Media
+- **Hackathon Track:** Track 2 — Accessible Learning Media
+- **Target Platform:** ALX Savanna Learning Management System & Career Gateway
+- **Team Lead & Lead Engineer:** Lead Engineer
+- **Co-Designer Protocols:** Blank testing protocol and session templates are documented in [`docs/co-design-log.md`](./docs/co-design-log.md). Unverified legacy mock logs have been quarantined to `docs/_unverified/` per our zero-fabrication integrity policy.
+- **Hardware Profile:** Engineered first for low-cost Android smartphones on Ethio Telecom / Safaricom 3G networks, with desktop as secondary.
 
 ---
 
-## 🇪🇹 ECC Guidelines & Ethiopian Cultural Context
+## What It Does
 
-Digital Bridge was engineered to adhere to the **Ethiopian Communications Commission (ECC)** digital inclusion principles:
-
-1. **Local Language Provisioning (Amharic Ethiopic / ፊደል):**
-   - Ethiopic script font support with line-height ratios tuned for complex diacritics.
-   - Dual-stream WebVTT captions in Amharic with non-speech indicators (`[ሙዚቃ]`, `[ጭብጨባ]`).
-   - Screen-reader pronunciation hints using explicit `<span lang="am">` attributes.
-
-2. **Ethiopian Sign Language (EthSL / የኢትዮጵያ የምልክት ቋንቋ):**
-   - Movable Picture-in-Picture window with 4 one-click dock points and keyboard arrow keys.
-
-3. **Bandwidth Sovereignty (Ethio Telecom / Safaricom 2G/3G Tiers):**
-   - Passive connection inspection (`navigator.connection.effectiveType`). When `2g` or `3g` is detected, low-bandwidth profile is offered.
-   - Self-contained offline bundle (`.zip`) containing plain HTML, audio, and tagged accessible PDF generated locally via FastAPI with zero external network roundtrips.
-
-4. **Ethiopian Calendar & Ge'ez Localization (ዓ.ም. / Amete Mihret):**
-   - Dual-date rendering on job cards converting Gregorian timestamps via astronomical Julian Day Number algorithms.
-
-5. **Economic Sovereignty & Zero Cloud Lock-in:**
-   - 100% zero paid cloud API dependencies (no paid OpenAI, AWS, or Google Cloud API keys).
-   - In-browser Web Speech API fallback for audio summaries.
-   - Local Grade 1 ASCII Braille (`.brf`) generation and SHA-256 credential verification.
-
-6. **Privacy-First Non-Disclosure:**
-   - All accessibility presets are stored strictly in client `localStorage`.
-   - Never requests learners to disclose or prove a disability; zero analytics or telemetry sent to remote servers.
+Digital Bridge provides what ALX would actually deploy in production:
+1. **Embeddable Accessible Player (`<db-player>`):** An accessible HTML5 Web Component running in Shadow DOM with dual English and Amharic (Ethiopic fidäl) captions, movable/dockable Ethiopian Sign Language (EthSL) window, Web Audio ducked Audio Description, interactive transcript, and ASCII Braille export.
+2. **Career Gateway (`<db-job-card>`):** Accessible job opportunity feed with one-click Audio Summaries (operable at 200% text zoom and 320px viewport) and tamper-evident W3C Verifiable Credential / Open Badges 3.0 cryptographic verification powered by Ed25519 digital signatures.
+3. **Offline 3G Learning Pipeline (`pipeline.py`):** Generates self-contained 810 KB offline learning packages (speech-optimized Opus audio, WebVTT captions, accessible tagged HTML reader, and tagged PDF with embedded Ethiopic typography) in 7.15 seconds CPU runtime with zero paid cloud dependencies.
 
 ---
 
-## 🚀 Quick Start
+## Main Task Sentence
 
-### Option A: Local Python & Node (Recommended for Hackathon Evaluation)
+> "A deaf Ethiopian learner watching a programming concept video opens the synchronized Amharic captions and moves the Ethiopian Sign Language interpreter window to the top-right position using keyboard controls, then downloads an 810 KB offline pack to study on an Android phone without internet."
+
+---
+
+## Run
+
+### Quick Start (Local Development)
 
 ```bash
-# 1. Start the range-enabled static frontend server (supports HTML5 video byte-range seeking)
+# 1. Start the range-enabled frontend server (supports HTML5 video seeking on port 8080)
 python scripts/range_server.py 8080 frontend
 
-# 2. In another terminal, start the FastAPI backend
+# 2. In another terminal, start the FastAPI backend (port 8000)
 python -m uvicorn main:app --app-dir backend --host 127.0.0.1 --port 8000
 ```
 
-Open **http://localhost:8080/demo.html** to test the interactive demo.
+- Open **Interactive Demo:** [http://localhost:8080/demo.html](http://localhost:8080/demo.html)
+- Open **Savanna Concept Page:** [http://localhost:8080/savanna/pages/concept-with-navigation.html](http://localhost:8080/savanna/pages/concept-with-navigation.html)
+- Open **Savanna Career Gateway:** [http://localhost:8080/savanna/pages/jobs.html](http://localhost:8080/savanna/pages/jobs.html)
+- Open **Standalone Proof (`demo/blank.html`):** [http://localhost:8080/demo/blank.html](http://localhost:8080/demo/blank.html)
+- Open **Interactive API Docs (Swagger):** [http://localhost:8000/docs](http://localhost:8000/docs)
 
-### Option B: Docker Compose
+### Docker Compose
 
 ```bash
-docker compose up
+docker compose up -d
 ```
-
-Visit **http://localhost:8080** (proxied to frontend on port 8080, API at port 8000).
+Serves the web client at `http://localhost:8080` and the API backend at `http://localhost:8000`.
 
 ---
 
-## 🔌 Integration Guide & REST API
+## Install (Levels 1, 2, and 3)
 
-### ALX Savanna Integration
-A dedicated step-by-step integration guide for `Savanna-static-pages` (`pages/concept-with-navigation.html`) is in **[`docs/SAVANNA_INTEGRATION.md`](./docs/SAVANNA_INTEGRATION.md)**.
+### Level 1: Script Tag Embed (Under 1 Minute)
+Drop the custom element script into any existing HTML or CMS page (e.g. Savanna):
 
-### Verified REST API Endpoints (FastAPI)
+```html
+<!-- Load ES module -->
+<script type="module" src="module/db-player.js"></script>
 
-The lightweight FastAPI backend provides offline pack generation, tagged PDF compilation, ASCII Braille formatting, on-the-fly Amharic translation, and cryptographic credential verification. The committed OpenAPI 3.1 specification is in **[`docs/openapi.json`](./docs/openapi.json)** (interactive Swagger docs at `http://localhost:8000/docs`).
+<!-- Mount accessible player -->
+<db-player
+  src="data/lesson_360p.mp4"
+  src-low="data/lesson_144p.mp4"
+  audio-src="data/lesson_audio.opus"
+  captions="data/captions-en.vtt,data/captions-am.vtt"
+  sign="data/lesson_360p.mp4"
+  describe="data/lesson_audio.opus"
+  lang="am"
+  theme="wob"
+  poster="data/lesson_poster.jpg">
+</db-player>
 
-| Method | Endpoint | Description | Request Body |
+<!-- Host listens for composed, bubbling CustomEvents -->
+<script>
+  window.addEventListener('db-player:progress', (e) => console.log('Progress:', e.detail));
+  window.addEventListener('db-player:complete', (e) => console.log('Lesson complete'));
+  window.addEventListener('db-player:prefs', (e) => console.log('User preferences:', e.detail));
+</script>
+```
+
+### Level 2: REST API + OpenAPI 3.1
+The backend exposes clean, versioned JSON endpoints documented in `openapi.yaml` at repo root:
+
+- **Get Lesson Metadata:**
+  ```bash
+  curl -s http://localhost:8000/api/v1/lessons/1
+  ```
+- **Get Timed Transcript (Amharic or English):**
+  ```bash
+  curl -s "http://localhost:8000/api/v1/lessons/1/transcript?lang=am"
+  ```
+- **Download 3G Offline Pack (.zip):**
+  ```bash
+  curl -s -O http://localhost:8000/api/v1/lessons/1/offline-pack
+  ```
+- **Submit Corrected Captions:**
+  ```bash
+  curl -X POST http://localhost:8000/api/v1/lessons/1/captions \
+    -H "Content-Type: application/json" \
+    -d '{"vtt_content": "WEBVTT\n\n1\n00:00:01.000 --> 00:00:04.000\nሰላም", "lang": "am"}'
+  ```
+- **Verify Open Badges 3.0 Credential (Ed25519 signature):**
+  ```bash
+  curl -X POST http://localhost:8000/api/verify-badge \
+    -H "Content-Type: application/json" \
+    -d @frontend/assets/sample-badge.json
+  ```
+
+### Level 3: Open Standards & Semantic Architecture
+- **W3C Verifiable Credentials 2.0 & Open Badges 3.0:** Tamper-evident Ed25519 digital signature verification (`Ed25519Signature2020`) with anti-tampering rejection and revocation status verification.
+- **schema.org / JSON-LD:** Structured metadata embedded in offline HTML reader and job listings.
+- **Accessible Packaging:** Self-contained bundles readable offline by any modern browser without server infrastructure.
+
+---
+
+## Languages & Localization
+
+- **Amharic (አማርኛ) Ethiopic Script (ፊደል):**
+  - Line-height tuned to ≥1.7 to prevent vertical clipping of complex diacritics.
+  - No CSS `text-transform: uppercase` or letter-spacing applied to Ethiopic text.
+  - Dual WebVTT captions with non-speech auditory cues (`[ሙዚቃ]`, `[ጭብጨባ]`).
+  - Amharic UI dictionary (`module/i18n/am.json`) with honest audit metadata (`"reviewed": false`).
+- **Astronomical Ethiopian Calendar (ዓ.ም. / Amete Mihret):**
+  - Algorithms calculate Ethiopian calendar dates from Julian Day Numbers with Ge'ez numeral formatting (`፳፻፲፱ ዓ.ም.`).
+- **Ethiopian Sign Language (EthSL / የኢትዮጵያ የምልክት ቋንቋ):**
+  - Movable, resizable Picture-in-Picture window with keyboard arrow shortcuts and 4 single-click dock presets. Standby indicator informs learners of ENAD (Ethiopian National Association of the Deaf) certification status.
+
+---
+
+## Offline & Slow Connection (Measured Numbers)
+
+All measurements conducted locally using Google Chrome DevTools Network throttling and file size inspection:
+
+| Asset | Size | Slow 3G (400 kbps) Load Time |
+|---|---|---|
+| `<db-player>` Module JS | 110 KB (25 KB gzipped) | 0.5s |
+| Lesson Poster (`lesson_poster.jpg`) | 60 KB | 1.2s |
+| Dual Captions (`captions-en.vtt` + `am.vtt`) | 10.6 KB | 0.2s |
+| Speech-optimized Audio (`lesson_audio.opus`, 28 kbps) | 744 KB (3.5 KB/s stream) | Plays without buffering |
+| Low-Bandwidth Video (`lesson_144p.mp4`) | 1.47 MB | 29.4s (progressive stream) |
+| Complete Offline Pack ZIP (`offline_pack.zip`) | 810 KB | 16.2s (one-time download) |
+
+- **Zero External Fonts Required:** Uses system font stacks (`'Noto Sans Ethiopic', 'Segoe UI', system-ui`) on first paint; zero kilobyte webfont blocking penalty.
+- **Bandwidth Detection:** Inspects `navigator.connection.effectiveType` to suggest audio-only and low-bandwidth presets when 2G/3G networks are detected.
+
+---
+
+## Data & Privacy
+
+1. **Zero Disability Profiling:** No disability diagnosis fields or medical categories are requested, stored, or transmitted.
+2. **Local Preference Storage:** Preferences (caption size, theme, sign language position) are saved exclusively to the learner's browser `localStorage`.
+3. **No External Analytics:** Zero tracking scripts, analytics beacons, or remote logging.
+4. **Offline Voice Privacy:** Web Speech API synthesizers check `voice.localService === true` before synthesizing Audio Descriptions to prevent speech data from leaving the host device.
+5. **Passive Network Probing:** No active bandwidth probing packets; utilizes passive browser connection hints.
+
+---
+
+## Monthly Cost for 3,000 Learners
+
+Digital Bridge is designed for economic sovereignty and zero cloud lock-in:
+
+| Cost Item | Service Provider | Monthly Cost (USD) | Monthly Cost (ETB) |
 |---|---|---|---|
-| `GET` | `/` | Health check & service identity | None |
-| `GET` | `/api/bundle` | Download default 3G offline lesson bundle (`.zip`) | None |
-| `POST` | `/api/bundle` | Generate custom 3G offline pack (audio, HTML reader, text, PDF) | `BundleRequest` JSON |
-| `POST` | `/api/braille` | Convert text to English Grade 1 ASCII Braille (`.brf`, 40-cell width) | `BrailleRequest` JSON |
-| `POST` | `/api/pdf` | Generate tagged, structured PDF with embedded Ethiopic font | `PDFRequest` JSON |
-| `POST` | `/api/translate` | Translate text into Amharic with audited unreviewed draft flag | `TranslateRequest` JSON |
-| `POST` | `/api/verify-badge` | Open Badges 3.0 / W3C VC Ed25519 cryptographic signature & revocation check | `BadgeVerifyRequest` JSON |
-| `GET` | `/api/assets/{filename}` | Serve static lesson assets (captions, audio, chat logs) | None |
+| Static Asset Storage (100 lessons @ 7 MB) | Cloudflare R2 / Hetzner Object Storage | $0.01 | ~1.30 ETB |
+| Bandwidth Egress (3,000 learners × 20 lessons) | Cloudflare R2 (zero egress fees) / Hetzner | $0.00 | 0.00 ETB |
+| API & Offline Pack Compute Server | Hetzner CX22 VPS (2 vCPU, 4GB RAM) | $4.80 | ~620 ETB |
+| AI / Model / Translation API Keys | Offline glossary & heuristics (Zero paid APIs) | $0.00 | 0.00 ETB |
+| **Total Monthly Cost** | | **<$5.00 / month** | **~650 ETB / month** |
+
+*Cost per learner per month:* **< $0.0017 USD (approx. 0.22 ETB)**.
 
 ---
 
-## 🛠️ Transcript Pipeline CLI & Review Studio (WS2)
+## Finished and NOT Finished
 
-### 1. Offline Transcript Pipeline (`backend/pipeline.py`)
-Generates the complete accessible offline learning pack from any input video without cloud dependencies:
-```bash
-python backend/pipeline.py frontend/assets/lesson_360p.mp4 --output-dir output_pack
-```
-**Outputs produced in `output_pack/` (7.15s CPU runtime):**
-- `lesson_audio.opus` (28 kbps speech-optimized Opus audio)
-- `lesson_poster.jpg` (Optimized JPEG poster)
-- `captions-en.vtt` & `captions-am.vtt` (Synchronized dual-language WebVTT)
-- `transcript-en.json` & `transcript-am.json` (Structured timestamped transcripts with `reviewed` flags)
-- `lesson.pdf` (Tagged accessible PDF)
-- `lesson.brf` (Grade 1 ASCII Braille)
-- `reader.html` (Self-contained light offline HTML reader)
-- `offline_pack.zip` (Complete bundled archive)
-- `manifest.json` (SHA-256 integrity digests and component audit metadata)
+### Finished (Verified in Session)
+- [x] Embeddable `<db-player>` Web Component with full guide attribute contract (`src`, `captions`, `sign`, `describe`, `lang`, `theme`, `api`).
+- [x] Composed, bubbling CustomEvents (`db-player:progress`, `db-player:complete`, `db-player:prefs`).
+- [x] Level 2 REST API with `/api/v1/lessons/{id}`, `/transcript`, `/offline-pack`, and `/captions`.
+- [x] Standalone proof page (`demo/blank.html`) and Savanna integration (`savanna/pages/concept-with-navigation.html`).
+- [x] Accessible Career Gateway (`<db-job-card>`) at `savanna/pages/jobs.html` and verifiable certificate page (`certificate.html`).
+- [x] Cryptographic Ed25519 signature verification for Open Badges 3.0 / W3C Verifiable Credentials via PyNaCl.
+- [x] English Grade 1 ASCII Braille export (`.brf`, 40 cells/line).
+- [x] Automated test suites: 31/31 Playwright tests passed; 21/21 pytest tests passed.
 
-### 2. Accessible Review Studio (`frontend/studio.html`)
-An accessible (WCAG 2.2 AA) web editor for educators and blind teachers to review and edit caption cues, inspect Amharic machine translation drafts, manage Audio Description cues, and sign off on review status:
-- Full keyboard control and roving tabindex across cue cards
-- Dual English & Amharic side-by-side editing
-- Instant WebVTT & package export
-- Accessible via `http://localhost:8080/studio.html`
-
-### 3. Content Validator (`scripts/validate_content.py`)
-Validates caption synchronization, character limits, reading speeds, and missing media files:
-```bash
-python scripts/validate_content.py
-# Output: [PASS] All content validation checks passed with zero errors!
-```
-
-#### Example 1 — Health Check
-```bash
-curl -X GET http://localhost:8000/
-```
-**Response:**
-```json
-{
-  "status": "ok",
-  "service": "Digital Bridge Accessibility API",
-  "version": "1.0.0"
-}
-```
-
-#### Example 2 — Generate 3G Offline Pack (.zip)
-```bash
-curl -X POST http://localhost:8000/api/bundle \
-  -H "Content-Type: application/json" \
-  -d '{
-    "title": "Web Accessibility 101",
-    "transcript": "Introduction to Web Accessibility for Ethiopian learners...",
-    "captions_en": "assets/captions-en.vtt",
-    "captions_am": "assets/captions-am.vtt",
-    "include_audio": true,
-    "include_pdf": true
-  }' \
-  --output lesson_bundle.zip
-```
-
-#### Example 3 — Convert Text to Grade 1 ASCII Braille (.brf)
-```bash
-curl -X POST http://localhost:8000/api/braille \
-  -H "Content-Type: application/json" \
-  -d '{
-    "text": "Accessibility is essential for developers.",
-    "line_width": 40
-  }'
-```
-
-#### Example 4 — Verify Open Badges 3.0 Credential
-```bash
-curl -X POST http://localhost:8000/api/verify-badge \
-  -H "Content-Type: application/json" \
-  -d '{"badge_url": "assets/sample-badge.json"}'
-```
+### NOT Finished (Honest Disclosure)
+- [ ] **Native Speaker Amharic Review:** Amharic caption files and UI dictionaries are machine-translated drafts flagged with `"reviewed": false`. Requires in-person native Amharic linguist sign-off.
+- [ ] **Recorded EthSL Footage:** The EthSL window currently displays human signing standby graphics and reference video pending studio recording with certified signers from the Ethiopian National Association of the Deaf (ENAD).
+- [ ] **Human Audio Description Voice Track:** Audio description ducking architecture is fully functional with Web Speech fallback, but studio recording with a human narrator has not been performed.
+- [ ] **Physical Co-Designer Device Testing:** Testing completed with automated axe-core and synthetic keyboard/reflow emulation; formal in-person session with a blind NVDA user and a deaf TalkBack user is pending (blank log provided in `docs/co-design-log.md`).
 
 ---
 
-## 🧪 Verified Automated Test Suite
+## Libraries and Licences
 
-Run the full Playwright + axe-core suite:
+Every third-party library used in Digital Bridge has been vetted for permissive open-source licensing:
 
-```bash
-cd tests
-cmd.exe /c "npx playwright test"
-```
-
-### Verified Browser Results (Google Chrome):
-- **31 test cases passing (100% pass rate)**:
-  - ♿ WCAG 2.2 AA automated compliance (axe-core) at 100% and 200% zoom: **0 critical, 0 serious violations**
-  - ⌨️ Keyboard navigation: visible 3px `#00FF88` focus ring, Space/K play/pause, J/L seek, C captions, S EthSL, M mute, Escape
-  - 🎯 Preset profile state verification: Deaf, Blind, Motor, 3G
-  - 🔤 Caption system: English and Amharic loading and styling drawer
-  - 🤟 EthSL overlay: toggle, 4 dock positions, arrow key movement
-  - 📋 Transcript: cue rendering, click-to-seek, search filter, roving tabindex bypass
-  - ⠿ Braille export: verified download trigger
-  - 💼 Job card: axe-core audit, accessible audio button label, certificate panel, no horizontal scroll at 200% zoom
-  - 📱 Responsive reflow: `scrollWidth === 320px` at 320px viewport width (zero overflow), no hidden truncation
-  - 🔄 Keyboard trap verification: full tab cycling passes with zero trapped elements
-
-### Backend Pytest Suite:
-```bash
-pytest backend/test_api.py
-```
-- **13 test cases passing (100% pass rate)**:
-  - Health check & root status
-  - 3G offline bundle generation (GET & POST)
-  - English Grade 1 ASCII Braille conversion
-  - Tagged accessible PDF generation
-  - On-the-fly Amharic translation with unreviewed audit flags
-  - Open Badges 3.0 / W3C VC authentic Ed25519 digital signature verification
-  - Anti-tamper validation (tampered recipient and achievement rejection)
-  - Expiration and revocation list enforcement
-
----
-
-## 👥 Co-Design & Usability Testing Kit
-
-In strict adherence to the hackathon integrity rules, all fabricated historical participant records have been isolated to `docs/_unverified/co-design-log-unverified.md`. Active testing is governed by the standardized protocol and blank templates in **[`docs/co-design-log.md`](./docs/co-design-log.md)**.
-
----
-
-## 📄 License & Third-Party Licences
-
-This project is licensed under the **MIT License** — see [LICENSE](./LICENSE).
-- Font: `Ethiopic.ttf` (SIL Open Font License)
-- Frontend: Vanilla Web Components (MIT)
-- Backend: FastAPI (MIT), fpdf2 (LGPL-3.0-only / MIT permissible for distribution)
+| Library / Asset | Version | Licence | Purpose |
+|---|---|---|---|
+| **FastAPI** | 0.115.0 | MIT | Asynchronous REST API framework |
+| **Uvicorn** | 0.30.0 | BSD-3-Clause | ASGI server implementation |
+| **fpdf2** | 2.8.1 | LGPL-3.0-only | Accessible tagged PDF compilation |
+| **PyNaCl** | 1.6.2 | Apache-2.0 | Cryptographic Ed25519 signature verification |
+| **base58** | 2.1.1 | MIT | Multibase encoding / decoding for W3C VC keys |
+| **PyJWT** | 2.15.1 | MIT | Verifiable Credential JWT token parsing |
+| **Pillow** | 13.0.0 | HPND | Image optimization for offline pack thumbnails |
+| **fonttools** | 4.68.0 | MIT | TTF font inspection and subsetting |
+| **axe-core** | 4.10.0 | MPL-2.0 | Automated WCAG 2.2 accessibility test assertions |
+| **Playwright** | 1.65.1 | Apache-2.0 | End-to-end browser accessibility test runner |
+| **MDN Web Demystified Video** | — | CC-BY-SA 3.0 / 4.0 | Real lesson media used in demo path |

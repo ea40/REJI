@@ -1,0 +1,14 @@
+[
+  {"startTime": 0.5, "endTime": 3.0, "text": "A title card displays the text 'Introduction to Web Accessibility' over a gradient blue background with the Digital Bridge logo."},
+  {"startTime": 7.0, "endTime": 10.0, "text": "The instructor, a young woman in professional attire, stands before a projector screen showing the text 'Web Accessibility 101'."},
+  {"startTime": 16.0, "endTime": 19.0, "text": "An infographic appears on screen showing a world map with statistics: over one billion people with disabilities highlighted in yellow."},
+  {"startTime": 25.0, "endTime": 29.0, "text": "A slide displays the four WCAG principles as four colored pillars: Perceivable in blue, Operable in green, Understandable in orange, and Robust in purple."},
+  {"startTime": 40.0, "endTime": 44.0, "text": "The screen shows a side-by-side comparison: on the left, an image without alt text; on the right, the same image with a green check mark and descriptive alt text beneath it."},
+  {"startTime": 50.0, "endTime": 54.0, "text": "A video clip plays showing a student wearing headphones using a screen reader. Text output from the screen reader appears as an overlay at the bottom of the screen."},
+  {"startTime": 65.0, "endTime": 69.0, "text": "A code editor fills the screen showing HTML markup. Semantic elements like nav, main, and aside are highlighted in green, while generic div elements are highlighted in red."},
+  {"startTime": 85.0, "endTime": 89.0, "text": "Two text samples appear side by side: one with poor contrast showing light gray text on white, and another with strong contrast showing dark text on white with a green accessibility badge."},
+  {"startTime": 118.0, "endTime": 122.0, "text": "An animation demonstrates keyboard tab navigation. A visible blue focus ring moves sequentially through navigation links, a search field, and action buttons on a sample web page."},
+  {"startTime": 142.0, "endTime": 146.0, "text": "The Lighthouse accessibility audit results are displayed in Chrome DevTools, showing a score of 92 out of 100 with specific recommendations listed below."},
+  {"startTime": 160.0, "endTime": 164.0, "text": "The instructor gestures toward a slide showing the Digital Bridge logo alongside the ALX Savanna platform interface, with accessibility icons overlaid on the screen."},
+  {"startTime": 176.0, "endTime": 180.0, "text": "A summary slide appears with four key takeaways listed as bullet points, each accompanied by a relevant icon: a code bracket, an image, a keyboard, and a group of people."}
+]

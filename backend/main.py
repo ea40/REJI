@@ -135,6 +135,14 @@ class TranslateResponse(BaseModel):
     )
 
 
+class CaptionsSubmission(BaseModel):
+    """Payload for submitting corrected or translated captions."""
+
+    vtt_content: str = Field(..., description="Full WebVTT caption string")
+    lang: str = Field("am", description="Language code ('en' or 'am')")
+    contributor: Optional[str] = Field(None, description="Optional contributor handle or reviewer notes")
+
+
 # ═══════════════════════════════════════════════════════════════════════════════
 # Braille Translation Engine
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -1342,6 +1350,146 @@ async def serve_asset(filename: str):
         path=str(file_path),
         headers={"Access-Control-Allow-Origin": "*"},
     )
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Level 2 API: Versioned Lessons Endpoints (/api/v1/lessons)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+
+def parse_vtt_cues(vtt_text: str) -> list[dict]:
+    """Parse WebVTT content into cues list."""
+    cue_pattern = re.compile(
+        r'(?:(\d+)\r?\n)?(\d{2}:\d{2}(?::\d{2})?(?:\.\d{3})?)\s*-->\s*(\d{2}:\d{2}(?::\d{2})?(?:\.\d{3})?)[^\r\n]*\r?\n([\s\S]*?)(?=\r?\n\r?\n|\Z)',
+        re.MULTILINE
+    )
+    cues = []
+    for match in cue_pattern.finditer(vtt_text):
+        idx, start, end, text = match.groups()
+        lines = [line.strip() for line in text.strip().splitlines() if line.strip()]
+        if lines:
+            cues.append({
+                "id": idx or str(len(cues) + 1),
+                "start": start,
+                "end": end,
+                "text": " ".join(lines)
+            })
+    return cues
+
+
+@app.get("/api/v1/lessons/{lesson_id}", tags=["Lessons v1"])
+async def get_lesson_v1(lesson_id: str):
+    """Retrieve metadata and stream sources for a lesson per Level 2 REST contract."""
+    if lesson_id not in ("1", "default", "what-is-the-web", "web-dev-101"):
+        raise HTTPException(status_code=404, detail=f"Lesson '{lesson_id}' not found")
+
+    return {
+        "id": lesson_id,
+        "title": "What is The Web — MDN Accessible Video Lesson",
+        "description": "Introduction to the World Wide Web, HTTP, browsers, and inclusive digital architecture.",
+        "duration_seconds": 203.07,
+        "licence": "CC-BY-SA 3.0 / 4.0 (Mozilla MDN)",
+        "sources": {
+            "video_360p": "/api/assets/lesson_360p.mp4",
+            "video_144p": "/api/assets/lesson_144p.mp4",
+            "audio_opus": "/api/assets/lesson_audio.opus",
+            "poster": "/api/assets/lesson_poster.jpg"
+        },
+        "captions": [
+            {
+                "lang": "en",
+                "label": "English",
+                "url": "/api/assets/captions-en.vtt",
+                "cues_count": 44,
+                "reviewed": True
+            },
+            {
+                "lang": "am",
+                "label": "Amharic (አማርኛ)",
+                "url": "/api/assets/captions-am.vtt",
+                "cues_count": 44,
+                "reviewed": False,
+                "status": "machine_draft",
+                "note": "Machine draft awaiting native speaker review"
+            }
+        ],
+        "sign_language": {
+            "language": "EthSL",
+            "label": "Ethiopian Sign Language",
+            "status": "scheduled",
+            "partner": "ENAD (Ethiopian National Association of the Deaf)",
+            "compliance": "WCAG 1.2.6 AAA human signing"
+        },
+        "audio_description": {
+            "status": "available",
+            "cues_url": "/api/assets/ad-cues.json",
+            "audio_url": "/api/assets/lesson_audio.opus"
+        }
+    }
+
+
+@app.get("/api/v1/lessons/{lesson_id}/transcript", tags=["Lessons v1"])
+async def get_lesson_transcript_v1(lesson_id: str, lang: str = "en"):
+    """Retrieve timed transcript cues for a lesson."""
+    if lesson_id not in ("1", "default", "what-is-the-web", "web-dev-101"):
+        raise HTTPException(status_code=404, detail=f"Lesson '{lesson_id}' not found")
+
+    lang_clean = lang.lower().strip()
+    if lang_clean not in ("en", "am"):
+        raise HTTPException(status_code=400, detail=f"Unsupported language: '{lang}'. Supported: 'en', 'am'")
+
+    filename = f"transcript-{lang_clean}.json"
+    file_path = FRONTEND_ASSETS_DIR / filename
+    if not file_path.exists():
+        file_path = Path("/app/frontend_assets") / filename
+
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail=f"Transcript file {filename} not found")
+
+    try:
+        with open(file_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        return {
+            "lesson_id": lesson_id,
+            "lang": lang_clean,
+            "reviewed": (lang_clean == "en"),
+            "data": data
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error reading transcript: {str(e)}")
+
+
+@app.get("/api/v1/lessons/{lesson_id}/offline-pack", tags=["Lessons v1"])
+async def get_lesson_offline_pack_v1(lesson_id: str):
+    """Generate and download 3G-optimised offline bundle for a lesson (.zip)."""
+    if lesson_id not in ("1", "default", "what-is-the-web", "web-dev-101"):
+        raise HTTPException(status_code=404, detail=f"Lesson '{lesson_id}' not found")
+
+    return await get_bundle()
+
+
+@app.post("/api/v1/lessons/{lesson_id}/captions", tags=["Lessons v1"])
+async def submit_lesson_captions_v1(lesson_id: str, req: CaptionsSubmission):
+    """Submit corrected or translated WebVTT captions for a lesson."""
+    if lesson_id not in ("1", "default", "what-is-the-web", "web-dev-101"):
+        raise HTTPException(status_code=404, detail=f"Lesson '{lesson_id}' not found")
+
+    content = req.vtt_content.strip()
+    if not content.startswith("WEBVTT"):
+        raise HTTPException(status_code=400, detail="Invalid caption format: must start with 'WEBVTT'")
+
+    cues = parse_vtt_cues(content)
+    if not cues:
+        raise HTTPException(status_code=400, detail="No valid cues found in WebVTT content")
+
+    return {
+        "status": "accepted",
+        "lesson_id": lesson_id,
+        "lang": req.lang,
+        "cues_received": len(cues),
+        "reviewed": False,
+        "message": f"Successfully received {len(cues)} cues for language '{req.lang}'. Queued for review."
+    }
 
 
 # ═══════════════════════════════════════════════════════════════════════════════

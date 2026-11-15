@@ -179,3 +179,89 @@ def test_translate_endpoint():
     assert data["target_lang"] == "am"
     assert data["reviewed"] is False  # Integrity rule: machine drafts marked unreviewed
     assert "አሳሽ" in data["translated_text"] or "አገልጋይ" in data["translated_text"]
+
+
+def test_get_lesson_v1():
+    response = client.get("/api/v1/lessons/1")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["id"] == "1"
+    assert "What is The Web" in data["title"]
+    assert "sources" in data
+    assert "video_360p" in data["sources"]
+    assert "captions" in data
+    assert len(data["captions"]) >= 2
+    assert data["captions"][0]["lang"] == "en"
+    assert data["captions"][1]["lang"] == "am"
+    assert data["captions"][1]["reviewed"] is False  # Integrity rule
+
+
+def test_get_lesson_v1_not_found():
+    response = client.get("/api/v1/lessons/nonexistent-999")
+    assert response.status_code == 404
+
+
+def test_get_lesson_transcript_v1_en():
+    response = client.get("/api/v1/lessons/1/transcript?lang=en")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["lesson_id"] == "1"
+    assert data["lang"] == "en"
+    assert data["reviewed"] is True
+    assert "data" in data
+    assert len(data["data"]) > 0
+
+
+def test_get_lesson_transcript_v1_am():
+    response = client.get("/api/v1/lessons/1/transcript?lang=am")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["lesson_id"] == "1"
+    assert data["lang"] == "am"
+    assert data["reviewed"] is False  # Unreviewed draft rule
+    assert "data" in data
+
+
+def test_get_lesson_transcript_v1_invalid_lang():
+    response = client.get("/api/v1/lessons/1/transcript?lang=xyz")
+    assert response.status_code == 400
+
+
+def test_get_lesson_offline_pack_v1():
+    response = client.get("/api/v1/lessons/1/offline-pack")
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "application/zip"
+    assert len(response.content) > 0
+
+
+def test_submit_lesson_captions_v1():
+    vtt = """WEBVTT
+
+1
+00:00:01.000 --> 00:00:04.000
+የድር አሰሳ ምንድን ነው?
+
+2
+00:00:04.500 --> 00:00:08.000
+መረቡን ለመረዳት መሰረታዊ ፅንሰ ሃሳብ።
+"""
+    payload = {
+        "vtt_content": vtt,
+        "lang": "am",
+        "contributor": "Ethiopian Accessibility Collective"
+    }
+    response = client.post("/api/v1/lessons/1/captions", json=payload)
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "accepted"
+    assert data["cues_received"] == 2
+    assert data["reviewed"] is False
+
+
+def test_submit_lesson_captions_v1_invalid_vtt():
+    payload = {
+        "vtt_content": "This is not a webvtt file at all",
+        "lang": "en"
+    }
+    response = client.post("/api/v1/lessons/1/captions", json=payload)
+    assert response.status_code == 400
