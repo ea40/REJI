@@ -1069,3 +1069,58 @@ test.describe('Cross-cutting — No Keyboard Traps', () => {
     }
   });
 });
+
+/* ==========================================================================
+   k) Guide Contract & Element Aliases (<db-player>, <db-job-card>, Savanna)
+   ========================================================================== */
+
+test.describe('Guide Contract & Element Aliases', () => {
+  test('should support <db-player> tag and dispatch db-player:progress event', async ({ page }) => {
+    await page.goto('/demo.html');
+    await page.waitForLoadState('networkidle');
+
+    const result = await page.evaluate(async () => {
+      const dbPlayer = document.createElement('db-player');
+      dbPlayer.setAttribute('src', 'assets/lesson_360p.mp4');
+      dbPlayer.setAttribute('captions', 'assets/captions-en.vtt,assets/captions-am.vtt');
+      dbPlayer.setAttribute('sign', 'assets/lesson_360p.mp4');
+      dbPlayer.setAttribute('describe', 'assets/lesson_audio.opus');
+      dbPlayer.setAttribute('lang', 'en');
+      dbPlayer.setAttribute('theme', 'wob');
+      document.body.appendChild(dbPlayer);
+
+      let eventReceived = false;
+      dbPlayer.addEventListener('db-player:progress', (e) => {
+        if (e.detail && typeof e.detail.seconds === 'number') {
+          eventReceived = true;
+        }
+      });
+
+      // trigger internal timeupdate simulation
+      dbPlayer._onTimeUpdate();
+      dbPlayer.remove();
+      return eventReceived;
+    });
+
+    expect(result, 'db-player:progress CustomEvent should fire with detail.seconds').toBe(true);
+  });
+
+  test('should support <db-job-card> tag with audio summary and verified badge', async ({ page }) => {
+    await page.goto('/demo.html');
+    await page.waitForLoadState('networkidle');
+
+    const result = await page.evaluate(() => {
+      const card = document.createElement('db-job-card');
+      card.setAttribute('job-title', 'Accessibility Test Lead');
+      card.setAttribute('employer', 'ALX Savanna');
+      card.setAttribute('badge-url', 'assets/sample-badge.json');
+      document.body.appendChild(card);
+
+      const hasShadow = !!card.shadowRoot;
+      card.remove();
+      return hasShadow;
+    });
+
+    expect(result, '<db-job-card> should be defined and attach shadowRoot').toBe(true);
+  });
+});

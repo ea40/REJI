@@ -171,31 +171,85 @@
       return JSON.parse(JSON.stringify(badgeData));
     }
 
+    function playVerificationTone(success) {
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        const ctx = new AudioContext();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        const now = ctx.currentTime;
+        if (success) {
+          // Ascending affirmative chime (C5 -> G5)
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.15);
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+          osc.start(now);
+          osc.stop(now + 0.3);
+        } else {
+          // Descending warning tone
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(320, now);
+          osc.frequency.exponentialRampToValueAtTime(140, now + 0.25);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+          osc.start(now);
+          osc.stop(now + 0.35);
+        }
+      } catch (_) { /* audio not supported or blocked by policy */ }
+    }
+
     async function verifyWithBackend(payload) {
       const res = document.getElementById('verify-result');
       const details = document.getElementById('tech-details');
       res.innerHTML = '<span style="color:#64748b;">Verifying Ed25519 signature...</span>';
       details.style.display = 'none';
 
-      try {
-        const resp = await fetch('/api/verify-badge', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        const data = await resp.json();
+      const endpoints = [
+        '/api/verify-badge',
+        'http://localhost:8000/api/verify-badge',
+        'http://127.0.0.1:8000/api/verify-badge'
+      ];
 
-        if (data.valid) {
-          res.innerHTML = `<div class="status-badge status-valid">✔ Signature Verified — Issued by ${data.issuer} on ${data.issued_at} (Algorithm: ${data.crypto_algorithm})</div>`;
-        } else {
-          res.innerHTML = `<div class="status-badge status-invalid">✖ Verification Failed — ${data.error || 'Invalid signature or tampered data'}</div>`;
+      let lastErr = null;
+      let data = null;
+
+      for (const url of endpoints) {
+        try {
+          const resp = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          if (resp.ok) {
+            data = await resp.json();
+            break;
+          }
+        } catch (err) {
+          lastErr = err;
         }
-
-        details.style.display = 'block';
-        details.textContent = JSON.stringify(data, null, 2);
-      } catch (err) {
-        res.innerHTML = `<div class="status-badge status-invalid">⚠ Backend offline or network error (${err.message}). Is API running on port 8000?</div>`;
       }
+
+      if (!data) {
+        res.innerHTML = `<div class="status-badge status-invalid">⚠ Backend API not reached (${lastErr ? lastErr.message : 'Connection failed'}). Ensure backend is running on port 8000.</div>`;
+        playVerificationTone(false);
+        return;
+      }
+
+      if (data.valid) {
+        res.innerHTML = `<div class="status-badge status-valid">✔ Signature Verified — Issued by ${data.issuer} on ${data.issued_at} (Algorithm: ${data.crypto_algorithm})</div>`;
+        playVerificationTone(true);
+      } else {
+        res.innerHTML = `<div class="status-badge status-invalid">✖ Verification Failed — ${data.error || 'Invalid signature or tampered data'}</div>`;
+        playVerificationTone(false);
+      }
+
+      details.style.display = 'block';
+      details.textContent = JSON.stringify(data, null, 2);
     }
 
     document.getElementById('verify-btn').addEventListener('click', async () => {
