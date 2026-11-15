@@ -199,3 +199,59 @@ test.describe('Embedded Element Builder (demo/embed.html)', () => {
     expect(updatedSnippet).toContain('lang="am"');
   });
 });
+
+/* ==========================================================================
+   Documentation Portal (index.html) — WCAG 2.2 AA & Responsiveness
+   ========================================================================== */
+
+test.describe('Documentation Portal (index.html)', () => {
+  test('should have zero critical/serious axe-core violations on index.html', async ({ page }) => {
+    await page.goto('/index.html');
+    await page.waitForLoadState('networkidle');
+
+    const results = await new AxeBuilder({ page })
+      .withTags(['wcag2a', 'wcag2aa', 'wcag22aa'])
+      .analyze();
+
+    const critical = results.violations.filter(v => v.impact === 'critical');
+    const serious = results.violations.filter(v => v.impact === 'serious');
+
+    expect(critical, `Critical violations on index.html: ${JSON.stringify(critical, null, 2)}`).toHaveLength(0);
+    expect(serious, `Serious violations on index.html: ${JSON.stringify(serious, null, 2)}`).toHaveLength(0);
+  });
+
+  test('should open command palette search modal and support keyboard filtering', async ({ page }) => {
+    await page.goto('/index.html');
+    await page.waitForLoadState('networkidle');
+
+    // Click search trigger
+    const searchBtn = page.locator('#open-search-btn');
+    await searchBtn.click();
+
+    const dialog = page.locator('#search-dialog');
+    await expect(dialog).toBeVisible();
+
+    const input = page.locator('#search-input');
+    await expect(input).toBeFocused();
+
+    // Type filter query
+    await input.fill('Savanna');
+    const results = page.locator('#search-results-list .dialog-result-item:visible');
+    expect(await results.count()).toBeGreaterThan(0);
+
+    // Escape closes dialog and returns focus
+    await page.keyboard.press('Escape');
+    await expect(dialog).not.toBeVisible();
+    await expect(searchBtn).toBeFocused();
+  });
+
+  test('should reflow cleanly without horizontal scroll at 320px viewport', async ({ page }) => {
+    await page.setViewportSize({ width: 320, height: 640 });
+    await page.goto('/index.html');
+    await page.waitForLoadState('networkidle');
+
+    const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
+    const clientWidth = await page.evaluate(() => document.documentElement.clientWidth);
+    expect(scrollWidth).toBeLessThanOrEqual(clientWidth + 1);
+  });
+});

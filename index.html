@@ -3,296 +3,1488 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ALX Digital Bridge — Accessible Learning Media &amp; Career Gateway</title>
+  <title>ALX Digital Bridge — Developer Documentation &amp; Component Hub</title>
+  <meta name="description" content="Developer documentation, component integration guides, and live proofs for ALX Digital Bridge accessible media player and career gateway.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2338bdf8'><path d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'/></svg>">
   <style>
     :root {
-      --bg: #0b1120;
-      --card-bg: #1e293b;
-      --card-hover: #334155;
-      --accent: #00ff88;
-      --blue: #38bdf8;
-      --text: #f8fafc;
-      --text-muted: #94a3b8;
-      --border: #334155;
+      --bg-base: #080c16;
+      --bg-surface: #0e1526;
+      --bg-card: #111a2e;
+      --bg-card-hover: #16223b;
+      --border-subtle: #1e293b;
+      --border-focus: #38bdf8;
+      --border-highlight: #334155;
+      --accent-amber: #f59e0b;
+      --accent-amber-bg: rgba(245, 158, 11, 0.12);
+      --accent-cyan: #38bdf8;
+      --accent-cyan-bg: rgba(56, 189, 248, 0.12);
+      --accent-emerald: #10b981;
+      --accent-emerald-bg: rgba(16, 185, 129, 0.12);
+      --text-main: #f8fafc;
+      --text-muted: #cbd5e1;
+      --text-dim: #94a3b8;
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     }
-    body {
+
+    * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans Ethiopic", sans-serif;
-      background: var(--bg);
-      color: var(--text);
+    }
+
+    html, body {
+      overflow-x: hidden;
+      width: 100%;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      font-family: var(--font-family);
       line-height: 1.6;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
-    .container {
-      max-width: 1080px;
-      margin: 0 auto;
-      padding: 40px 20px;
-    }
-    header {
-      text-align: center;
-      margin-bottom: 48px;
-    }
-    .badge-pill {
-      display: inline-block;
-      background: rgba(0, 255, 136, 0.12);
-      color: var(--accent);
-      border: 1px solid var(--accent);
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 13px;
+
+    /* Skip link */
+    .skip-link {
+      position: absolute;
+      top: -40px;
+      left: 12px;
+      background: var(--accent-cyan);
+      color: #000;
+      padding: 8px 16px;
+      border-radius: 4px;
       font-weight: 700;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      margin-bottom: 16px;
-    }
-    h1 {
-      font-size: 2.4rem;
-      margin: 0 0 12px 0;
-      color: #ffffff;
-    }
-    .subtitle {
-      font-size: 1.15rem;
-      color: var(--text-muted);
-      max-width: 680px;
-      margin: 0 auto;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 20px;
-      margin-top: 32px;
-    }
-    .card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      transition: transform 0.15s ease, border-color 0.15s ease;
       text-decoration: none;
-      color: inherit;
+      z-index: 10000;
+      transition: top 0.15s ease;
     }
-    .card:hover, .card:focus-visible {
-      transform: translateY(-2px);
-      border-color: var(--accent);
-      outline: 2px solid var(--accent);
+    .skip-link:focus {
+      top: 12px;
+      outline: 3px solid #fff;
+    }
+
+    /* Announcement Banner (Arc Orange style) */
+    .announcement-banner {
+      background: linear-gradient(90deg, #92400e 0%, #b45309 50%, #92400e 100%);
+      color: #ffffff;
+      font-size: 0.875rem;
+      font-weight: 500;
+      padding: 8px 16px;
+      text-align: center;
+      border-bottom: 1px solid rgba(251, 191, 36, 0.3);
+      word-break: break-word;
+    }
+    .announcement-banner a {
+      color: #ffffff;
+      font-weight: 700;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    .announcement-banner a:hover,
+    .announcement-banner a:focus-visible {
+      color: #fef3c7;
+      outline: 2px solid #ffffff;
       outline-offset: 2px;
     }
-    .card h2 {
-      font-size: 1.3rem;
-      margin: 0 0 8px 0;
-      color: #ffffff;
+
+    /* Top Navigation Bar */
+    .navbar {
+      background: rgba(8, 12, 22, 0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-subtle);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .navbar-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text-main);
+    }
+    .brand-logo {
+      width: 26px;
+      height: 26px;
+      fill: var(--accent-cyan);
+      flex-shrink: 0;
+    }
+    .brand-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
       display: flex;
       align-items: center;
       gap: 8px;
     }
-    .card p {
-      color: var(--text-muted);
-      font-size: 0.95rem;
-      margin: 0 0 16px 0;
-      flex-grow: 1;
+    .brand-title span.slash {
+      color: var(--text-dim);
+      font-weight: 400;
     }
-    .card-footer {
+    .brand-title span.sub {
+      color: var(--text-muted);
+      font-weight: 500;
+      font-size: 0.95rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .nav-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      padding: 6px 10px;
+      border-radius: 6px;
+      transition: color 0.15s, background-color 0.15s;
+    }
+    .nav-link:hover,
+    .nav-link:focus-visible {
+      color: var(--text-main);
+      background-color: var(--border-subtle);
+      outline: 2px solid var(--border-focus);
+    }
+    .nav-btn-highlight {
+      background: var(--accent-cyan-bg);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      font-weight: 600;
+    }
+    .nav-btn-highlight:hover,
+    .nav-btn-highlight:focus-visible {
+      background: rgba(56, 189, 248, 0.25);
+      color: #ffffff;
+    }
+
+    /* Sub-header Breadcrumb & Quick Nav Bar */
+    .subnav {
+      border-bottom: 1px solid var(--border-subtle);
+      background: var(--bg-surface);
+      font-size: 0.85rem;
+    }
+    .subnav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 10px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      font-weight: 600;
-      font-size: 0.9rem;
-      color: var(--blue);
-    }
-    .status-tag {
-      font-size: 11px;
-      padding: 3px 8px;
-      border-radius: 4px;
-      background: rgba(56, 189, 248, 0.15);
-      color: var(--blue);
-      text-transform: uppercase;
-    }
-    .tag-verified {
-      background: rgba(0, 255, 136, 0.15);
-      color: var(--accent);
-    }
-    .info-bar {
-      margin-top: 48px;
-      padding: 20px;
-      background: rgba(30, 41, 59, 0.6);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      display: flex;
       flex-wrap: wrap;
-      justify-content: space-around;
-      gap: 16px;
-      text-align: center;
+      gap: 12px;
     }
-    .info-item span {
-      display: block;
-      font-size: 1.4rem;
-      font-weight: 700;
-      color: var(--accent);
-    }
-    .info-item label {
-      font-size: 0.85rem;
+    .breadcrumb-trail {
+      display: flex;
+      align-items: center;
+      gap: 8px;
       color: var(--text-muted);
+      flex-wrap: wrap;
+    }
+    .breadcrumb-trail svg {
+      width: 16px;
+      height: 16px;
+      fill: currentColor;
+      flex-shrink: 0;
+    }
+    .quick-tiles {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .quick-tile {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.8rem;
+      font-weight: 500;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .quick-tile:hover,
+    .quick-tile:focus-visible {
+      color: var(--text-main);
+      border-color: var(--accent-cyan);
+      outline: 2px solid var(--accent-cyan);
+    }
+    .quick-tile span.arrow {
+      color: var(--accent-cyan);
+      font-size: 0.75rem;
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px 80px 20px;
+    }
+
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      background: var(--accent-cyan-bg);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      color: var(--accent-cyan);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      max-width: 100%;
+      word-break: break-word;
+    }
+    .hero-badge span.dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-cyan);
+      box-shadow: 0 0 8px var(--accent-cyan);
+      flex-shrink: 0;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.25rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: #ffffff;
+      line-height: 1.15;
+      margin-bottom: 16px;
+      word-break: break-word;
+    }
+    .hero-subtitle {
+      font-size: clamp(0.95rem, 2vw, 1.15rem);
+      color: var(--text-muted);
+      max-width: 760px;
+      margin: 0 auto 32px auto;
+      line-height: 1.6;
+    }
+
+    /* Search & Command Bar */
+    .search-box-wrapper {
+      max-width: 580px;
+      margin: 0 auto;
+    }
+    .search-trigger-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 18px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-highlight);
+      border-radius: 12px;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .search-trigger-btn:hover {
+      border-color: var(--border-focus);
+      color: var(--text-main);
+    }
+    .search-trigger-btn:focus-visible {
+      outline: 2px solid var(--border-focus);
+      border-color: var(--border-focus);
+    }
+    .search-trigger-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-align: left;
+    }
+    .search-trigger-left svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      flex-shrink: 0;
+    }
+    .kbd-shortcut {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.75rem;
+      font-family: inherit;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 3px 8px;
+      color: #e2e8f0;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    /* Section Headings */
+    .section-header {
+      margin-bottom: 24px;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-caption {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    /* Use Cases Cards Grid (Arc Docs layout) */
+    .use-cases-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+      gap: 20px;
+      margin-bottom: 56px;
+    }
+    .use-case-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      text-decoration: none;
+      color: inherit;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+    }
+    .use-case-card:hover,
+    .use-case-card:focus-visible {
+      transform: translateY(-2px);
+      background-color: var(--bg-card-hover);
+      border-color: var(--accent-cyan);
+      outline: 2px solid var(--accent-cyan);
+      outline-offset: 2px;
+    }
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .card-icon-container {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent-cyan);
+      flex-shrink: 0;
+    }
+    .card-icon-container.emerald {
+      background: rgba(16, 185, 129, 0.12);
+      border-color: rgba(16, 185, 129, 0.3);
+      color: var(--accent-emerald);
+    }
+    .card-icon-container.amber {
+      background: rgba(245, 158, 11, 0.12);
+      border-color: rgba(245, 158, 11, 0.3);
+      color: var(--accent-amber);
+    }
+    .card-icon-container svg {
+      width: 22px;
+      height: 22px;
+    }
+    .card-meta {
+      flex: 1;
+    }
+    .card-tag {
+      font-size: 0.75rem;
+      font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.05em;
+      color: var(--accent-cyan);
+      margin-bottom: 4px;
+      display: block;
+    }
+    .card-tag.emerald { color: var(--accent-emerald); }
+    .card-tag.amber { color: var(--accent-amber); }
+    .use-case-card h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 1.3;
+    }
+    .card-body p {
+      color: var(--text-muted);
+      font-size: 0.925rem;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    .card-action {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--accent-cyan);
+    }
+    .card-action span.action-text {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Common Tasks (Arc Docs 3-column layout) */
+    .common-tasks-section {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 32px 28px;
+      margin-bottom: 56px;
+    }
+    .tasks-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+      gap: 32px;
+      margin-top: 20px;
+    }
+    .task-column-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #94a3b8;
+      margin-bottom: 14px;
+    }
+    .task-links-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .task-link-item a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: color 0.15s, transform 0.15s;
+    }
+    .task-link-item a:hover,
+    .task-link-item a:focus-visible {
+      color: var(--text-main);
+      transform: translateX(2px);
+      outline: 2px solid var(--border-focus);
+      border-radius: 4px;
+      padding: 2px 4px;
+    }
+    .task-link-item a svg {
+      width: 14px;
+      height: 14px;
+      stroke: var(--accent-cyan);
+      flex-shrink: 0;
+    }
+
+    /* Split Section: Build with AI & Tools + What's New */
+    .split-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      margin-bottom: 56px;
+    }
+    @media (max-width: 860px) {
+      .split-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Build with Accessibility & Tools */
+    .tools-pane {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .tool-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      text-decoration: none;
+      color: inherit;
+      transition: border-color 0.15s, transform 0.15s;
+    }
+    .tool-card:hover,
+    .tool-card:focus-visible {
+      border-color: var(--accent-cyan);
+      transform: translateY(-2px);
+      outline: 2px solid var(--accent-cyan);
+    }
+    .tool-card-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent-cyan);
+      flex-shrink: 0;
+    }
+    .tool-card-icon svg {
+      width: 20px;
+      height: 20px;
+    }
+    .tool-card-info h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 4px;
+    }
+    .tool-card-info p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* What's New Feed */
+    .whats-new-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 24px;
+    }
+    .feed-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .feed-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 0.875rem;
+      line-height: 1.5;
+    }
+    .feed-date {
+      color: #94a3b8;
+      font-size: 0.8rem;
+      font-weight: 600;
+      white-space: nowrap;
+      min-width: 65px;
+    }
+    .feed-pill {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(56, 189, 248, 0.18);
+      color: #38bdf8;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+    .feed-pill.crypto {
+      background: rgba(16, 185, 129, 0.18);
+      color: #34d399;
+    }
+    .feed-pill.a11y {
+      background: rgba(245, 158, 11, 0.18);
+      color: #fbbf24;
+    }
+    .feed-text {
+      color: var(--text-muted);
+      flex: 1;
+    }
+
+    /* System Metrics & Conformance Bar */
+    .metrics-bar {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 24px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 140px), 1fr));
+      gap: 20px;
+      text-align: center;
+      margin-bottom: 56px;
+    }
+    .metric-item-value {
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--accent-cyan);
+      margin-bottom: 4px;
+    }
+    .metric-item-value.emerald { color: #34d399; }
+    .metric-item-value.amber { color: #fbbf24; }
+    .metric-item-label {
+      font-size: 0.8rem;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 600;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border-subtle);
+      background: var(--bg-surface);
+      padding: 40px 20px;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .footer-links {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+    .footer-links a:hover,
+    .footer-links a:focus-visible {
+      color: var(--text-main);
+      outline: 2px solid var(--border-focus);
+    }
+
+    /* Command Palette Modal Dialog */
+    dialog#search-dialog {
+      margin: 10vh auto auto auto;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-highlight);
+      border-radius: 14px;
+      padding: 0;
+      max-width: 620px;
+      width: 90%;
+      color: var(--text-main);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7);
+    }
+    dialog#search-dialog::backdrop {
+      background: rgba(4, 7, 14, 0.8);
+      backdrop-filter: blur(6px);
+    }
+    .dialog-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .dialog-header svg {
+      width: 20px;
+      height: 20px;
+      stroke: var(--accent-cyan);
+    }
+    .dialog-input {
+      background: transparent;
+      border: none;
+      color: #ffffff;
+      font-size: 1.05rem;
+      width: 100%;
+      font-family: inherit;
+    }
+    .dialog-input:focus {
+      outline: none;
+    }
+    .dialog-results {
+      max-height: 380px;
+      overflow-y: auto;
+      padding: 12px;
+      list-style: none;
+    }
+    .dialog-result-item a {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      border-radius: 8px;
+      text-decoration: none;
+      color: var(--text-main);
+      font-size: 0.95rem;
+      transition: background-color 0.12s;
+    }
+    .dialog-result-item a:hover,
+    .dialog-result-item a:focus {
+      background: var(--bg-card);
+      outline: 2px solid var(--accent-cyan);
+    }
+    .dialog-result-meta {
+      font-size: 0.75rem;
+      color: #94a3b8;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .dialog-footer {
+      padding: 12px 20px;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: #94a3b8;
+    }
+
+    /* Screen reader only utility */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border-width: 0;
+    }
+
+    /* Accessibility Focus visible styles */
+    :focus-visible {
+      outline: 2px solid var(--border-focus);
+      outline-offset: 2px;
+    }
+
+    /* Responsive adjustments for 320px screens */
+    @media (max-width: 600px) {
+      .container {
+        padding: 24px 10px 60px 10px;
+      }
+      .navbar-inner, .subnav-inner {
+        padding: 8px 10px;
+      }
+      .nav-actions {
+        gap: 6px;
+      }
+      .nav-link {
+        font-size: 0.8rem;
+        padding: 4px 6px;
+      }
+      .hero h1 {
+        font-size: 1.75rem;
+      }
+      .search-trigger-btn {
+        padding: 10px 12px;
+        font-size: 0.85rem;
+      }
+      .common-tasks-section {
+        padding: 20px 12px;
+      }
+      .use-case-card {
+        padding: 16px 12px;
+      }
+      .metrics-bar {
+        padding: 16px 8px;
+        gap: 12px;
+      }
+      .metric-item-value {
+        font-size: 1.4rem;
+      }
+      .metric-item-label {
+        font-size: 0.7rem;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <div class="badge-pill">Track 2: Accessible Learning Media · ALX Digital Bridge</div>
-      <h1>Digital Bridge Production Portal</h1>
-      <p class="subtitle">
-        What ALX would actually deploy: an embeddable accessible video player, synchronized Amharic captions, EthSL interpreter overlay, and accessible career gateway.
+  <!-- Accessibility Skip Link -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <!-- Top Announcement Banner (Arc Orange style) -->
+  <aside class="announcement-banner" aria-label="Official Conformance Announcement">
+    <span>ALX Savanna LMS × Digital Bridge is live. WCAG 2.2 Level AA and ECA guidelines verified —</span>
+    <a href="CONFORMANCE.md">review the full conformance report</a>
+    <span>before deployment.</span>
+  </aside>
+
+  <!-- Top Navigation Header -->
+  <header class="navbar" role="banner">
+    <div class="navbar-inner">
+      <a href="index.html" class="brand" aria-label="ALX Digital Bridge Documentation Home">
+        <svg class="brand-logo" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        </svg>
+        <span class="brand-title">
+          ALX <span class="slash">|</span> <span class="sub">Docs</span>
+        </span>
+      </a>
+
+      <nav class="nav-actions" aria-label="Quick links">
+        <a href="savanna/pages/concept-with-navigation.html" class="nav-link">Savanna LMS</a>
+        <a href="savanna/pages/jobs.html" class="nav-link">Career Gateway</a>
+        <a href="demo/embed.html" class="nav-link">Embed Builder</a>
+        <a href="https://github.com/ea40/REJI" class="nav-link nav-btn-highlight" target="_blank" rel="noopener noreferrer">
+          GitHub Repo ↗
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Subnav Breadcrumbs & Quick Tiles -->
+  <nav class="subnav" aria-label="Documentation Sub-navigation">
+    <div class="subnav-inner">
+      <div class="breadcrumb-trail">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/></svg>
+        <span>Welcome to Digital Bridge docs</span>
+      </div>
+
+      <div class="quick-tiles" role="list" aria-label="Topic shortcuts">
+        <a href="#use-cases" class="quick-tile" role="listitem">Architecture <span class="arrow">›</span></a>
+        <a href="savanna/pages/concept-with-navigation.html" class="quick-tile" role="listitem">Savanna Bridge <span class="arrow">›</span></a>
+        <a href="demo/embed.html" class="quick-tile" role="listitem">Player Component <span class="arrow">›</span></a>
+        <a href="savanna/pages/jobs.html" class="quick-tile" role="listitem">Job Gateway <span class="arrow">›</span></a>
+        <a href="savanna/pages/certificate.html" class="quick-tile" role="listitem">Ed25519 Badges <span class="arrow">›</span></a>
+        <a href="CONFORMANCE.md" class="quick-tile" role="listitem">ECA &amp; WCAG Report <span class="arrow">›</span></a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main id="main-content" class="container" tabindex="-1">
+    
+    <!-- Hero Section -->
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-badge">
+        <span class="dot"></span>
+        Track 2: Accessible Learning Media &amp; Career Gateway
+      </div>
+      <h1 id="hero-title">Digital Bridge developer documentation</h1>
+      <p class="hero-subtitle">
+        Everything you need to build and deploy accessible learning media with synchronized Amharic captions, EthSL sign language, and inclusive career tools: start fast, scale reliably across low-bandwidth networks.
       </p>
-    </header>
 
-    <main class="grid" role="navigation" aria-label="Product Modules">
-      <!-- 1. Savanna Integration -->
-      <a href="savanna/pages/concept-with-navigation.html" class="card">
-        <div>
-          <div class="card-footer" style="margin-bottom:12px;">
-            <span class="status-tag tag-verified">Production Integration</span>
-            <span>Savanna LMS</span>
-          </div>
-          <h2><span>🎓</span> Savanna Course Page</h2>
-          <p>
-            The live ALX Savanna concept page with &lt;db-player&gt; mounted under the banner. Features real Mozilla lesson video, synchronized Amharic/English captions, movable EthSL window, and low-bandwidth data saver.
-          </p>
-        </div>
-        <div class="card-footer">
-          <span>Open Savanna Page →</span>
-        </div>
-      </a>
-
-      <!-- 2. Career Gateway -->
-      <a href="savanna/pages/jobs.html" class="card">
-        <div>
-          <div class="card-footer" style="margin-bottom:12px;">
-            <span class="status-tag tag-verified">Career Gateway</span>
-            <span>Savanna Jobs</span>
-          </div>
-          <h2><span>💼</span> Accessible Job Cards</h2>
-          <p>
-            Inclusive tech job listings across Addis Ababa with disability accommodations. Features one-click audio summaries (tested at 200% zoom) and astronomical Ethiopian calendar dates (ዓ.ም.).
-          </p>
-        </div>
-        <div class="card-footer">
-          <span>Open Job Feed →</span>
-        </div>
-      </a>
-
-      <!-- 3. Verifiable Certificate -->
-      <a href="savanna/pages/certificate.html" class="card">
-        <div>
-          <div class="card-footer" style="margin-bottom:12px;">
-            <span class="status-tag tag-verified">Cryptographic VC</span>
-            <span>Open Badges 3.0</span>
-          </div>
-          <h2><span>🏅</span> Verifiable Certificate</h2>
-          <p>
-            Employer verification portal checking W3C Verifiable Credentials with Ed25519 digital signatures. Includes real-time anti-tamper detection and multi-sensory audio chime feedback.
-          </p>
-        </div>
-        <div class="card-footer">
-          <span>Verify Certificate →</span>
-        </div>
-      </a>
-
-      <!-- 4. Standalone Proof -->
-      <a href="demo/blank.html" class="card">
-        <div>
-          <div class="card-footer" style="margin-bottom:12px;">
-            <span class="status-tag">Level 1 Script Tag</span>
-            <span>Standalone</span>
-          </div>
-          <h2><span>⚡</span> Standalone Proof (blank.html)</h2>
-          <p>
-            Minimal HTML5 page demonstrating &lt;db-player&gt; outside the Savanna LMS using the guide's exact attribute contract and host CustomEvent telemetry logging.
-          </p>
-        </div>
-        <div class="card-footer">
-          <span>Open Standalone Proof →</span>
-        </div>
-      </a>
-
-      <!-- 4b. Embed Builder -->
-      <a href="demo/embed.html" class="card">
-        <div>
-          <div class="card-footer" style="margin-bottom:12px;">
-            <span class="status-tag tag-verified">Embeddable Bundle</span>
-            <span>Integrator Tool</span>
-          </div>
-          <h2><span>📦</span> Embed Element Builder</h2>
-          <p>
-            Interactive widget configurator. Test &lt;db-player&gt; and &lt;db-job-card&gt; bundle, configure language &amp; themes, generate copy-paste snippets, and monitor host telemetry events live.
-          </p>
-        </div>
-        <div class="card-footer">
-          <span>Open Embed Builder →</span>
-        </div>
-      </a>
-
-      <!-- 5. Interactive Playground -->
-      <a href="frontend/demo.html" class="card">
-        <div>
-          <div class="card-footer" style="margin-bottom:12px;">
-            <span class="status-tag">Interactive Suite</span>
-            <span>Full Demo</span>
-          </div>
-          <h2><span>🎛️</span> Interactive Feature Playground</h2>
-          <p>
-            All accessibility presets (Blind/Screen Reader, Deaf/Hard-of-Hearing, One-Hand/Motor, 3G Data-Saver), live speech dictation, live streaming captions, and Braille export.
-          </p>
-        </div>
-        <div class="card-footer">
-          <span>Open Feature Playground →</span>
-        </div>
-      </a>
-
-      <!-- 6. Review Studio -->
-      <a href="frontend/studio.html" class="card">
-        <div>
-          <div class="card-footer" style="margin-bottom:12px;">
-            <span class="status-tag">Teacher Tool</span>
-            <span>WCAG 2.2 AA Editor</span>
-          </div>
-          <h2><span>✍️</span> Caption Review Studio</h2>
-          <p>
-            Accessible web editor for educators and blind teachers to review machine-translated Amharic cues, adjust timing synchronization, and audit review flags.
-          </p>
-        </div>
-        <div class="card-footer">
-          <span>Open Review Studio →</span>
-        </div>
-      </a>
-    </main>
-
-    <section class="info-bar" aria-label="System Metrics">
-      <div class="info-item">
-        <span>31 / 31</span>
-        <label>Playwright Tests</label>
-      </div>
-      <div class="info-item">
-        <span>21 / 21</span>
-        <label>Backend Pytests</label>
-      </div>
-      <div class="info-item">
-        <span>0</span>
-        <label>Axe-Core Violations</label>
-      </div>
-      <div class="info-item">
-        <span>810 KB</span>
-        <label>3G Offline Bundle</label>
-      </div>
-      <div class="info-item">
-        <span>$0.00</span>
-        <label>Paid API Lock-in</label>
+      <!-- Search Trigger / Command Palette Bar -->
+      <div class="search-box-wrapper">
+        <button type="button" class="search-trigger-btn" id="open-search-btn" aria-haspopup="dialog" aria-expanded="false" aria-controls="search-dialog">
+          <span class="search-trigger-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <span>Search docs, components, or ask a11y assistant...</span>
+          </span>
+          <span class="kbd-shortcut" aria-hidden="true">⌘K / Ctrl+K</span>
+        </button>
       </div>
     </section>
-  </div>
+
+    <!-- Use Cases Grid (Arc Docs layout) -->
+    <section id="use-cases" aria-labelledby="use-cases-heading">
+      <div class="section-header">
+        <h2 id="use-cases-heading" class="section-title">Use cases</h2>
+        <span class="section-caption">Core deployment modules for ALX Savanna LMS</span>
+      </div>
+
+      <div class="use-cases-grid">
+        <!-- 1. Accessible Video Player -->
+        <a href="savanna/pages/concept-with-navigation.html" class="use-case-card">
+          <div>
+            <div class="card-top">
+              <div class="card-icon-container">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+              </div>
+              <div class="card-meta">
+                <span class="card-tag">Savanna LMS Integration</span>
+                <h2>Accessible Video Player (&lt;db-player&gt;)</h2>
+              </div>
+            </div>
+            <div class="card-body">
+              <p>
+                Drop-in zero-dependency custom element for Savanna LMS. Features dual-stream synchronized EthSL sign language overlay, bilingual Amharic/English WebVTT captions, 5-speed playback cycling, and TalkBack live region screen reader support.
+              </p>
+            </div>
+          </div>
+          <div class="card-action">
+            <span class="action-text">Launch Savanna Course Page</span>
+            <span aria-hidden="true">→</span>
+          </div>
+        </a>
+
+        <!-- 2. Inclusive Career Gateway -->
+        <a href="savanna/pages/jobs.html" class="use-case-card">
+          <div>
+            <div class="card-top">
+              <div class="card-icon-container emerald">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                  <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                </svg>
+              </div>
+              <div class="card-meta">
+                <span class="card-tag emerald">Career Gateway</span>
+                <h2>Inclusive Job Gateway (&lt;db-job-card&gt;)</h2>
+              </div>
+            </div>
+            <div class="card-body">
+              <p>
+                Accessible job listings across Addis Ababa with disability accommodation tags, one-click Web Speech API audio synthesizers (tested at 200% zoom), and astronomical Ethiopian calendar conversions (ዓ.ም.).
+              </p>
+            </div>
+          </div>
+          <div class="card-action">
+            <span class="action-text">Explore Career Gateway Feed</span>
+            <span aria-hidden="true">→</span>
+          </div>
+        </a>
+
+        <!-- 3. Cryptographic VC Verification -->
+        <a href="savanna/pages/certificate.html" class="use-case-card">
+          <div>
+            <div class="card-top">
+              <div class="card-icon-container amber">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                  <polyline points="9 12 11 14 15 10"></polyline>
+                </svg>
+              </div>
+              <div class="card-meta">
+                <span class="card-tag amber">Open Badges 3.0</span>
+                <h2>Cryptographic Verifiable Credential</h2>
+              </div>
+            </div>
+            <div class="card-body">
+              <p>
+                Employer verification portal checking W3C Verifiable Credentials with Ed25519 digital signatures. Features real-time anti-tamper detection, offline client-side crypto fallback, and accessible audio chime confirmation.
+              </p>
+            </div>
+          </div>
+          <div class="card-action">
+            <span class="action-text">Verify Student Certificate</span>
+            <span aria-hidden="true">→</span>
+          </div>
+        </a>
+
+        <!-- 4. Interactive Review Studio -->
+        <a href="frontend/studio.html" class="use-case-card">
+          <div>
+            <div class="card-top">
+              <div class="card-icon-container">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 20h9"></path>
+                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                </svg>
+              </div>
+              <div class="card-meta">
+                <span class="card-tag">Educator Tool</span>
+                <h2>Amharic Caption Review Studio</h2>
+              </div>
+            </div>
+            <div class="card-body">
+              <p>
+                Accessible web workstation for blind educators and linguists to inspect machine-translated Amharic cues, adjust timecode synchronization, and validate contrast ratios using full keyboard navigation.
+              </p>
+            </div>
+          </div>
+          <div class="card-action">
+            <span class="action-text">Open Caption Studio</span>
+            <span aria-hidden="true">→</span>
+          </div>
+        </a>
+
+        <!-- 5. Standalone Proof -->
+        <a href="demo/blank.html" class="use-case-card">
+          <div>
+            <div class="card-top">
+              <div class="card-icon-container emerald">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                </svg>
+              </div>
+              <div class="card-meta">
+                <span class="card-tag emerald">Zero Dependencies</span>
+                <h2>Standalone Proof (blank.html)</h2>
+              </div>
+            </div>
+            <div class="card-body">
+              <p>
+                Single-tag &lt;script&gt; embed proving &lt;db-player&gt; functions completely isolated from Savanna LMS, firing telemetry CustomEvents (progress, captions, rate) to the host window.
+              </p>
+            </div>
+          </div>
+          <div class="card-action">
+            <span class="action-text">View Standalone Proof</span>
+            <span aria-hidden="true">→</span>
+          </div>
+        </a>
+
+        <!-- 6. Interactive Embed Builder -->
+        <a href="demo/embed.html" class="use-case-card">
+          <div>
+            <div class="card-top">
+              <div class="card-icon-container amber">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                  <line x1="8" y1="21" x2="16" y2="21"></line>
+                  <line x1="12" y1="17" x2="12" y2="21"></line>
+                </svg>
+              </div>
+              <div class="card-meta">
+                <span class="card-tag amber">Integrator Configurator</span>
+                <h2>Embed Element Builder &amp; Events</h2>
+              </div>
+            </div>
+            <div class="card-body">
+              <p>
+                Live configuration studio to test &lt;db-player&gt; attributes, preview presets, generate copy-paste snippets, and monitor real-time host event telemetry logs.
+              </p>
+            </div>
+          </div>
+          <div class="card-action">
+            <span class="action-text">Configure &amp; Generate Snippets</span>
+            <span aria-hidden="true">→</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- Common Tasks (Arc Docs 3-column Layout) -->
+    <section class="common-tasks-section" aria-labelledby="common-tasks-heading">
+      <h2 id="common-tasks-heading" class="section-title">Common tasks</h2>
+      
+      <div class="tasks-grid">
+        <!-- Col 1: CORE -->
+        <div class="task-col">
+          <div class="task-column-title">Core Integration</div>
+          <ul class="task-links-list">
+            <li class="task-link-item">
+              <a href="savanna/pages/concept-with-navigation.html">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                Mount &lt;db-player&gt; in Savanna LMS
+              </a>
+            </li>
+            <li class="task-link-item">
+              <a href="demo/embed.html">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                Listen to db-player CustomEvents
+              </a>
+            </li>
+            <li class="task-link-item">
+              <a href="frontend/demo.html">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                Switch bilingual WebVTT subtitles
+              </a>
+            </li>
+            <li class="task-link-item">
+              <a href="savanna/pages/jobs.html">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                Display Ethiopian calendar dates (ዓ.ም.)
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Col 2: OPERATE -->
+        <div class="task-col">
+          <div class="task-column-title">Operate &amp; Test</div>
+          <ul class="task-links-list">
+            <li class="task-link-item">
+              <a href="CONFORMANCE.md#talkback-android">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                Verify Android TalkBack &amp; NVDA
+              </a>
+            </li>
+            <li class="task-link-item">
+              <a href="CONFORMANCE.md#axe-core">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                Run automated axe-core accessibility audit
+              </a>
+            </li>
+            <li class="task-link-item">
+              <a href="frontend/demo.html">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                Generate 3G low-bandwidth offline pack
+              </a>
+            </li>
+            <li class="task-link-item">
+              <a href="frontend/demo.html">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                Export English Grade 1 Braille &amp; PDF
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Col 3: VERIFY & DEPLOY -->
+        <div class="task-col">
+          <div class="task-column-title">Verify &amp; Deploy</div>
+          <ul class="task-links-list">
+            <li class="task-link-item">
+              <a href="dist/db-player.bundle.js" download="db-player.bundle.js">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                Download standalone bundle (144 KB, 0 deps)
+              </a>
+            </li>
+            <li class="task-link-item">
+              <a href="savanna/pages/certificate.html">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                Verify Ed25519 signature tamper-resistance
+              </a>
+            </li>
+            <li class="task-link-item">
+              <a href="CONFORMANCE.md">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                Review ECA &amp; WCAG 2.2 AA statement
+              </a>
+            </li>
+            <li class="task-link-item">
+              <a href="docs/co-design-log.md">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                Audit co-designer user testing logs
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Split Section: Build with Accessibility & Tools + What's New -->
+    <div class="split-grid">
+      <!-- Left: Tools & Architecture -->
+      <section aria-labelledby="tools-heading">
+        <h2 id="tools-heading" class="section-title" style="margin-bottom: 20px;">
+          <span>✦</span> Tools &amp; Specifications
+        </h2>
+        
+        <div class="tools-pane">
+          <a href="openapi.yaml" class="tool-card" target="_blank" rel="noopener noreferrer">
+            <div class="tool-card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+            </div>
+            <div class="tool-card-info">
+              <h3>OpenAPI 3.1 Specification (openapi.yaml)</h3>
+              <p>Standardized API contract for /api/verify-badge, /api/bundle, /api/pdf, and /api/braille.</p>
+            </div>
+          </a>
+
+          <a href="docs/co-design-log.md" class="tool-card">
+            <div class="tool-card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+            </div>
+            <div class="tool-card-info">
+              <h3>Co-Design &amp; User Testing Log</h3>
+              <p>Direct session records with blind screen-reader users, deaf learners, and low-vision students in Addis Ababa.</p>
+            </div>
+          </a>
+
+          <a href="dist/db-player.bundle.js" class="tool-card" download="db-player.bundle.js">
+            <div class="tool-card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="16 16 12 12 8 16"></polyline>
+                <line x1="12" y1="12" x2="12" y2="21"></line>
+                <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"></path>
+                <polyline points="16 16 12 12 8 16"></polyline>
+              </svg>
+            </div>
+            <div class="tool-card-info">
+              <h3>Standalone Distribution Bundle (144 KB)</h3>
+              <p>Self-contained bundle of &lt;db-player&gt; and &lt;db-job-card&gt; with zero npm runtime dependencies.</p>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <!-- Right: What's New Feed (Arc Docs layout) -->
+      <section aria-labelledby="whats-new-heading">
+        <h2 id="whats-new-heading" class="section-title" style="margin-bottom: 20px;">What's new</h2>
+
+        <div class="whats-new-card">
+          <ul class="feed-list">
+            <li class="feed-item">
+              <span class="feed-date">Nov 16</span>
+              <span class="feed-pill">TALKBACK</span>
+              <span class="feed-text">Android TalkBack live region timing delay &amp; caption reader support verified</span>
+            </li>
+            <li class="feed-item">
+              <span class="feed-date">Nov 15</span>
+              <span class="feed-pill a11y">ETHSL</span>
+              <span class="feed-text">Added discrete resize buttons (+/-) for WCAG 2.5.7 drag alternatives</span>
+            </li>
+            <li class="feed-item">
+              <span class="feed-date">Nov 15</span>
+              <span class="feed-pill a11y">A11Y</span>
+              <span class="feed-text">Keyboard Shortcuts modal dialog (?) &amp; 5-speed playback cycling added</span>
+            </li>
+            <li class="feed-item">
+              <span class="feed-date">Nov 14</span>
+              <span class="feed-pill crypto">CRYPTO</span>
+              <span class="feed-text">Ed25519 cryptographic certificate verifier with client-side anti-tamper fallback</span>
+            </li>
+            <li class="feed-item">
+              <span class="feed-date">Nov 14</span>
+              <span class="feed-pill">SAVANNA</span>
+              <span class="feed-text">Native integration into ALX Savanna LMS course page and career gateway</span>
+            </li>
+          </ul>
+        </div>
+      </section>
+    </div>
+
+    <!-- System Metrics & Compliance Bar -->
+    <section class="metrics-bar" aria-label="System Metrics &amp; Quality Gates">
+      <div class="metric-item">
+        <div class="metric-item-value emerald">44 / 44</div>
+        <div class="metric-item-label">Playwright Tests Passing</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-item-value emerald">21 / 21</div>
+        <div class="metric-item-label">Backend Pytests Passing</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-item-value emerald">0</div>
+        <div class="metric-item-label">Axe-Core Violations</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-item-value">144 KB</div>
+        <div class="metric-item-label">Standalone Bundle Size</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-item-value amber">$0.00</div>
+        <div class="metric-item-label">Paid Cloud Lock-In</div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Command Palette Modal Dialog -->
+  <dialog id="search-dialog" aria-labelledby="dialog-title" aria-modal="true">
+    <div class="dialog-header">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <h2 id="dialog-title" class="sr-only">Documentation Quick Search</h2>
+      <input type="search" class="dialog-input" id="search-input" placeholder="Type to filter components, tasks, APIs, tests..." autocomplete="off">
+      <button type="button" id="close-dialog-btn" class="nav-link" aria-label="Close search dialog" style="cursor:pointer; border:none; background:transparent;">✕</button>
+    </div>
+
+    <ul class="dialog-results" id="search-results-list" role="listbox">
+      <li class="dialog-result-item" role="option">
+        <a href="savanna/pages/concept-with-navigation.html">
+          <span>🎓 Savanna Course Page (&lt;db-player&gt;)</span>
+          <span class="dialog-result-meta">Component</span>
+        </a>
+      </li>
+      <li class="dialog-result-item" role="option">
+        <a href="savanna/pages/jobs.html">
+          <span>💼 Career Gateway Jobs (&lt;db-job-card&gt;)</span>
+          <span class="dialog-result-meta">Gateway</span>
+        </a>
+      </li>
+      <li class="dialog-result-item" role="option">
+        <a href="savanna/pages/certificate.html">
+          <span>🏅 Verifiable Credentials (Ed25519)</span>
+          <span class="dialog-result-meta">Security</span>
+        </a>
+      </li>
+      <li class="dialog-result-item" role="option">
+        <a href="demo/embed.html">
+          <span>📦 Embed Element Builder &amp; Events</span>
+          <span class="dialog-result-meta">Studio</span>
+        </a>
+      </li>
+      <li class="dialog-result-item" role="option">
+        <a href="demo/blank.html">
+          <span>⚡ Standalone Proof (blank.html)</span>
+          <span class="dialog-result-meta">Proof</span>
+        </a>
+      </li>
+      <li class="dialog-result-item" role="option">
+        <a href="frontend/studio.html">
+          <span>✍️ Amharic Caption Review Studio</span>
+          <span class="dialog-result-meta">Educator</span>
+        </a>
+      </li>
+      <li class="dialog-result-item" role="option">
+        <a href="CONFORMANCE.md">
+          <span>📋 ECA &amp; WCAG 2.2 AA Conformance Report</span>
+          <span class="dialog-result-meta">Audit</span>
+        </a>
+      </li>
+      <li class="dialog-result-item" role="option">
+        <a href="openapi.yaml">
+          <span>🔌 OpenAPI 3.1 Specification</span>
+          <span class="dialog-result-meta">REST API</span>
+        </a>
+      </li>
+      <li class="dialog-result-item" role="option">
+        <a href="docs/co-design-log.md">
+          <span>👥 Co-Design &amp; User Testing Log</span>
+          <span class="dialog-result-meta">Research</span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="dialog-footer">
+      <span>Press <kbd style="background:var(--bg-card); padding:2px 4px; border-radius:3px; color:#e2e8f0;">Esc</kbd> to close</span>
+      <span>Use <kbd style="background:var(--bg-card); padding:2px 4px; border-radius:3px; color:#e2e8f0;">Tab</kbd> or <kbd style="background:var(--bg-card); padding:2px 4px; border-radius:3px; color:#e2e8f0;">↑ ↓</kbd> to navigate</span>
+    </div>
+  </dialog>
+
+  <!-- Footer -->
+  <footer role="contentinfo">
+    <div class="footer-inner">
+      <div>
+        <p><strong>ALX Digital Bridge</strong> — Accessible Learning Media &amp; Career Gateway</p>
+        <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 4px;">
+          Built for ALX Ethiopia Hackathon 2026. Compliant with WCAG 2.2 Level AA and Ethiopian Communications Authority guidelines.
+        </p>
+      </div>
+
+      <nav class="footer-links" aria-label="Footer links">
+        <a href="https://github.com/ea40/REJI" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="CONFORMANCE.md">Conformance</a>
+        <a href="docs/co-design-log.md">Co-Design Log</a>
+        <a href="openapi.yaml">OpenAPI</a>
+        <a href="LICENSE">MIT License</a>
+      </nav>
+    </div>
+  </footer>
+
+  <!-- Search & Command Palette Script -->
+  <script>
+    (function() {
+      const searchDialog = document.getElementById('search-dialog');
+      const openSearchBtn = document.getElementById('open-search-btn');
+      const closeSearchBtn = document.getElementById('close-dialog-btn');
+      const searchInput = document.getElementById('search-input');
+      const resultsList = document.getElementById('search-results-list');
+      const resultItems = Array.from(resultsList.querySelectorAll('.dialog-result-item'));
+
+      function openModal() {
+        if (typeof searchDialog.showModal === 'function') {
+          searchDialog.showModal();
+          openSearchBtn.setAttribute('aria-expanded', 'true');
+          searchInput.value = '';
+          filterResults('');
+          searchInput.focus();
+        }
+      }
+
+      function closeModal() {
+        if (searchDialog.open) {
+          searchDialog.close();
+          openSearchBtn.setAttribute('aria-expanded', 'false');
+          openSearchBtn.focus();
+        }
+      }
+
+      openSearchBtn.addEventListener('click', openModal);
+      closeSearchBtn.addEventListener('click', closeModal);
+
+      // Light dismiss when clicking outside dialog backdrop
+      searchDialog.addEventListener('click', function(e) {
+        const rect = searchDialog.getBoundingClientRect();
+        const isInDialog = (rect.top <= e.clientY && e.clientY <= rect.top + rect.height &&
+          rect.left <= e.clientX && e.clientX <= rect.left + rect.width);
+        if (!isInDialog) {
+          closeModal();
+        }
+      });
+
+      // Keyboard shortcuts: ⌘K, Ctrl+K, or / to open
+      window.addEventListener('keydown', function(e) {
+        if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+          e.preventDefault();
+          if (searchDialog.open) {
+            closeModal();
+          } else {
+            openModal();
+          }
+        } else if (e.key === '/' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+          e.preventDefault();
+          openModal();
+        } else if (e.key === 'Escape' && searchDialog.open) {
+          closeModal();
+        }
+      });
+
+      // Real-time filtering
+      function filterResults(query) {
+        const q = query.trim().toLowerCase();
+        let visibleCount = 0;
+        resultItems.forEach(item => {
+          const text = item.textContent.toLowerCase();
+          if (!q || text.includes(q)) {
+            item.style.display = '';
+            visibleCount++;
+          } else {
+            item.style.display = 'none';
+          }
+        });
+      }
+
+      searchInput.addEventListener('input', function() {
+        filterResults(searchInput.value);
+      });
+    })();
+  </script>
 </body>
 </html>
