@@ -89,6 +89,9 @@ class BadgeVerifyRequest(BaseModel):
     badge_url: Optional[str] = Field(default=None, description="URL of badge JSON")
     badge_data: Optional[dict] = Field(default=None, description="Direct badge JSON payload")
 
+    class Config:
+        extra = "allow"
+
 
 class BrailleRequest(BaseModel):
     """Request body for Braille transcription."""
@@ -1012,6 +1015,15 @@ async def verify_badge(req: BadgeVerifyRequest):
                     "reason": f"Failed to parse badge JSON from URL: {str(e)}",
                     "check_type": "W3C VC Verification",
                 }
+
+    if not data and not req.badge_url:
+        # Check if the badge payload was sent directly at top-level
+        extra = getattr(req, "__pydantic_extra__", None) or {}
+        model_dict = req.model_dump() if hasattr(req, "model_dump") else (req.dict() if hasattr(req, "dict") else {})
+        if "@context" in extra:
+            data = dict(extra)
+        elif "@context" in model_dict:
+            data = model_dict
 
     if not data or not isinstance(data, dict):
         return {

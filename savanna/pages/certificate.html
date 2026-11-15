@@ -223,7 +223,7 @@
           const resp = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+            body: JSON.stringify({ badge_data: payload })
           });
           if (resp.ok) {
             data = await resp.json();

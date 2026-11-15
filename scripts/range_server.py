@@ -29,6 +29,15 @@ class RangeRequestHandler(SimpleHTTPRequestHandler):
         self.send_header("Access-Control-Allow-Origin", "*")
         super().end_headers()
 
+    def translate_path(self, path):
+        translated = super().translate_path(path)
+        if not os.path.exists(translated):
+            clean = path.split("?", 1)[0].split("#", 1)[0].lstrip("/")
+            candidate = os.path.join(os.getcwd(), "frontend", clean)
+            if os.path.exists(candidate):
+                return candidate
+        return translated
+
     def send_head(self):
         if "Range" not in self.headers:
             return super().send_head()
