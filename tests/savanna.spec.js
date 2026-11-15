@@ -2,8 +2,6 @@
 const { test, expect } = require('@playwright/test');
 const AxeBuilder = require('@axe-core/playwright').default;
 
-test.use({ baseURL: 'http://localhost:8080' });
-
 /* ==========================================================================
    Savanna Platform Integration & Career Gateway Test Suite
    ========================================================================== */

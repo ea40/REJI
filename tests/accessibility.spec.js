@@ -2,8 +2,6 @@
 const { test, expect } = require('@playwright/test');
 const AxeBuilder = require('@axe-core/playwright').default;
 
-test.use({ baseURL: 'http://localhost:8080' });
-
 /* ==========================================================================
    a) WCAG 2.2 AA Compliance — Demo Page
    ========================================================================== */

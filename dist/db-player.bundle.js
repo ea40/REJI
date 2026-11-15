@@ -260,7 +260,7 @@ const COMPONENT_STYLES = /* css */ `
     --bg-light: #112240;
     --text: #E6F1FF;
     --text-muted: #8892B0;
-    --btn-min: 44px;
+    --btn-min: 48px;
     --focus-outline: 3px solid var(--accent);
     --gap: 8px;
   }
@@ -857,6 +857,62 @@ const COMPONENT_STYLES = /* css */ `
     pointer-events: none;
   }
   .keyboard-hint.show { display: block; }
+
+  /* ---- Keyboard help dialog modal ---- */
+  .kb-dialog-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    z-index: 50;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+  .kb-dialog-backdrop.open { display: flex; }
+  .kb-dialog {
+    background: #0B1120;
+    border: 2px solid var(--accent);
+    border-radius: 8px;
+    padding: 20px;
+    max-width: 440px;
+    width: 100%;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    color: var(--text);
+  }
+  .kb-dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    border-bottom: 1px solid #233554;
+    padding-bottom: 8px;
+  }
+  .kb-dialog-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin: 0;
+  }
+  .kb-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 8px 16px;
+    font-size: 0.85rem;
+    margin-bottom: 16px;
+    align-items: center;
+  }
+  .kb-key {
+    background: #0F172A;
+    border: 1px solid #334155;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-family: monospace;
+    font-weight: 700;
+    color: var(--accent);
+    text-align: center;
+    white-space: nowrap;
+  }
 `;
 
 /* ================================================================
@@ -866,9 +922,9 @@ const COMPONENT_STYLES = /* css */ `
 const COMPONENT_HTML = /* html */ `
 <div class="player-root" role="region" aria-label="Digital Bridge accessible video player">
 
-  <!-- Live region for state announcements (screen readers) -->
-  <div class="sr-only" aria-live="polite" id="sr-announce"></div>
-  <div class="sr-only" aria-live="assertive" id="sr-alert"></div>
+  <!-- Live region for state announcements (screen readers & TalkBack) -->
+  <div class="sr-only" role="status" aria-live="polite" aria-atomic="true" id="sr-announce"></div>
+  <div class="sr-only" role="alert" aria-live="assertive" aria-atomic="true" id="sr-alert"></div>
 
   <!-- Adaptive presets toolbar -->
   <div class="toolbar" role="toolbar" aria-label="Customize Experience">
@@ -881,7 +937,7 @@ const COMPONENT_HTML = /* html */ `
   </div>
 
   <!-- Lesson title -->
-  <div class="lesson-title" role="heading" aria-level="2" id="lesson-heading"></div>
+  <div class="lesson-title" role="heading" aria-level="2" id="lesson-heading" tabindex="-1"></div>
 
   <!-- Main layout -->
   <div class="main-layout">
@@ -889,13 +945,13 @@ const COMPONENT_HTML = /* html */ `
     <!-- Video area -->
     <div class="video-area">
       <div class="video-wrapper" id="video-wrapper">
-        <video id="main-video" playsinline preload="metadata" tabindex="-1">
-          <track kind="subtitles" srclang="en" label="English" src="assets/captions-en.vtt">
-          <track kind="subtitles" srclang="am" label="Amharic (አማርኛ)" src="assets/captions-am.vtt">
+        <video id="main-video" playsinline preload="metadata" tabindex="-1" aria-label="Course video playback">
+          <track kind="subtitles" srclang="en" label="English">
+          <track kind="subtitles" srclang="am" label="Amharic (አማርኛ)">
         </video>
 
         <!-- Caption overlay -->
-        <div class="caption-overlay caption-display captions" id="caption-overlay" aria-hidden="true"></div>
+        <div class="caption-overlay caption-display captions" id="caption-overlay" role="region" aria-label="Captions" aria-live="polite" aria-atomic="true"></div>
 
         <!-- EthSL overlay -->
         <div class="ethsl-overlay" id="ethsl-overlay" tabindex="0"
@@ -908,17 +964,19 @@ const COMPONENT_HTML = /* html */ `
             <span class="ethsl-sub">WCAG 1.2.6 AAA · Verified Human Signing</span>
           </div>
           <div class="resize-handle" id="ethsl-resize" aria-hidden="true"></div>
-          <div class="ethsl-dock-bar" role="toolbar" aria-label="Sign language window position">
+          <div class="ethsl-dock-bar" role="toolbar" aria-label="Sign language window position and size">
             <button type="button" data-dock="tl" aria-label="Dock Top-Left">↖</button>
             <button type="button" data-dock="tr" aria-label="Dock Top-Right">↗</button>
             <button type="button" data-dock="bl" aria-label="Dock Bottom-Left">↙</button>
             <button type="button" data-dock="br" aria-label="Dock Bottom-Right">↘</button>
             <button type="button" data-dock="sbs" aria-label="Side by Side">⇔</button>
+            <button type="button" id="ethsl-larger-btn" data-action="larger" aria-label="Make sign language window larger">＋</button>
+            <button type="button" id="ethsl-smaller-btn" data-action="smaller" aria-label="Make sign language window smaller">－</button>
           </div>
         </div>
 
         <!-- Keyboard hint (shown briefly when player gains focus) -->
-        <div class="keyboard-hint" id="kb-hint">Keys: Space/K Play · J −10s · L +10s · M Mute · C Captions · S Sign · A Audio Desc</div>
+        <div class="keyboard-hint" id="kb-hint">Keys: Space/K Play · J −10s · L +10s · M Mute · C Captions · S Sign · A Audio Desc · ? Help</div>
       </div>
 
       <!-- Low-bandwidth fallback notice -->
@@ -947,6 +1005,8 @@ const COMPONENT_HTML = /* html */ `
           <button type="button" id="fwd15-btn" aria-label="Forward 15 seconds">+15s</button>
         </div>
 
+        <button type="button" id="speed-btn" aria-label="Playback speed: 1x" title="Playback speed">1x</button>
+
         <div class="progress-container">
           <div class="progress-bar" id="progress-bar" role="slider"
                aria-label="Seek" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"
@@ -966,7 +1026,9 @@ const COMPONENT_HTML = /* html */ `
         <button type="button" id="caption-style-btn" aria-label="Caption settings" aria-expanded="false">⚙</button>
         <button type="button" id="ethsl-btn" aria-label="Toggle sign language" aria-pressed="false">🤟</button>
         <button type="button" id="ad-btn" aria-label="Toggle audio description" aria-pressed="false">AD</button>
+        <button type="button" id="transcript-toggle-btn" aria-label="Toggle transcript" aria-expanded="true">📝</button>
         <button type="button" id="fs-btn" aria-label="Enter fullscreen">⛶</button>
+        <button type="button" id="kb-help-btn" aria-label="Keyboard help">⌨ Help</button>
       </div>
 
       <!-- Caption style drawer -->
@@ -1005,7 +1067,7 @@ const COMPONENT_HTML = /* html */ `
           </select>
         </label>
         <label style="display:flex;align-items:center;gap:4px;cursor:pointer;">
-          <input type="checkbox" id="cap-live-stream" checked>
+          <input type="checkbox" id="cap-live-stream">
           <span>⚡ Live Stream</span>
         </label>
         <button type="button" id="cap-mic-btn" style="background:#0F172A;color:#00FF88;border:1px solid #00FF88;border-radius:4px;padding:3px 8px;font-size:12px;cursor:pointer;" aria-pressed="false" aria-label="Toggle live voice dictation">🎤 Live Voice</button>
@@ -1031,8 +1093,9 @@ const COMPONENT_HTML = /* html */ `
       <div class="tab-content">
         <!-- Transcript pane -->
         <div class="tab-pane active" id="pane-transcript" role="tabpanel" aria-labelledby="tab-transcript">
-          <div class="transcript-search">
-            <input type="search" id="transcript-filter" placeholder="Search transcript…" aria-label="Filter transcript">
+          <div class="transcript-search" style="display:flex;gap:8px;align-items:center;">
+            <input type="search" id="transcript-filter" placeholder="Search transcript…" aria-label="Filter transcript" style="flex:1;">
+            <button type="button" id="dl-transcript-btn" style="background:#0F172A;color:var(--accent);border:1px solid #334155;border-radius:4px;padding:6px 10px;font-size:12px;cursor:pointer;white-space:nowrap;font-weight:600;" aria-label="Download transcript as text">📄 Text</button>
           </div>
           <div class="transcript-list" id="transcript-list" role="list" aria-label="Transcript cues">
           </div>
@@ -1049,8 +1112,31 @@ const COMPONENT_HTML = /* html */ `
   <!-- Bottom action bar -->
   <div class="bottom-bar">
     <button type="button" id="braille-btn" aria-label="Braille Export — Download .brf transcript">⠿ Braille Export</button>
-    <button type="button" id="offline-btn" aria-label="Offline Pack — Download 3G lesson bundle">💾 Offline Pack</button>
+    <button type="button" id="offline-btn" aria-label="Offline Pack — Download 3G lesson bundle (12.4 MB)">💾 Offline Pack (12.4 MB)</button>
     <span class="download-progress" id="dl-progress" aria-live="polite"></span>
+  </div>
+
+  <!-- Keyboard help modal dialog -->
+  <div class="kb-dialog-backdrop" id="kb-dialog-backdrop" role="dialog" aria-modal="true" aria-labelledby="kb-dialog-title">
+    <div class="kb-dialog">
+      <div class="kb-dialog-header">
+        <h3 class="kb-dialog-title" id="kb-dialog-title">⌨ Keyboard Shortcuts</h3>
+        <button type="button" id="kb-dialog-close" aria-label="Close keyboard shortcuts" style="background:transparent;border:none;font-size:18px;color:var(--text);cursor:pointer;">✕</button>
+      </div>
+      <div class="kb-grid">
+        <div class="kb-key">Space / K</div><div>Play / Pause video</div>
+        <div class="kb-key">← / →</div><div>Seek 5 seconds backward / forward</div>
+        <div class="kb-key">J / L</div><div>Seek 10 seconds backward / forward</div>
+        <div class="kb-key">M</div><div>Toggle Mute / Unmute audio</div>
+        <div class="kb-key">C</div><div>Toggle Closed Captions (Subtitles)</div>
+        <div class="kb-key">S</div><div>Toggle Ethiopian Sign Language (EthSL)</div>
+        <div class="kb-key">A</div><div>Toggle Audio Description (AD)</div>
+        <div class="kb-key">F</div><div>Toggle Fullscreen mode</div>
+        <div class="kb-key">?</div><div>Open Keyboard Shortcuts Help</div>
+        <div class="kb-key">Esc</div><div>Close dialogs or exit fullscreen</div>
+      </div>
+      <button type="button" id="kb-dialog-done" style="width:100%;background:var(--accent);color:var(--bg);font-weight:700;border:none;border-radius:4px;padding:8px 12px;cursor:pointer;">Got it</button>
+    </div>
   </div>
 </div>
 `;
@@ -1110,7 +1196,7 @@ class DigitalBridgePlayer extends HTMLElement {
     this._isDraggingEthsl = false;
     this._isResizingEthsl = false;
     this._keyboardUser = false;
-    this._liveSubtitleMode = true;
+    this._liveSubtitleMode = false;
     this._announceCaptionsToSR = false;
     this._shortcutsDisabled = false;
     this._recognizing = false;
@@ -1437,6 +1523,15 @@ class DigitalBridgePlayer extends HTMLElement {
       capSrAnnounce:  q('#cap-sr-announce'),
       capKbEnable:    q('#cap-kb-enable'),
       ethslStandby:   q('#ethsl-standby'),
+      speedBtn:       q('#speed-btn'),
+      transcriptToggleBtn: q('#transcript-toggle-btn'),
+      kbHelpBtn:      q('#kb-help-btn'),
+      kbModal:        q('#kb-dialog-backdrop'),
+      kbModalClose:   q('#kb-dialog-close'),
+      kbModalDone:    q('#kb-dialog-done'),
+      dlTranscriptBtn: q('#dl-transcript-btn'),
+      ethslLargerBtn: q('#ethsl-larger-btn'),
+      ethslSmallerBtn: q('#ethsl-smaller-btn'),
     };
   }
 
@@ -1585,6 +1680,9 @@ class DigitalBridgePlayer extends HTMLElement {
       this._savePreferences();
     });
 
+    /* ---- Speed ---- */
+    if (els.speedBtn) els.speedBtn.addEventListener('click', () => this._cyclePlaybackSpeed());
+
     /* ---- Captions ---- */
     els.captionsBtn.addEventListener('click', () => this._toggleCaptions());
 
@@ -1637,6 +1735,21 @@ class DigitalBridgePlayer extends HTMLElement {
 
     /* ---- Fullscreen ---- */
     els.fsBtn.addEventListener('click', () => this._toggleFullscreen());
+
+    /* ---- Transcript panel toggle ---- */
+    if (els.transcriptToggleBtn) els.transcriptToggleBtn.addEventListener('click', () => this._toggleTranscript());
+
+    /* ---- Keyboard help modal ---- */
+    if (els.kbHelpBtn) els.kbHelpBtn.addEventListener('click', () => this._toggleKbHelp());
+    if (els.kbModalClose) els.kbModalClose.addEventListener('click', () => this._toggleKbHelp());
+    if (els.kbModalDone) els.kbModalDone.addEventListener('click', () => this._toggleKbHelp());
+
+    /* ---- EthSL resize buttons ---- */
+    if (els.ethslLargerBtn) els.ethslLargerBtn.addEventListener('click', () => this._resizeEthsl(1.2));
+    if (els.ethslSmallerBtn) els.ethslSmallerBtn.addEventListener('click', () => this._resizeEthsl(0.8));
+
+    /* ---- Transcript text download ---- */
+    if (els.dlTranscriptBtn) els.dlTranscriptBtn.addEventListener('click', () => this._downloadTranscriptText());
 
     /* ---- Side panel tabs ---- */
     els.tabTranscript.addEventListener('click', () => this._switchTab('transcript'));
@@ -1875,6 +1988,17 @@ class DigitalBridgePlayer extends HTMLElement {
         e.preventDefault();
         this._toggleAD();
         break;
+      case '?':
+      case '/':
+        e.preventDefault();
+        this._toggleKbHelp();
+        break;
+      case 'Escape':
+        if (this._els.kbModal && this._els.kbModal.classList.contains('open')) {
+          e.preventDefault();
+          this._toggleKbHelp();
+        }
+        break;
     }
   }
 
@@ -1933,8 +2057,9 @@ class DigitalBridgePlayer extends HTMLElement {
       const partial = words.slice(0, count).join(' ');
       const isComplete = count >= words.length;
       const isPaused = this._els.video && this._els.video.paused;
+      const rendered = this._renderCueText(partial);
       const cursor = (!isComplete && !isPaused) ? ' <span class="live-cursor" aria-hidden="true">▌</span>' : '';
-      text = partial + cursor;
+      return rendered + cursor;
     }
     return this._renderCueText(text);
   }
@@ -2037,19 +2162,15 @@ class DigitalBridgePlayer extends HTMLElement {
   }
 
   /**
-   * Render cue text, converting bracketed non-speech markers into badges.
-   * E.g. [Music] → <span class="sound-badge">[Music]</span>
+   * Render cue text, converting bracketed non-speech markers into accessible sound badges.
+   * E.g. [Music] → <span class="sound-badge">[Music]</span> or [ደስ የሚል የመግቢያ ሙዚቃ]
    */
   _renderCueText(text) {
+    if (!text) return '';
     // Sanitize HTML first
     const safe = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    if (this._showNonSpeechBadges) {
-      return safe.replace(
-        /\[(Music|Applause|Alert|Laughter|Silence|Sound|Noise|Cheering|Clapping|ሙዚቃ|ጭብጨባ|ሳቅ|ዝምታ|ድምጽ|ደስ የሚል የመግቢያ ሙዚቃ|ደስ የሚል የማጠቃለያ ሙዚቃ)\]/gi,
-        (m) => `<span class="sound-badge">${m}</span>`
-      );
-    }
-    return safe;
+    // Wrap bracketed non-speech audio cues in accessible badges
+    return safe.replace(/(\[[^\]\n]+\])/g, '<span class="sound-badge">$1</span>');
   }
 
   /* ================================================================
@@ -2816,19 +2937,121 @@ class DigitalBridgePlayer extends HTMLElement {
   }
 
   /* ================================================================
-     SCREEN READER ANNOUNCEMENTS
+     TRACK 2 EXTENDED CAPABILITIES (Speed, Help, Transcript Export, Resize)
+     ================================================================ */
+
+  /** Cycle playback speed (1x -> 1.25x -> 1.5x -> 2x -> 0.75x -> 1x). */
+  _cyclePlaybackSpeed() {
+    const vid = this._els.video;
+    if (!vid) return;
+    const speeds = [1, 1.25, 1.5, 2, 0.75];
+    const cur = vid.playbackRate || 1;
+    let nextIdx = 0;
+    for (let i = 0; i < speeds.length; i++) {
+      if (Math.abs(speeds[i] - cur) < 0.05) {
+        nextIdx = (i + 1) % speeds.length;
+        break;
+      }
+    }
+    const nextSpeed = speeds[nextIdx];
+    vid.playbackRate = nextSpeed;
+    if (this._els.ethslVideo) this._els.ethslVideo.playbackRate = nextSpeed;
+    if (this._els.speedBtn) {
+      this._els.speedBtn.textContent = `${nextSpeed}x`;
+      this._els.speedBtn.setAttribute('aria-label', `Playback speed: ${nextSpeed}x`);
+    }
+    this._announceToSR(`Playback speed set to ${nextSpeed}x`);
+  }
+
+  /** Show and focus transcript panel. */
+  _toggleTranscript() {
+    const panel = this._els.sidePanel;
+    if (!panel) return;
+    panel.style.display = '';
+    this._switchTab('transcript');
+    if (this._els.transcriptToggleBtn) {
+      this._els.transcriptToggleBtn.setAttribute('aria-expanded', 'true');
+    }
+    if (this._els.transcriptList) {
+      const firstCue = this._els.transcriptList.querySelector('.transcript-cue');
+      if (firstCue) firstCue.focus();
+    }
+    this._announceToSR('Transcript panel opened');
+  }
+
+  /** Toggle keyboard shortcuts dialog modal. */
+  _toggleKbHelp() {
+    const modal = this._els.kbModal;
+    if (!modal) return;
+    const open = modal.classList.toggle('open');
+    if (this._els.kbHelpBtn) {
+      this._els.kbHelpBtn.setAttribute('aria-expanded', String(open));
+    }
+    if (open) {
+      const closeBtn = this._els.kbModalClose;
+      if (closeBtn) closeBtn.focus();
+      this._announceToSR('Keyboard shortcuts help opened. Press Escape to close.');
+    } else {
+      if (this._els.kbHelpBtn) this._els.kbHelpBtn.focus();
+      this._announceToSR('Keyboard shortcuts help closed.');
+    }
+  }
+
+  /** Resize sign language overlay with scale factor. */
+  _resizeEthsl(factor) {
+    const overlay = this._els.ethslOverlay;
+    if (!overlay) return;
+    const curW = overlay.offsetWidth || 220;
+    const newW = Math.max(140, Math.min(480, Math.round(curW * factor)));
+    const newH = Math.round(newW * 0.75);
+    overlay.style.width = `${newW}px`;
+    overlay.style.height = `${newH}px`;
+    this._announceToSR(`Sign language window resized to ${newW} by ${newH} pixels`);
+  }
+
+  /** Download transcript as a clean UTF-8 text file. */
+  _downloadTranscriptText() {
+    const track = this._captionTrack || 'en';
+    const cues = (track === 'am' && this._captionsAM.length) ? this._captionsAM : this._captionsEN;
+    if (!cues || !cues.length) {
+      this._announceToSR('No transcript cues available to download');
+      return;
+    }
+    let content = `Transcript: ${this.getAttribute('lesson-title') || 'Lesson'}\n`;
+    content += `Language: ${track === 'am' ? 'Amharic (አማርኛ)' : 'English'}\n`;
+    content += `Generated: ${new Date().toISOString()}\n`;
+    content += '─'.repeat(40) + '\n\n';
+    for (const cue of cues) {
+      content += `[${formatTime(cue.startTime)} - ${formatTime(cue.endTime)}] ${cue.text}\n`;
+    }
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `lesson-transcript-${track}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+    this._announceToSR('Transcript text downloaded');
+  }
+
+  /* ================================================================
+     SCREEN READER ANNOUNCEMENTS (TalkBack & NVDA compliant)
      ================================================================ */
 
   /**
    * Announce a message to screen readers via live region.
+   * Debounced with 60ms delay to ensure Android TalkBack AccessibilityNodeInfo flushes.
    * @param {string} msg - Text to announce.
    * @param {boolean} [assertive=false] - Use assertive instead of polite.
    */
   _announceToSR(msg, assertive = false) {
     const el = assertive ? this._els.srAlert : this._els.srAnnounce;
-    // Force re-announcement by clearing then setting
+    if (!el) return;
+    // Force re-announcement by clearing then setting after delay for TalkBack
     el.textContent = '';
-    requestAnimationFrame(() => { el.textContent = msg; });
+    setTimeout(() => {
+      el.textContent = msg;
+    }, 60);
   }
 
   /* ================================================================
