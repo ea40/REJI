@@ -1,0 +1,572 @@
+openapi: 3.1.0
+info:
+  title: Digital Bridge Accessibility API
+  description: Generate accessible offline lesson bundles, Braille transcriptions,
+    and tagged PDFs for learners with disabilities.
+  version: 1.0.0
+paths:
+  /:
+    get:
+      tags:
+      - Health
+      summary: Health Check
+      description: Service health check.
+      operationId: health_check__get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /api/bundle:
+    get:
+      tags:
+      - Bundle
+      summary: Get Bundle
+      description: Download default 3G-optimised offline lesson bundle (.zip).
+      operationId: get_bundle_api_bundle_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+    post:
+      tags:
+      - Bundle
+      summary: Create Bundle
+      description: 'Generate a 3G-optimised offline lesson bundle (.zip).
+
+
+        The zip contains:
+
+        - `audio/narration.wav` — synthesized audible intro audio
+
+        - `reader.html` — self-contained offline HTML reader
+
+        - `transcript.txt` — plain-text transcript (EN + AM)
+
+        - `lesson.pdf` — tagged accessible PDF with embedded Ethiopic font
+
+        - `metadata.json` — bundle metadata'
+      operationId: create_bundle_api_bundle_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BundleRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/verify-badge:
+    post:
+      tags:
+      - Badges
+      summary: Verify Badge
+      description: 'Perform real Open Badges 3.0 / W3C Verifiable Credential integrity
+        and cryptographic verification.
+
+
+        Implements:
+
+        - Ed25519 digital signature verification (Ed25519Signature2020 / DataIntegrityProof)
+        via PyNaCl
+
+        - VC-JWT token verification via PyJWT
+
+        - Canonical payload hashing (RFC 8785 JCS)
+
+        - Issuer identity and authority validation
+
+        - Validity date enforcement (issuanceDate, expirationDate)
+
+        - Revocation status registry checking (BitstringStatusListEntry)
+
+        - Immediate rejection with valid: false upon any tampering, expiration, or
+        revocation'
+      operationId: verify_badge_api_verify_badge_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BadgeVerifyRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/braille:
+    post:
+      tags:
+      - Braille
+      summary: Create Braille
+      description: Convert text to Grade 1 Braille ASCII (.brf format).
+      operationId: create_braille_api_braille_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BrailleRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/pdf:
+    post:
+      tags:
+      - PDF
+      summary: Create Pdf
+      description: Generate a tagged, accessible PDF document.
+      operationId: create_pdf_api_pdf_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PDFRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/translate:
+    post:
+      tags:
+      - Translation
+      summary: Translate Text
+      description: 'Translate educational text into Amharic (Ethiopic fidäl) on-the-fly.
+
+
+        Uses offline educational glossary matching and transliteration rules.
+
+        Outputs are honestly flagged with reviewed=False per Non-Negotiable Rules.'
+      operationId: translate_text_api_translate_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TranslateRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TranslateResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/assets/{filename}:
+    get:
+      tags:
+      - Assets
+      summary: Serve Asset
+      description: Serve static sample assets from the frontend assets directory.
+      operationId: serve_asset_api_assets__filename__get
+      parameters:
+      - name: filename
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Filename
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/lessons/{lesson_id}:
+    get:
+      tags:
+      - Lessons v1
+      summary: Get Lesson V1
+      description: Retrieve metadata and stream sources for a lesson per Level 2 REST
+        contract.
+      operationId: get_lesson_v1_api_v1_lessons__lesson_id__get
+      parameters:
+      - name: lesson_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Lesson Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/lessons/{lesson_id}/transcript:
+    get:
+      tags:
+      - Lessons v1
+      summary: Get Lesson Transcript V1
+      description: Retrieve timed transcript cues for a lesson.
+      operationId: get_lesson_transcript_v1_api_v1_lessons__lesson_id__transcript_get
+      parameters:
+      - name: lesson_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Lesson Id
+      - name: lang
+        in: query
+        required: false
+        schema:
+          type: string
+          default: en
+          title: Lang
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/lessons/{lesson_id}/offline-pack:
+    get:
+      tags:
+      - Lessons v1
+      summary: Get Lesson Offline Pack V1
+      description: Generate and download 3G-optimised offline bundle for a lesson
+        (.zip).
+      operationId: get_lesson_offline_pack_v1_api_v1_lessons__lesson_id__offline_pack_get
+      parameters:
+      - name: lesson_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Lesson Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/lessons/{lesson_id}/captions:
+    post:
+      tags:
+      - Lessons v1
+      summary: Submit Lesson Captions V1
+      description: Submit corrected or translated WebVTT captions for a lesson.
+      operationId: submit_lesson_captions_v1_api_v1_lessons__lesson_id__captions_post
+      parameters:
+      - name: lesson_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Lesson Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CaptionsSubmission'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    BadgeVerifyRequest:
+      properties:
+        badge_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Badge Url
+          description: URL of badge JSON
+        badge_data:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Badge Data
+          description: Direct badge JSON payload
+      type: object
+      title: BadgeVerifyRequest
+      description: Request body for Open Badges 3.0 SHA-256 integrity verification.
+    BrailleRequest:
+      properties:
+        text:
+          type: string
+          minLength: 1
+          title: Text
+          description: Text to convert to Braille
+        line_width:
+          type: integer
+          maximum: 80.0
+          minimum: 10.0
+          title: Line Width
+          description: Characters per Braille line
+          default: 40
+      type: object
+      required:
+      - text
+      title: BrailleRequest
+      description: Request body for Braille transcription.
+    BundleRequest:
+      properties:
+        title:
+          type: string
+          title: Title
+          description: Lesson title
+          default: Web Accessibility 101
+        transcript:
+          type: string
+          title: Transcript
+          description: Full transcript text
+          default: Introduction to Web Accessibility for Ethiopian learners.
+        transcript_en:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Transcript En
+          description: Optional alias for transcript
+        transcript_am:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Transcript Am
+          description: Amharic transcript text
+        captions_en:
+          type: string
+          title: Captions En
+          description: English captions (VTT format)
+          default: ''
+        captions_am:
+          type: string
+          title: Captions Am
+          description: Amharic captions (VTT format)
+          default: ''
+        include_audio:
+          type: boolean
+          title: Include Audio
+          description: Whether to include lightweight audio
+          default: true
+        include_pdf:
+          type: boolean
+          title: Include Pdf
+          description: Whether to include tagged PDF
+          default: true
+        image_descriptions:
+          items:
+            type: string
+          type: array
+          title: Image Descriptions
+          description: Alt-text descriptions for lesson images
+      type: object
+      title: BundleRequest
+      description: Request body for generating a 3G offline lesson pack.
+    CaptionsSubmission:
+      properties:
+        vtt_content:
+          type: string
+          title: Vtt Content
+          description: Full WebVTT caption string
+        lang:
+          type: string
+          title: Lang
+          description: Language code ('en' or 'am')
+          default: am
+        contributor:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Contributor
+          description: Optional contributor handle or reviewer notes
+      type: object
+      required:
+      - vtt_content
+      title: CaptionsSubmission
+      description: Payload for submitting corrected or translated captions.
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    PDFRequest:
+      properties:
+        title:
+          type: string
+          minLength: 1
+          title: Title
+          description: Document title
+        content:
+          type: string
+          minLength: 1
+          title: Content
+          description: Main body text
+        headings:
+          items:
+            type: string
+          type: array
+          title: Headings
+          description: Section headings
+        image_descriptions:
+          items:
+            type: string
+          type: array
+          title: Image Descriptions
+          description: Alt-text descriptions for images
+      type: object
+      required:
+      - title
+      - content
+      title: PDFRequest
+      description: Request body for accessible PDF generation.
+    TranslateRequest:
+      properties:
+        text:
+          type: string
+          minLength: 1
+          title: Text
+          description: Text to translate
+        source_lang:
+          type: string
+          title: Source Lang
+          description: Source language code
+          default: en
+        target_lang:
+          type: string
+          title: Target Lang
+          description: Target language code
+          default: am
+      type: object
+      required:
+      - text
+      title: TranslateRequest
+      description: Request body for on-the-fly Amharic translation.
+    TranslateResponse:
+      properties:
+        source_text:
+          type: string
+          title: Source Text
+        translated_text:
+          type: string
+          title: Translated Text
+        source_lang:
+          type: string
+          title: Source Lang
+        target_lang:
+          type: string
+          title: Target Lang
+        reviewed:
+          type: boolean
+          title: Reviewed
+          default: false
+        engine:
+          type: string
+          title: Engine
+          default: offline-glossary-heuristics
+        review_notice:
+          type: string
+          title: Review Notice
+          default: Unreviewed machine translation draft (Ethiopic fidäl); requires
+            native Amharic speaker sign-off before production certification.
+      type: object
+      required:
+      - source_text
+      - translated_text
+      - source_lang
+      - target_lang
+      title: TranslateResponse
+      description: Response body with translated Amharic text and review audit flag.
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError

@@ -1154,4 +1154,7 @@
   if (!customElements.get('digital-bridge-job-card')) {
     customElements.define('digital-bridge-job-card', DigitalBridgeJobCard);
   }
+  if (!customElements.get('db-job-card')) {
+    customElements.define('db-job-card', class extends DigitalBridgeJobCard {});
+  }
 })();

@@ -3,7 +3,7 @@ module.exports = defineConfig({
   testDir: '.',
   timeout: 30000,
   webServer: {
-    command: 'python -m http.server 8080 --directory ../frontend',
+    command: 'python ../scripts/range_server.py 8080 ../frontend',
     port: 8080,
     reuseExistingServer: true,
   },

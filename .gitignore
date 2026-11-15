@@ -5,7 +5,8 @@ __pycache__/
 *.so
 *.egg
 *.egg-info/
-dist/
+dist/*
+!dist/db-player.bundle.js
 build/
 eggs/
 *.whl

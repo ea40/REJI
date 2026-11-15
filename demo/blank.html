@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Digital Bridge Accessible Player — Standalone Proof</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #0b1120;
+      --text: #f8fafc;
+      --card-bg: #1e293b;
+      --accent: #38bdf8;
+    }
+    body {
+      margin: 0;
+      padding: 24px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans Ethiopic", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    header {
+      width: 100%;
+      max-width: 960px;
+      margin-bottom: 24px;
+    }
+    h1 {
+      margin: 0 0 8px 0;
+      font-size: 1.5rem;
+      color: var(--accent);
+    }
+    p {
+      margin: 0;
+      font-size: 0.95rem;
+      color: #94a3b8;
+    }
+    main {
+      width: 100%;
+      max-width: 960px;
+    }
+    .event-log {
+      margin-top: 24px;
+      padding: 16px;
+      background: var(--card-bg);
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      max-height: 160px;
+      overflow-y: auto;
+      border: 1px solid #334155;
+    }
+    .event-log h2 {
+      margin: 0 0 8px 0;
+      font-size: 13px;
+      color: #38bdf8;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+  </style>
+  <script type="module" src="../module/db-player.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Digital Bridge Accessible Player &lt;db-player&gt;</h1>
+    <p>Standalone host integration test outside Savanna. Level 1 custom element with full attribute contract &amp; CustomEvent telemetry.</p>
+  </header>
+
+  <main>
+    <db-player
+      id="test-player"
+      src="data/lesson_360p.mp4"
+      src-low="data/lesson_144p.mp4"
+      audio-src="data/lesson_audio.opus"
+      captions="data/captions-en.vtt,data/captions-am.vtt"
+      sign="data/lesson_360p.mp4"
+      describe="data/lesson_audio.opus"
+      lang="en"
+      theme="wob"
+      api="http://localhost:8000"
+      poster="data/lesson_poster.jpg"
+      lesson-title="MDN What Is The Web — Offline Accessibility Test">
+    </db-player>
+
+    <div class="event-log" id="event-log" role="log" aria-label="Event Log" aria-live="polite">
+      <h2>Host Event Listener Telemetry (db-player:*)</h2>
+      <div id="log-output">Listening for bubbling CustomEvents...</div>
+    </div>
+  </main>
+
+  <script>
+    const player = document.getElementById('test-player');
+    const logOutput = document.getElementById('log-output');
+    function logEvent(name, detail) {
+      const line = document.createElement('div');
+      line.textContent = `[${new Date().toLocaleTimeString()}] ${name}: ${JSON.stringify(detail)}`;
+      logOutput.prepend(line);
+    }
+    window.addEventListener('db-player:progress', (e) => {
+      // throttle logging to whole seconds
+      if (Math.floor(e.detail.seconds) % 3 === 0) {
+        logEvent('db-player:progress', { seconds: e.detail.seconds.toFixed(1), percent: e.detail.percent.toFixed(1) + '%' });
+      }
+    });
+    window.addEventListener('db-player:complete', (e) => {
+      logEvent('db-player:complete', e.detail);
+    });
+    window.addEventListener('db-player:prefs', (e) => {
+      logEvent('db-player:prefs', e.detail);
+    });
+  </script>
+</body>
+</html>
