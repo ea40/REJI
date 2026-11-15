@@ -4,11 +4,16 @@
     "https://purl.imsglobal.org/spec/ob/v3p0/context-3.0.3.json"
   ],
   "id": "urn:uuid:a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-  "type": ["VerifiableCredential", "OpenBadgeCredential"],
+  "type": [
+    "VerifiableCredential",
+    "OpenBadgeCredential"
+  ],
   "name": "Web Development Foundations Certificate",
   "issuer": {
     "id": "https://alx-ethiopia.example.org/issuers/1",
-    "type": ["Profile"],
+    "type": [
+      "Profile"
+    ],
     "name": "ALX Ethiopia",
     "url": "https://www.alxafrica.com/ethiopia",
     "description": "ALX Ethiopia is a technology training program empowering young Africans with in-demand digital skills through project-based, peer-learning experiences.",
@@ -23,11 +28,15 @@
   "expirationDate": "2029-10-01T00:00:00Z",
   "credentialSubject": {
     "id": "did:example:learner123",
-    "type": ["AchievementSubject"],
+    "type": [
+      "AchievementSubject"
+    ],
     "name": "Abebe Kebede",
     "achievement": {
       "id": "https://alx-ethiopia.example.org/achievements/web-dev-101",
-      "type": ["Achievement"],
+      "type": [
+        "Achievement"
+      ],
       "name": "Web Development Foundations",
       "description": "Completed the ALX Ethiopia Web Development Foundations program covering HTML5, CSS3, JavaScript ES2025+, responsive design, accessibility (WCAG 2.2 AA), and introductory back-end development with Node.js.",
       "criteria": {
@@ -63,7 +72,7 @@
     "created": "2026-10-01T12:00:00Z",
     "verificationMethod": "https://alx-ethiopia.example.org/issuers/1#key-1",
     "proofPurpose": "assertionMethod",
-    "proofValue": "z58DAdFfa9SkqZMVPxAQpic76UmLkGtLQsDBbF2MqSKbiYCkGF3vmYpFLQcUs8gLSYyWarXhqs2VddSHEj8LGnDqK"
+    "proofValue": "zaEGyzdaVRbQoLtxVb6NmLnwpQwvkYdTLHMawB4CJygbDH6ryvKHT7ZfJN7dsd2Z8w2mYogKyMHbo8pmpDZee4zM"
   },
   "credentialStatus": {
     "id": "https://alx-ethiopia.example.org/credentials/status/1#42",

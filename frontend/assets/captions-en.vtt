@@ -1,173 +1,177 @@
 WEBVTT
 
 1
-00:00:00.000 --> 00:00:03.500
-[Music]
+00:00:00.000 --> 00:00:01.200
+[Upbeat intro music]
 
 2
-00:00:03.500 --> 00:00:07.000
-Welcome to Introduction to Web Accessibility.
+00:00:00.520 --> 00:00:03.326
+Hello!. Welcome to Web Demystified.
 
 3
-00:00:07.000 --> 00:00:11.500
-In this lesson, we'll explore why accessibility matters
-and how to build inclusive web experiences.
+00:00:03.326 --> 00:00:08.031
+I’m Jeremie and in this series of videos we are gonna try to make the web easy.
 
 4
-00:00:11.500 --> 00:00:16.000
-Over one billion people worldwide live with some form of disability.
+00:00:08.031 --> 00:00:13.358
+So today, in this special episode, I’m gonna give you a quick overview of what the web is and how it works.
 
 5
-00:00:16.000 --> 00:00:20.500
-Web accessibility, often abbreviated as a11y,
-ensures everyone can use the web.
+00:00:13.358 --> 00:00:14.908
+Lame!
 
 6
-00:00:20.500 --> 00:00:25.000
-The Web Content Accessibility Guidelines, or WCAG,
-provide the international standard.
+00:00:15.698 --> 00:00:21.157
+Yeah! Maybe there will be stuff you already know, but you could be surprised.
 
 7
-00:00:25.000 --> 00:00:30.000
-WCAG is organized around four principles:
-Perceivable, Operable, Understandable, and Robust.
+00:00:21.157 --> 00:00:24.417
+And if you’re not, show this video to someone who will be!
 
 8
-00:00:30.000 --> 00:00:35.500
-Let's start with Perceivable.
-All content must be presentable in ways users can perceive.
+00:00:24.417 --> 00:00:26.920
+Anyway, we have to start somewhere… so let’s go!
 
 9
-00:00:35.500 --> 00:00:40.000
-One of the most important practices is providing
-alternative text for images.
+00:00:32.348 --> 00:00:35.667
+Everything starts with your favorite browser where you type a web address.
 
 10
-00:00:40.000 --> 00:00:45.500
-Alt text describes the content and function of an image
-for users who cannot see it.
+00:00:35.667 --> 00:00:37.640
+Nope! I use Google.
 
 11
-00:00:45.500 --> 00:00:50.000
-[Screen reader speaking]
-"Image: A student using a screen reader to navigate a website."
+00:00:38.500 --> 00:00:46.300
+Yes… and Google, like any other search engine that you could use, is nothing but a web site for which you have to type its web address.
 
 12
-00:00:50.000 --> 00:00:55.500
-That was a screen reader reading aloud the alt text
-we provided for that image.
+00:00:46.303 --> 00:00:53.276
+Ok don’t worry, this is just an overview. We will talk about search engines and searching the web in another video.
 
 13
-00:00:55.500 --> 00:01:01.000
-Next, let's talk about semantic HTML.
-Using the correct HTML elements conveys meaning to assistive technology.
+00:00:53.276 --> 00:00:55.101
+So as you type a web address…
 
 14
-00:01:01.000 --> 00:01:06.500
-For example, use heading tags like h1 through h6
-to create a logical document outline.
+00:00:55.101 --> 00:01:01.619
+The technical name for a web address is a URL (Uniform Resource Locator)…
 
 15
-00:01:06.500 --> 00:01:12.000
-Use nav for navigation, main for primary content,
-and aside for supplementary content.
+00:01:01.636 --> 00:01:06.777
+and it’s maybe better to save that for another video.
 
 16
-00:01:12.000 --> 00:01:17.500
-[Applause]
-Great question from the chat about color contrast.
+00:01:06.777 --> 00:01:09.146
+Overview… remember, overview.
 
 17
-00:01:17.500 --> 00:01:23.000
-WCAG requires a contrast ratio of at least 4.5 to 1
-for normal text, and 3 to 1 for large text.
+00:01:09.146 --> 00:01:12.190
+So as you type a web address and hit the “Enter” key
 
 18
-00:01:23.000 --> 00:01:28.500
-Now let's discuss keyboard navigation.
-Every interactive element must be reachable and operable with a keyboard.
+00:01:12.190 --> 00:01:13.887
+OR click a link from a search page
 
 19
-00:01:28.500 --> 00:01:34.000
-Focus indicators show users where they are on the page.
-Never remove the default focus outline without providing an alternative.
+00:01:13.887 --> 00:01:19.816
+your browser will send a request to the server that hosts the web site that lives at that address.
 
 20
-00:01:34.000 --> 00:01:40.000
-ARIA, or Accessible Rich Internet Applications,
-extends HTML when native semantics are not enough.
+00:01:19.816 --> 00:01:24.285
+There, the server will process the address and it will send you back an HTML document.
 
 21
-00:01:40.000 --> 00:01:46.000
-But remember the first rule of ARIA:
-do not use ARIA if a native HTML element can do the job.
+00:01:25.142 --> 00:01:33.804
+And, yes, we will get into the details of how server and request work… in another video.
 
 22
-00:01:46.000 --> 00:01:52.000
-Captions and transcripts are essential for video content.
-They help users who are deaf or hard of hearing.
+00:01:33.804 --> 00:01:37.920
+Next, the browser retrieves the HTML document and it reads it.
 
 23
-00:01:52.000 --> 00:01:58.000
-Audio descriptions narrate visual information
-for users who are blind or have low vision.
+00:01:37.920 --> 00:01:45.694
+Usually, the HTML document contains further information telling the web browser that it needs some extra resources to render the full page.
 
 24
-00:01:58.000 --> 00:02:04.000
-[Screen reader speaking]
-"Button: Submit form."
-That is how a screen reader announces a properly labeled button.
+00:01:45.694 --> 00:01:48.971
+For example: stylesheets (to know how to display the document)
 
 25
-00:02:04.000 --> 00:02:10.000
-Forms need associated labels.
-Every input must have a corresponding label element.
+00:01:48.971 --> 00:01:49.971
+images
 
 26
-00:02:10.000 --> 00:02:16.000
-Error messages should be clear, specific,
-and programmatically associated with the relevant field.
+00:01:49.971 --> 00:01:52.751
+or even scripts (to attach special effects).
 
 27
-00:02:16.000 --> 00:02:22.000
-Testing is crucial. Use tools like Lighthouse, axe,
-and manual screen reader testing.
+00:01:52.751 --> 00:01:58.767
+Yes, you got it right… other videos to cover all of that.
 
 28
-00:02:22.000 --> 00:02:28.000
-In Ethiopia, accessibility is especially important
-for reaching learners in diverse communities.
+00:01:58.767 --> 00:02:02.714
+Your browser will request all those extra ressources
 
 29
-00:02:28.000 --> 00:02:34.000
-Digital Bridge aims to make ALX course content
-accessible to all Ethiopian learners, regardless of ability.
+00:02:02.714 --> 00:02:09.704
+and, once it gets all the resources, it will mix them all together to, at last, display the web page you were expecting.
 
 30
-00:02:34.000 --> 00:02:40.000
-Let's recap: use semantic HTML, provide alt text,
-ensure keyboard access, and test with real users.
+00:02:10.023 --> 00:02:11.536
+Okay, let's recap!
 
 31
-00:02:40.000 --> 00:02:46.000
-Accessibility is not a feature — it is a fundamental right.
-Building inclusively benefits everyone.
+00:02:11.536 --> 00:02:16.963
+The web is a collection of documents that will be requested by a browser from a server.
 
 32
-00:02:46.000 --> 00:02:52.000
-[Applause]
-Thank you for joining this session.
+00:02:16.963 --> 00:02:20.697
+Each document is accessible through a web address.
 
 33
-00:02:52.000 --> 00:02:58.000
-In our next lesson, we will build an accessible
-navigation component from scratch.
+00:02:20.697 --> 00:02:27.250
+The browser will mix all the necessary documents to turn any HTML document into a nice web page.
 
 34
-00:02:58.000 --> 00:03:03.000
-Keep practicing, and remember:
-the web is for everyone.
+00:02:27.250 --> 00:02:29.943
+Yes, the web is nothing else than that.
 
 35
-00:03:03.000 --> 00:03:06.000
-[Music]
+00:02:29.943 --> 00:02:34.749
+Of course that simplicity hides many subtle things. Things that we will explore…
+
+36
+00:02:34.749 --> 00:02:36.185
+In another video!
+
+37
+00:02:37.059 --> 00:02:39.319
+Well… maybe more than one.
+
+38
+00:02:40.142 --> 00:02:42.437
+Thank you for watching our very first video.
+
+39
+00:02:42.437 --> 00:02:46.460
+As you might guess, many others are in the pipe and they should arrive very soon.
+
+40
+00:02:46.460 --> 00:02:48.937
+If you liked it, share it with your friends.
+
+41
+00:02:48.937 --> 00:02:53.978
+If you didn’t… I don't know, share it with your… arch enemy for example?
+
+42
+00:02:53.978 --> 00:02:59.725
+If you want to continue the discussion feel free to comment down below or join me and my colleagues on Twitter.
+
+43
+00:02:59.725 --> 00:03:03.455
+And until next time… Long live the open web! Bye!
+
+44
+00:03:03.500 --> 00:03:23.000
+[Upbeat outro music fadeout]

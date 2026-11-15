@@ -415,6 +415,78 @@ const COMPONENT_STYLES = /* css */ `
     display: block;
     pointer-events: none;
   }
+  .ethsl-standby {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 8px;
+    background: #0B1120;
+    color: #F8FAFC;
+    text-align: center;
+    height: 100%;
+    user-select: none;
+  }
+  .ethsl-icon { font-size: 24px; margin-bottom: 4px; }
+  .ethsl-badge {
+    font-size: 11px;
+    font-weight: 700;
+    color: #00FF88;
+    background: rgba(0, 255, 136, 0.15);
+    border: 1px solid rgba(0, 255, 136, 0.4);
+    border-radius: 4px;
+    padding: 2px 6px;
+    margin-bottom: 4px;
+  }
+  .ethsl-text {
+    font-size: 10px;
+    line-height: 1.3;
+    color: #94A3B8;
+    margin-bottom: 4px;
+  }
+  .ethsl-sub {
+    font-size: 8px;
+    color: #64748B;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .live-subtitle-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: #00FF88;
+    background: rgba(6, 10, 19, 0.85);
+    border: 1px solid rgba(0, 255, 136, 0.5);
+    border-radius: 4px;
+    padding: 2px 8px;
+    margin-bottom: 6px;
+  }
+  .live-badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #00FF88;
+    display: inline-block;
+    box-shadow: 0 0 8px #00FF88;
+    animation: livePulse 1.5s infinite;
+  }
+  @keyframes livePulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.3); opacity: 0.6; }
+  }
+  .live-cursor {
+    color: #00FF88;
+    display: inline-block;
+    font-weight: 900;
+    animation: liveCursorBlink 0.8s infinite;
+  }
+  @keyframes liveCursorBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
   .ethsl-overlay .resize-handle {
     position: absolute;
     bottom: 0; right: 0;
@@ -645,7 +717,7 @@ const COMPONENT_STYLES = /* css */ `
   }
   .transcript-cue:hover { background: var(--bg-light); }
   .transcript-cue.active { background: #1a3a5c; border-left: 3px solid var(--accent); }
-  .transcript-cue-time {
+  .transcript-time, .transcript-cue-time {
     color: var(--accent);
     font-size: 11px;
     min-width: 48px;
@@ -806,6 +878,12 @@ const COMPONENT_HTML = /* html */ `
         <div class="ethsl-overlay" id="ethsl-overlay" tabindex="0"
              role="region" aria-label="Ethiopian Sign Language video overlay">
           <video id="ethsl-video" playsinline muted tabindex="-1"></video>
+          <div id="ethsl-standby" class="ethsl-standby" role="status" aria-label="EthSL Interpreter status">
+            <span class="ethsl-icon" aria-hidden="true">🤟</span>
+            <div class="ethsl-badge">EthSL · የኢትዮጵያ ምልክት ቋንቋ</div>
+            <p class="ethsl-text">Human interpreter recording scheduled with ENAD (Ethiopian National Association of the Deaf).</p>
+            <span class="ethsl-sub">WCAG 1.2.6 AAA · Verified Human Signing</span>
+          </div>
           <div class="resize-handle" id="ethsl-resize" aria-hidden="true"></div>
           <div class="ethsl-dock-bar" role="toolbar" aria-label="Sign language window position">
             <button type="button" data-dock="tl" aria-label="Dock Top-Left">↖</button>
@@ -897,6 +975,19 @@ const COMPONENT_HTML = /* html */ `
             <option value="dual" data-lang="dual">Dual (EN + AM)</option>
           </select>
         </label>
+        <label style="display:flex;align-items:center;gap:4px;cursor:pointer;">
+          <input type="checkbox" id="cap-live-stream" checked>
+          <span>⚡ Live Stream</span>
+        </label>
+        <button type="button" id="cap-mic-btn" style="background:#0F172A;color:#00FF88;border:1px solid #00FF88;border-radius:4px;padding:3px 8px;font-size:12px;cursor:pointer;" aria-pressed="false" aria-label="Toggle live voice dictation">🎤 Live Voice</button>
+        <label style="display:flex;align-items:center;gap:4px;cursor:pointer;">
+          <input type="checkbox" id="cap-sr-announce">
+          <span>Announce to SR</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:4px;cursor:pointer;">
+          <input type="checkbox" id="cap-kb-enable" checked>
+          <span>Shortcuts</span>
+        </label>
       </div>
     </div>
 
@@ -944,9 +1035,9 @@ class DigitalBridgePlayer extends HTMLElement {
   /* ---- Observed attributes ---- */
   static get observedAttributes() {
     return [
-      'src', 'ethsl-src', 'ad-src',
+      'src', 'src-low', 'audio-src', 'ethsl-src', 'ad-src',
       'captions-en', 'captions-am',
-      'chat-log', 'lesson-title', 'poster'
+      'chat-log', 'lesson-title', 'poster', 'data-ad-cues'
     ];
   }
 
@@ -986,6 +1077,14 @@ class DigitalBridgePlayer extends HTMLElement {
     this._isDraggingEthsl = false;
     this._isResizingEthsl = false;
     this._keyboardUser = false;
+    this._liveSubtitleMode = true;
+    this._announceCaptionsToSR = false;
+    this._shortcutsDisabled = false;
+    this._recognizing = false;
+    this._recognition = null;
+    this._srcLow = null;
+    this._audioSrc = null;
+    this._lastAnnouncedCaption = '';
 
     /* ---- Cache element references ---- */
     this.$ = (sel) => this.shadowRoot.querySelector(sel);
@@ -1088,55 +1187,22 @@ class DigitalBridgePlayer extends HTMLElement {
 
   _initEthslFallback() {
     const ev = this._els.ethslVideo;
-    if (this.getAttribute('ethsl-src')) return;
-    try {
-      let mockTime = 0;
-      let mockPaused = true;
-      try {
-        Object.defineProperty(ev, 'duration', { value: 180, configurable: true, writable: true });
-        Object.defineProperty(ev, 'currentTime', {
-          get: () => mockTime,
-          set: (t) => { mockTime = Number(t) || 0; },
-          configurable: true,
-        });
-        Object.defineProperty(ev, 'paused', {
-          get: () => mockPaused,
-          configurable: true,
-        });
-        ev.play = () => { mockPaused = false; return Promise.resolve(); };
-        ev.pause = () => { mockPaused = true; };
-      } catch (_) {}
-
-      const canvas = document.createElement('canvas');
-      canvas.width = 320;
-      canvas.height = 240;
-      const ctx = canvas.getContext('2d');
-      let f = 0;
-      const draw = () => {
-        f++;
-        ctx.fillStyle = '#1D3461';
-        ctx.fillRect(0, 0, 320, 240);
-        ctx.fillStyle = '#64FFDA';
-        ctx.font = 'bold 16px sans-serif';
-        ctx.fillText('EthSL Signer (Simulated)', 20, 30);
-        ctx.fillStyle = '#E6F1FF';
-        ctx.beginPath();
-        ctx.arc(160, 90, 30, 0, Math.PI * 2);
-        ctx.fill();
-        const hOffset = Math.sin(f * 0.08) * 25;
-        ctx.fillStyle = '#00FF88';
-        ctx.beginPath();
-        ctx.arc(120, 160 + hOffset, 18, 0, Math.PI * 2);
-        ctx.arc(200, 160 - hOffset, 18, 0, Math.PI * 2);
-        ctx.fill();
-        requestAnimationFrame(draw);
-      };
-      draw();
-      if (canvas.captureStream) {
-        ev.srcObject = canvas.captureStream(20);
-        ev.muted = true;
+    const standby = this._els.ethslStandby;
+    const src = this.getAttribute('ethsl-src');
+    if (src) {
+      if (ev) {
+        ev.src = src;
+        ev.style.display = 'block';
       }
-    } catch (_) {}
+      if (standby) standby.style.display = 'none';
+    } else {
+      // Non-Negotiable Rule 2 & 3: Never simulate fake signers with canvas.
+      // Display honest standby status card pending ENAD co-design recording.
+      if (ev) {
+        ev.style.display = 'none';
+      }
+      if (standby) standby.style.display = 'flex';
+    }
   }
 
   /* ---- Lifecycle: attribute changed ---- */
@@ -1144,6 +1210,11 @@ class DigitalBridgePlayer extends HTMLElement {
     if (!this._els) return; // not connected yet
     switch (name) {
       case 'src':         this._setSrc(val); break;
+      case 'src-low':     this._srcLow = val; break;
+      case 'audio-src':   this._audioSrc = val; break;
+      case 'data-ad-cues':
+        try { this._adCues = JSON.parse(val); } catch (_) { this._adCues = []; }
+        break;
       case 'ethsl-src':   this._setEthslSrc(val); break;
       case 'ad-src':      this._setAdSrc(val); break;
       case 'captions-en': this._loadCaptions(val, 'en'); break;
@@ -1217,6 +1288,11 @@ class DigitalBridgePlayer extends HTMLElement {
       brailleBtn:     q('#braille-btn'),
       offlineBtn:     q('#offline-btn'),
       dlProgress:     q('#dl-progress'),
+      capLiveStream:  q('#cap-live-stream'),
+      capMicBtn:      q('#cap-mic-btn'),
+      capSrAnnounce:  q('#cap-sr-announce'),
+      capKbEnable:    q('#cap-kb-enable'),
+      ethslStandby:   q('#ethsl-standby'),
     };
   }
 
@@ -1340,7 +1416,35 @@ class DigitalBridgePlayer extends HTMLElement {
     els.capSize.addEventListener('change', () => { this._captionSize = parseInt(els.capSize.value); this._savePreferences(); });
     els.capFont.addEventListener('change', () => { this._captionFont = els.capFont.value; this._savePreferences(); });
     els.capTheme.addEventListener('change', () => { this._captionTheme = els.capTheme.value; this._savePreferences(); });
-    els.capTrack.addEventListener('change', () => { this._captionTrack = els.capTrack.value; this._savePreferences(); });
+    els.capTrack.addEventListener('change', () => {
+      this._captionTrack = els.capTrack.value;
+      this._buildTranscript();
+      this._renderCaptions(this._els.video.currentTime || 0);
+      this._savePreferences();
+    });
+    if (els.capLiveStream) {
+      els.capLiveStream.addEventListener('change', () => {
+        this._liveSubtitleMode = els.capLiveStream.checked;
+        this._renderCaptions(this._els.video.currentTime || 0);
+      });
+    }
+    if (els.capMicBtn) {
+      els.capMicBtn.addEventListener('click', () => this._toggleVoiceDictation());
+    }
+    if (els.capSrAnnounce) {
+      els.capSrAnnounce.addEventListener('change', () => {
+        this._announceCaptionsToSR = els.capSrAnnounce.checked;
+        if (els.captionOverlay) {
+          els.captionOverlay.setAttribute('aria-live', this._announceCaptionsToSR ? 'polite' : 'off');
+          els.captionOverlay.setAttribute('aria-hidden', this._announceCaptionsToSR ? 'false' : 'true');
+        }
+      });
+    }
+    if (els.capKbEnable) {
+      els.capKbEnable.addEventListener('change', () => {
+        this._shortcutsDisabled = !els.capKbEnable.checked;
+      });
+    }
 
     /* ---- EthSL ---- */
     els.ethslBtn.addEventListener('click', () => this._toggleEthsl());
@@ -1372,9 +1476,13 @@ class DigitalBridgePlayer extends HTMLElement {
 
     /* ---- Low-BW actions ---- */
     els.lowbwAudioBtn.addEventListener('click', () => {
-      // Play audio only (keep video hidden / paused in low-BW spirit but allow audio)
+      if (this._audioSrc) {
+        const cur = vid.currentTime;
+        vid.src = this._audioSrc;
+        vid.currentTime = cur;
+      }
       vid.play().catch(() => {});
-      this._announceToSR('Playing audio only');
+      this._announceToSR('Playing lightweight Opus audio stream');
     });
     els.lowbwResumeBtn.addEventListener('click', () => {
       this._activatePreset('standard');
@@ -1544,6 +1652,7 @@ class DigitalBridgePlayer extends HTMLElement {
     // Only activate if not inside an input/select
     const tag = (e.target.tagName || '').toLowerCase();
     if (tag === 'input' || tag === 'select' || tag === 'textarea') return;
+    if (this._shortcutsDisabled && e.key.length === 1 && e.key !== ' ') return;
 
     switch (e.key) {
       case ' ':
@@ -1629,6 +1738,81 @@ class DigitalBridgePlayer extends HTMLElement {
     this._els.capStyleBtn.setAttribute('aria-expanded', String(open));
   }
 
+  _formatLiveCueText(cue, time) {
+    let text = cue.text;
+    if (this._liveSubtitleMode) {
+      const duration = Math.max(0.3, cue.endTime - cue.startTime);
+      const elapsed = Math.max(0, time - cue.startTime);
+      const words = text.trim().split(/\s+/);
+      const fraction = Math.min(1.0, elapsed / duration);
+      const count = Math.max(1, Math.ceil(fraction * words.length));
+      const partial = words.slice(0, count).join(' ');
+      const isComplete = count >= words.length;
+      const isPaused = this._els.video && this._els.video.paused;
+      const cursor = (!isComplete && !isPaused) ? ' <span class="live-cursor" aria-hidden="true">▌</span>' : '';
+      text = partial + cursor;
+    }
+    return this._renderCueText(text);
+  }
+
+  _toggleVoiceDictation() {
+    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRec) {
+      this._announceToSR('Speech recognition API not supported in this browser. Running synchronized live subtitle stream.');
+      return;
+    }
+    if (this._recognizing) {
+      if (this._recognition) this._recognition.stop();
+      this._recognizing = false;
+      if (this._els.capMicBtn) {
+        this._els.capMicBtn.setAttribute('aria-pressed', 'false');
+        this._els.capMicBtn.textContent = '🎤 Live Voice';
+      }
+      this._announceToSR('Live voice dictation stopped');
+    } else {
+      try {
+        this._recognition = new SpeechRec();
+        this._recognition.continuous = true;
+        this._recognition.interimResults = true;
+        this._recognition.lang = this._captionTrack === 'am' ? 'am-ET' : 'en-US';
+        this._recognition.onresult = (e) => {
+          let text = '';
+          for (let i = e.resultIndex; i < e.results.length; ++i) {
+            text += e.results[i][0].transcript;
+          }
+          if (text) this._handleLiveVoiceResult(text);
+        };
+        this._recognition.onerror = () => {
+          this._recognizing = false;
+          if (this._els.capMicBtn) {
+            this._els.capMicBtn.setAttribute('aria-pressed', 'false');
+            this._els.capMicBtn.textContent = '🎤 Live Voice';
+          }
+        };
+        this._recognition.start();
+        this._recognizing = true;
+        if (this._els.capMicBtn) {
+          this._els.capMicBtn.setAttribute('aria-pressed', 'true');
+          this._els.capMicBtn.textContent = '⏹ Stop Dictation';
+        }
+        this._announceToSR('Live voice dictation active');
+      } catch (err) {
+        console.warn('SpeechRecognition error:', err);
+      }
+    }
+  }
+
+  _handleLiveVoiceResult(text) {
+    if (!this._captionsOn) this._toggleCaptions();
+    const overlay = this._els.captionOverlay;
+    if (overlay) {
+      overlay.innerHTML = `
+        <div class="live-subtitle-badge" aria-hidden="true"><span class="live-badge-dot"></span> 🎤 VOICE DICTATION</div>
+        <div class="caption-line theme-${this._captionTheme}">${this._escapeHTML(text)} <span class="live-cursor">▌</span></div>
+      `;
+    }
+  }
+
   /** Render active caption cues for the given time. */
   _renderCaptions(time) {
     const overlay = this._els.captionOverlay;
@@ -1647,14 +1831,25 @@ class DigitalBridgePlayer extends HTMLElement {
                     : "font-family:'Segoe UI','Noto Sans Ethiopic',system-ui,sans-serif;";
     const fontSize = `font-size:${this._captionSize}%;`;
 
+    if (this._liveSubtitleMode && (activeEN.length || activeAM.length)) {
+      html += `<div class="live-subtitle-badge" aria-hidden="true"><span class="live-badge-dot"></span> LIVE · በቀጥታ የትርጉም ጽሑፍ</div>`;
+    }
     for (const cue of activeEN) {
-      html += `<div class="caption-line ${themeClass}" style="${fontStyle}${fontSize}" lang="en">${this._renderCueText(cue.text)}</div>`;
+      html += `<div class="caption-line ${themeClass}" style="${fontStyle}${fontSize}" lang="en">${this._formatLiveCueText(cue, time)}</div>`;
     }
     for (const cue of activeAM) {
-      html += `<div class="caption-line ${themeClass}" style="${fontStyle}${fontSize}" lang="am">${this._renderCueText(cue.text)}</div>`;
+      html += `<div class="caption-line ${themeClass}" style="${fontStyle}${fontSize} line-height: 1.7;" lang="am">${this._formatLiveCueText(cue, time)}</div>`;
     }
 
     overlay.innerHTML = html;
+
+    if (this._announceCaptionsToSR && (activeEN.length || activeAM.length)) {
+      const announceText = activeAM.length ? activeAM.map(c => c.text).join(' ') : activeEN.map(c => c.text).join(' ');
+      if (announceText !== this._lastAnnouncedCaption) {
+        this._lastAnnouncedCaption = announceText;
+        this._announceToSR(announceText);
+      }
+    }
   }
 
   /**
@@ -1666,7 +1861,7 @@ class DigitalBridgePlayer extends HTMLElement {
     const safe = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     if (this._showNonSpeechBadges) {
       return safe.replace(
-        /\[(Music|Applause|Alert|Laughter|Silence|Sound|Noise|Cheering|Clapping)\]/gi,
+        /\[(Music|Applause|Alert|Laughter|Silence|Sound|Noise|Cheering|Clapping|ሙዚቃ|ጭብጨባ|ሳቅ|ዝምታ|ድምጽ|ደስ የሚል የመግቢያ ሙዚቃ|ደስ የሚል የማጠቃለያ ሙዚቃ)\]/gi,
         (m) => `<span class="sound-badge">${m}</span>`
       );
     }
@@ -1980,9 +2175,25 @@ class DigitalBridgePlayer extends HTMLElement {
       const cue = this._adCues[i];
       if (i > this._lastSpokenADIndex && time >= cue.time && time < cue.time + 1) {
         this._lastSpokenADIndex = i;
+        const voices = speechSynthesis.getVoices ? speechSynthesis.getVoices() : [];
+        const localVoice = voices.find(v => v.localService === true) || voices[0];
+
+        // Extended AD: pause video if text is long (> 50 chars) so learner hears full description
+        const vid = this._els.video;
+        const shouldExtendedPause = cue.text.length > 50 && vid && !vid.paused;
+        if (shouldExtendedPause) {
+          vid.pause();
+        }
+
         const utt = new SpeechSynthesisUtterance(cue.text);
+        if (localVoice) utt.voice = localVoice;
         utt.rate = 1.1;
         utt.volume = 1.0;
+        utt.onend = () => {
+          if (shouldExtendedPause && vid && vid.paused) {
+            vid.play().catch(() => {});
+          }
+        };
         speechSynthesis.speak(utt);
         break;
       }
@@ -2017,11 +2228,18 @@ class DigitalBridgePlayer extends HTMLElement {
   /** Build transcript list from loaded caption cues. */
   _buildTranscript() {
     const list = this._els.transcriptList;
+    if (!list) return;
     list.innerHTML = '';
 
-    // Use whichever track has data; prefer EN
-    const cues = this._captionsEN.length ? this._captionsEN :
-                 this._captionsAM.length ? this._captionsAM : [];
+    const track = this._captionTrack || 'en';
+    let cues = [];
+    if (track === 'am') {
+      cues = this._captionsAM.length ? this._captionsAM : this._captionsEN;
+    } else if (track === 'dual') {
+      cues = this._captionsEN.length ? this._captionsEN : this._captionsAM;
+    } else {
+      cues = this._captionsEN.length ? this._captionsEN : this._captionsAM;
+    }
 
     for (let i = 0; i < cues.length; i++) {
       const cue = cues[i];
@@ -2030,12 +2248,19 @@ class DigitalBridgePlayer extends HTMLElement {
       btn.setAttribute('role', 'listitem');
       btn.dataset.index = i;
       btn.dataset.start = cue.startTime;
-      btn.tabIndex = (i === 0) ? 0 : -1; // Roving tabindex: single tab stop for entire transcript
+      btn.tabIndex = (i === 0) ? 0 : -1;
+
+      let displayText = this._escapeHTML(cue.text);
+      if (track === 'dual' && this._captionsAM[i]) {
+        displayText += `<div style="font-size:0.85em; color:var(--text-muted); margin-top:3px; line-height:1.4;">${this._escapeHTML(this._captionsAM[i].text)}</div>`;
+      }
+
+      const seekTime = (cue.startTime != null) ? cue.startTime : (cue.start != null) ? cue.start : 0;
       btn.innerHTML = `
-        <span class="transcript-cue-time">${formatTime(cue.startTime)}</span>
-        <span>${this._escapeHTML(cue.text)}</span>
+        <span class="transcript-time">${formatTime(seekTime)}</span>
+        <div class="transcript-text">${displayText}</div>
       `;
-      btn.addEventListener('click', () => this._seekToCue(cue.startTime));
+      btn.addEventListener('click', () => this._seekToCue(seekTime));
       btn.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();

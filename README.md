@@ -76,13 +76,11 @@ Digital Bridge was engineered to adhere to the **Ethiopian Communications Commis
 ### Option A: Local Python & Node (Recommended for Hackathon Evaluation)
 
 ```bash
-# 1. Start the static frontend
-cd frontend
-python -m http.server 8080
+# 1. Start the range-enabled static frontend server (supports HTML5 video byte-range seeking)
+python scripts/range_server.py 8080 frontend
 
 # 2. In another terminal, start the FastAPI backend
-cd backend
-python -m uvicorn main:app --host 0.0.0.0 --port 8000
+python -m uvicorn main:app --app-dir backend --host 127.0.0.1 --port 8000
 ```
 
 Open **http://localhost:8080/demo.html** to test the interactive demo.
@@ -104,7 +102,7 @@ A dedicated step-by-step integration guide for `Savanna-static-pages` (`pages/co
 
 ### Verified REST API Endpoints (FastAPI)
 
-The lightweight FastAPI backend provides offline pack generation, tagged PDF compilation, ASCII Braille formatting, and credential checks. The committed OpenAPI 3.1 specification is in **[`backend/openapi.json`](./backend/openapi.json)** (interactive Swagger docs at `http://localhost:8000/docs`).
+The lightweight FastAPI backend provides offline pack generation, tagged PDF compilation, ASCII Braille formatting, on-the-fly Amharic translation, and cryptographic credential verification. The committed OpenAPI 3.1 specification is in **[`docs/openapi.json`](./docs/openapi.json)** (interactive Swagger docs at `http://localhost:8000/docs`).
 
 | Method | Endpoint | Description | Request Body |
 |---|---|---|---|
@@ -113,8 +111,43 @@ The lightweight FastAPI backend provides offline pack generation, tagged PDF com
 | `POST` | `/api/bundle` | Generate custom 3G offline pack (audio, HTML reader, text, PDF) | `BundleRequest` JSON |
 | `POST` | `/api/braille` | Convert text to English Grade 1 ASCII Braille (`.brf`, 40-cell width) | `BrailleRequest` JSON |
 | `POST` | `/api/pdf` | Generate tagged, structured PDF with embedded Ethiopic font | `PDFRequest` JSON |
-| `POST` | `/api/verify-badge` | Open Badges 3.0 SHA-256 credential integrity check | `BadgeVerifyRequest` JSON |
+| `POST` | `/api/translate` | Translate text into Amharic with audited unreviewed draft flag | `TranslateRequest` JSON |
+| `POST` | `/api/verify-badge` | Open Badges 3.0 / W3C VC Ed25519 cryptographic signature & revocation check | `BadgeVerifyRequest` JSON |
 | `GET` | `/api/assets/{filename}` | Serve static lesson assets (captions, audio, chat logs) | None |
+
+---
+
+## 🛠️ Transcript Pipeline CLI & Review Studio (WS2)
+
+### 1. Offline Transcript Pipeline (`backend/pipeline.py`)
+Generates the complete accessible offline learning pack from any input video without cloud dependencies:
+```bash
+python backend/pipeline.py frontend/assets/lesson_360p.mp4 --output-dir output_pack
+```
+**Outputs produced in `output_pack/` (7.15s CPU runtime):**
+- `lesson_audio.opus` (28 kbps speech-optimized Opus audio)
+- `lesson_poster.jpg` (Optimized JPEG poster)
+- `captions-en.vtt` & `captions-am.vtt` (Synchronized dual-language WebVTT)
+- `transcript-en.json` & `transcript-am.json` (Structured timestamped transcripts with `reviewed` flags)
+- `lesson.pdf` (Tagged accessible PDF)
+- `lesson.brf` (Grade 1 ASCII Braille)
+- `reader.html` (Self-contained light offline HTML reader)
+- `offline_pack.zip` (Complete bundled archive)
+- `manifest.json` (SHA-256 integrity digests and component audit metadata)
+
+### 2. Accessible Review Studio (`frontend/studio.html`)
+An accessible (WCAG 2.2 AA) web editor for educators and blind teachers to review and edit caption cues, inspect Amharic machine translation drafts, manage Audio Description cues, and sign off on review status:
+- Full keyboard control and roving tabindex across cue cards
+- Dual English & Amharic side-by-side editing
+- Instant WebVTT & package export
+- Accessible via `http://localhost:8080/studio.html`
+
+### 3. Content Validator (`scripts/validate_content.py`)
+Validates caption synchronization, character limits, reading speeds, and missing media files:
+```bash
+python scripts/validate_content.py
+# Output: [PASS] All content validation checks passed with zero errors!
+```
 
 #### Example 1 — Health Check
 ```bash
@@ -172,7 +205,7 @@ cd tests
 cmd.exe /c "npx playwright test"
 ```
 
-### Verified Results (Google Chrome):
+### Verified Browser Results (Google Chrome):
 - **31 test cases passing (100% pass rate)**:
   - ♿ WCAG 2.2 AA automated compliance (axe-core) at 100% and 200% zoom: **0 critical, 0 serious violations**
   - ⌨️ Keyboard navigation: visible 3px `#00FF88` focus ring, Space/K play/pause, J/L seek, C captions, S EthSL, M mute, Escape
@@ -184,6 +217,20 @@ cmd.exe /c "npx playwright test"
   - 💼 Job card: axe-core audit, accessible audio button label, certificate panel, no horizontal scroll at 200% zoom
   - 📱 Responsive reflow: `scrollWidth === 320px` at 320px viewport width (zero overflow), no hidden truncation
   - 🔄 Keyboard trap verification: full tab cycling passes with zero trapped elements
+
+### Backend Pytest Suite:
+```bash
+pytest backend/test_api.py
+```
+- **13 test cases passing (100% pass rate)**:
+  - Health check & root status
+  - 3G offline bundle generation (GET & POST)
+  - English Grade 1 ASCII Braille conversion
+  - Tagged accessible PDF generation
+  - On-the-fly Amharic translation with unreviewed audit flags
+  - Open Badges 3.0 / W3C VC authentic Ed25519 digital signature verification
+  - Anti-tamper validation (tampered recipient and achievement rejection)
+  - Expiration and revocation list enforcement
 
 ---
 

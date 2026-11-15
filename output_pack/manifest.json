@@ -1,0 +1,74 @@
+{
+  "title": "What is 'The Web' and how does it work? — Web Demystified, Ep 0",
+  "source_media": "lesson_360p.mp4",
+  "generated_at": "2026-11-14T13:19:03Z",
+  "pipeline_duration_seconds": 7.148,
+  "files": [
+    {
+      "filename": "lesson_audio.opus",
+      "bytes": 760177,
+      "sha256": "4fd257f3248ab8233410898584cb14fefa8d4aec230b8441d160c9c2ef58b26d",
+      "reviewed": false
+    },
+    {
+      "filename": "lesson_poster.jpg",
+      "bytes": 14619,
+      "sha256": "2de431ca04073131b4dacbb715218dd60196de9f90a3b1584e4ca153b554ac51",
+      "reviewed": false
+    },
+    {
+      "filename": "captions-en.vtt",
+      "bytes": 4329,
+      "sha256": "c17544991554844a053bb2c377b4131d330339ee320fb8cd5bbf8bac30974b43",
+      "reviewed": true
+    },
+    {
+      "filename": "captions-am.vtt",
+      "bytes": 6054,
+      "sha256": "bd733ef6068138cf31eeb54c6d6a28cc283504d01a521ac2bed6633223ccd5fc",
+      "reviewed": false
+    },
+    {
+      "filename": "transcript-en.json",
+      "bytes": 9639,
+      "sha256": "ca07d8fc5d973d22c3968f1b7d99630cd87ee183b6bce00a92bbb0bfef01d097",
+      "reviewed": true
+    },
+    {
+      "filename": "transcript-am.json",
+      "bytes": 14539,
+      "sha256": "df602f2bfc28a30bf9eee21b63cdec2c0c4270fd49dfdcefd756fc081292abd8",
+      "reviewed": false
+    },
+    {
+      "filename": "lesson.pdf",
+      "bytes": 28705,
+      "sha256": "1c3d65c65240ea3bad2053f49a41c32cf92ed1b987a1c6373ff03458a30fb4d2",
+      "reviewed": false
+    },
+    {
+      "filename": "lesson.brf",
+      "bytes": 3875,
+      "sha256": "a1b62d563043f340fe6d1bee3d8dba3315a68a2f8f95f6e047753bb48b247e29",
+      "reviewed": false
+    },
+    {
+      "filename": "reader.html",
+      "bytes": 25280,
+      "sha256": "62da8f6a496df6efca4154614643d676cac885f59cdbd95313d5e14b955c0ffd",
+      "reviewed": false
+    },
+    {
+      "filename": "offline_pack.zip",
+      "bytes": 810916,
+      "sha256": "513595b61d6a1dd5d8822ebf61e8dd9981a987b5e68af757f88363f1b76fab96",
+      "reviewed": false
+    },
+    {
+      "filename": "audio_16k.wav",
+      "bytes": 6497950,
+      "sha256": "74cc555c4fc3df8062609b4f4aff9fc64aaf324eaaae72431154cc3b15b309fe",
+      "reviewed": false
+    }
+  ]
+}

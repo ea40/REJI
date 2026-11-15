@@ -1,0 +1,212 @@
+[
+  {
+    "start": 0.52,
+    "duration": 2.806,
+    "text": "Hello!. Welcome to Web Demystified."
+  },
+  {
+    "start": 3.326,
+    "duration": 4.705,
+    "text": "I’m Jeremie and in this series of videos we are gonna try to make the web easy."
+  },
+  {
+    "start": 8.031,
+    "duration": 5.327,
+    "text": "So today, in this special episode, I’m gonna give you a quick overview of what the web is and how it works."
+  },
+  {
+    "start": 13.358,
+    "duration": 1.55,
+    "text": "Lame!"
+  },
+  {
+    "start": 15.698,
+    "duration": 5.459,
+    "text": "Yeah! Maybe there will be stuff you already know, but you could be surprised."
+  },
+  {
+    "start": 21.157,
+    "duration": 3.26,
+    "text": "And if you’re not, show this video to someone who will be!"
+  },
+  {
+    "start": 24.417,
+    "duration": 2.503,
+    "text": "Anyway, we have to start somewhere… so let’s go!"
+  },
+  {
+    "start": 32.348,
+    "duration": 3.319,
+    "text": "Everything starts with your favorite browser where you type a web address."
+  },
+  {
+    "start": 35.667,
+    "duration": 1.973,
+    "text": "Nope! I use Google."
+  },
+  {
+    "start": 38.5,
+    "duration": 7.8,
+    "text": "Yes… and Google, like any other search engine that you could use, is nothing but a web site for which you have to type its web address."
+  },
+  {
+    "start": 46.303,
+    "duration": 6.973,
+    "text": "Ok don’t worry, this is just an overview. We will talk\nabout search engines and searching the web in another video."
+  },
+  {
+    "start": 53.276,
+    "duration": 1.825,
+    "text": "So as you type a web address…"
+  },
+  {
+    "start": 55.101,
+    "duration": 6.518,
+    "text": "The technical name for a web address is a URL (Uniform Resource Locator)…"
+  },
+  {
+    "start": 61.636,
+    "duration": 5.141,
+    "text": "and it’s maybe better to save that for another video."
+  },
+  {
+    "start": 66.777,
+    "duration": 2.369,
+    "text": "Overview… remember, overview."
+  },
+  {
+    "start": 69.146,
+    "duration": 3.044,
+    "text": "So as you type a web address and hit the “Enter” key"
+  },
+  {
+    "start": 72.19,
+    "duration": 1.697,
+    "text": "OR click a link from a search page"
+  },
+  {
+    "start": 73.887,
+    "duration": 5.929,
+    "text": "your browser will send a request to the server that\nhosts the web site that lives at that address."
+  },
+  {
+    "start": 79.816,
+    "duration": 4.469,
+    "text": "There, the server will process the address and\nit will send you back an HTML document."
+  },
+  {
+    "start": 85.142,
+    "duration": 8.662,
+    "text": "And, yes, we will get into the details of how\nserver and request work… in another video."
+  },
+  {
+    "start": 93.804,
+    "duration": 4.116,
+    "text": "Next, the browser retrieves the HTML document and it reads it."
+  },
+  {
+    "start": 97.92,
+    "duration": 7.774,
+    "text": "Usually, the HTML document contains further information telling\nthe web browser that it needs some extra resources to render the full page."
+  },
+  {
+    "start": 105.694,
+    "duration": 3.277,
+    "text": "For example: stylesheets (to know how to display the document)"
+  },
+  {
+    "start": 108.971,
+    "duration": 1.0,
+    "text": "images"
+  },
+  {
+    "start": 109.971,
+    "duration": 2.78,
+    "text": "or even scripts (to attach special effects)."
+  },
+  {
+    "start": 112.751,
+    "duration": 6.016,
+    "text": "Yes, you got it right… other videos to cover all of that."
+  },
+  {
+    "start": 118.767,
+    "duration": 3.947,
+    "text": "Your browser will request all those extra ressources"
+  },
+  {
+    "start": 122.714,
+    "duration": 6.99,
+    "text": "and, once it gets all the resources, it will mix them all together to, at last, display the web page you were expecting."
+  },
+  {
+    "start": 130.023,
+    "duration": 1.513,
+    "text": "Okay, let's recap!"
+  },
+  {
+    "start": 131.536,
+    "duration": 5.427,
+    "text": "The web is a collection of documents\nthat will be requested by a browser from a server."
+  },
+  {
+    "start": 136.963,
+    "duration": 3.734,
+    "text": "Each document is accessible through a web address."
+  },
+  {
+    "start": 140.697,
+    "duration": 6.553,
+    "text": "The browser will mix all the necessary documents to turn any HTML document into a nice web page."
+  },
+  {
+    "start": 147.25,
+    "duration": 2.693,
+    "text": "Yes, the web is nothing else than that."
+  },
+  {
+    "start": 149.943,
+    "duration": 4.806,
+    "text": "Of course that simplicity hides many subtle things. Things that we will explore…"
+  },
+  {
+    "start": 154.749,
+    "duration": 1.436,
+    "text": "In another video!"
+  },
+  {
+    "start": 157.059,
+    "duration": 2.26,
+    "text": "Well… maybe more than one."
+  },
+  {
+    "start": 160.142,
+    "duration": 2.295,
+    "text": "Thank you for watching our very first video."
+  },
+  {
+    "start": 162.437,
+    "duration": 4.023,
+    "text": "As you might guess, many others are in the pipe and they should arrive very soon."
+  },
+  {
+    "start": 166.46,
+    "duration": 2.477,
+    "text": "If you liked it, share it with your friends."
+  },
+  {
+    "start": 168.937,
+    "duration": 5.041,
+    "text": "If you didn’t… I don't know, share it with your… arch enemy for example?"
+  },
+  {
+    "start": 173.978,
+    "duration": 5.747,
+    "text": "If you want to continue the discussion feel free to comment down below or join me and my colleagues on Twitter."
+  },
+  {
+    "start": 179.725,
+    "duration": 3.73,
+    "text": "And until next time… Long live the open web! Bye!"
+  }
+]

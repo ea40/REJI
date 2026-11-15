@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Review Studio — Multilingual Caption &amp; Audio Description Editor | Digital Bridge</title>
+  <meta name="description" content="Accessible WCAG 2.2 AA editor for reviewing dual English and Amharic captions, EthSL alignment, and Audio Description cues.">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #060A13;
+      --surface: #0B1120;
+      --card: #0F172A;
+      --card-hover: #162038;
+      --border: #1E293B;
+      --border-focus: #00FF88;
+      --accent: #00FF88;
+      --primary: #38BDF8;
+      --text: #F8FAFC;
+      --text-muted: #94A3B8;
+      --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans Ethiopic', 'Nyala', sans-serif;
+    }
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .skip-link {
+      position: absolute; top: -100%; left: 16px;
+      background: var(--accent); color: #060A13; padding: 8px 16px;
+      font-weight: 700; border-radius: 0 0 6px 6px; z-index: 1000;
+    }
+    .skip-link:focus { top: 0; outline: 3px solid #FFF; }
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .brand-title { font-size: 1.25rem; font-weight: 700; color: #FFF; display: flex; align-items: center; gap: 8px; }
+    .badge {
+      font-size: 0.75rem; background: rgba(0,255,136,0.15); color: var(--accent);
+      border: 1px solid var(--accent); border-radius: 4px; padding: 2px 8px; font-weight: 600;
+    }
+    nav a {
+      color: var(--primary); text-decoration: none; font-size: 0.9rem; margin-left: 16px;
+    }
+    nav a:hover, nav a:focus { text-decoration: underline; color: #7DD3FC; outline: 2px solid var(--accent); }
+    main {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 20px;
+      padding: 24px;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    @media (max-width: 900px) {
+      main { grid-template-columns: 1fr; }
+    }
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 12px;
+    }
+    .panel-header h2 { font-size: 1.1rem; color: #FFF; }
+    .cue-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      overflow-y: auto;
+      max-height: 680px;
+      padding-right: 4px;
+    }
+    .cue-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      cursor: pointer;
+      text-align: left;
+      color: inherit;
+      font: inherit;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .cue-item:hover { background: var(--card-hover); border-color: var(--primary); }
+    .cue-item:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+    .cue-item.active { border-color: var(--accent); background: rgba(0,255,136,0.06); }
+    .cue-meta { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; }
+    .cue-snippet { font-size: 0.85rem; color: #FFF; margin-bottom: 2px; }
+    .cue-snippet-am { font-size: 0.85rem; color: var(--accent); line-height: 1.4; font-family: 'Noto Sans Ethiopic', sans-serif; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    label { font-size: 0.85rem; font-weight: 600; color: #CBD5E1; }
+    input[type="text"], input[type="number"], textarea {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: #FFF;
+      padding: 10px 12px;
+      font-family: inherit;
+      font-size: 0.95rem;
+    }
+    input:focus-visible, textarea:focus-visible { outline: 3px solid var(--accent); border-color: var(--accent); }
+    .timing-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+    .btn-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+    button.btn-primary {
+      background: var(--accent); color: #060A13; border: none; font-weight: 700;
+      padding: 10px 18px; border-radius: 6px; cursor: pointer; font-size: 0.95rem;
+    }
+    button.btn-primary:hover { background: #00CC6A; }
+    button.btn-primary:focus-visible { outline: 3px solid #FFF; outline-offset: 2px; }
+    button.btn-secondary {
+      background: var(--card); color: #FFF; border: 1px solid var(--border);
+      padding: 10px 16px; border-radius: 6px; cursor: pointer; font-size: 0.95rem;
+    }
+    button.btn-secondary:hover { background: var(--card-hover); border-color: var(--primary); }
+    button.btn-secondary:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+    .checkbox-label {
+      display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.9rem; color: #FFF;
+    }
+    .checkbox-label input { width: 18px; height: 18px; accent-color: var(--accent); }
+    .status-banner {
+      padding: 10px 14px; border-radius: 6px; font-size: 0.85rem; display: flex; align-items: center; gap: 8px;
+    }
+    .status-banner.reviewed { background: rgba(0,255,136,0.12); border: 1px solid var(--accent); color: var(--accent); }
+    .status-banner.unreviewed { background: rgba(245,158,11,0.12); border: 1px solid #F59E0B; color: #FBBF24; }
+    footer {
+      background: var(--surface); border-top: 1px solid var(--border);
+      padding: 16px 24px; text-align: center; font-size: 0.85rem; color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+  <a href="#editor-form" class="skip-link">Skip to cue editor</a>
+
+  <header role="banner">
+    <div class="brand-title">
+      <span>Digital Bridge</span>
+      <span class="badge">Review Studio</span>
+      <span style="font-size:0.8rem; color:var(--text-muted); font-weight:normal;">Track 2 · Inclusive Media Pipeline</span>
+    </div>
+    <nav aria-label="Main Navigation">
+      <a href="demo.html">← Back to Player Demo</a>
+      <a href="/docs" target="_blank" rel="noopener">OpenAPI Docs</a>
+    </nav>
+  </header>
+
+  <main id="editor-main" role="main">
+    <!-- Left panel: Cue List -->
+    <section class="panel" aria-labelledby="cue-list-heading">
+      <div class="panel-header">
+        <h2 id="cue-list-heading">Lesson Cues (44)</h2>
+        <span id="audit-stats" style="font-size:0.75rem; color:var(--text-muted);">Audit: 0/44 Reviewed</span>
+      </div>
+      <div class="cue-list" id="cue-list-container" role="list" aria-label="Caption cue list">
+        <!-- Dynamically populated from transcript-en.json / transcript-am.json -->
+      </div>
+    </section>
+
+    <!-- Right panel: Interactive Cue & Audio Description Editor -->
+    <section class="panel" aria-labelledby="editor-heading">
+      <div class="panel-header">
+        <h2 id="editor-heading">Cue Review &amp; Translation Editor</h2>
+        <div id="cue-status-banner" class="status-banner unreviewed">
+          <span>⚠️ Status: Machine-Generated Draft (Ethiopic fidäl)</span>
+        </div>
+      </div>
+
+      <form id="editor-form" onsubmit="event.preventDefault();">
+        <div class="timing-row">
+          <div class="form-group">
+            <label for="cue-start">Start Time (sec)</label>
+            <input type="number" id="cue-start" step="0.001" min="0" required>
+          </div>
+          <div class="form-group">
+            <label for="cue-end">End Time (sec)</label>
+            <input type="number" id="cue-end" step="0.001" min="0" required>
+          </div>
+          <div class="form-group">
+            <label for="cue-speaker">Speaker</label>
+            <input type="text" id="cue-speaker" value="Jeremie Patonnier">
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top:12px;">
+          <label for="cue-text-en">English Caption Text</label>
+          <textarea id="cue-text-en" rows="2" required></textarea>
+        </div>
+
+        <div class="form-group" style="margin-top:12px;">
+          <label for="cue-text-am">Amharic Translation (ፊደል - Ethiopic Script)</label>
+          <textarea id="cue-text-am" rows="2" style="font-family:'Noto Sans Ethiopic',serif; color:#00FF88;" required></textarea>
+        </div>
+
+        <div class="form-group" style="margin-top:12px;">
+          <label for="cue-ad-text">Audio Description (AD Cue for Blind Learners)</label>
+          <textarea id="cue-ad-text" rows="2" placeholder="Describe key visual actions, whiteboard diagrams, or expressions during pauses..."></textarea>
+        </div>
+
+        <div style="margin-top:16px;">
+          <label class="checkbox-label">
+            <input type="checkbox" id="cue-reviewed-check">
+            <span><strong>Verified by Native Speaker</strong> (Under Rule 1 &amp; 2, only checked after human review)</span>
+          </label>
+        </div>
+
+        <div class="btn-row">
+          <button type="button" class="btn-primary" id="save-cue-btn">💾 Save Cue &amp; Next</button>
+          <button type="button" class="btn-secondary" id="preview-audio-btn">▶ Listen Segment</button>
+          <button type="button" class="btn-secondary" id="export-vtt-btn">📥 Export WebVTT</button>
+          <button type="button" class="btn-secondary" id="export-pack-btn">📦 Publish Audited Pack</button>
+        </div>
+      </form>
+
+      <div id="sr-status" class="sr-only" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <footer role="contentinfo">
+    Review Studio adheres to WCAG 2.2 AA. Certified accessibility specialist review required for production release. Zero cloud lock-in.
+  </footer>
+
+  <script>
+    let cuesEN = [];
+    let cuesAM = [];
+    let currentIdx = 0;
+
+    async function loadCues() {
+      try {
+        const [respEN, respAM] = await Promise.all([
+          fetch('assets/transcript-en.json'),
+          fetch('assets/transcript-am.json')
+        ]);
+        if (respEN.ok) {
+          const dataEN = await respEN.json();
+          cuesEN = dataEN.cues || [];
+        }
+        if (respAM.ok) {
+          const dataAM = await respAM.json();
+          cuesAM = dataAM.cues || [];
+        }
+        renderCueList();
+        if (cuesEN.length) selectCue(0);
+      } catch (e) {
+        console.error('Failed to load transcripts:', e);
+      }
+    }
+
+    function renderCueList() {
+      const container = document.getElementById('cue-list-container');
+      container.innerHTML = '';
+      let reviewedCount = 0;
+
+      cuesEN.forEach((en, i) => {
+        const am = cuesAM[i] || { text: '', reviewed: false };
+        if (am.reviewed) reviewedCount++;
+
+        const item = document.createElement('button');
+        item.className = `cue-item ${i === currentIdx ? 'active' : ''}`;
+        item.setAttribute('role', 'listitem');
+        item.setAttribute('aria-label', `Cue ${i+1} at ${en.start} seconds`);
+        item.innerHTML = `
+          <div class="cue-meta">
+            <span>#${i+1} · ${en.start.toFixed(1)}s - ${en.end.toFixed(1)}s</span>
+            <span>${am.reviewed ? '✅ Reviewed' : '⚠️ Draft'}</span>
+          </div>
+          <div class="cue-snippet">${escapeHtml(en.text)}</div>
+          <div class="cue-snippet-am">${escapeHtml(am.text)}</div>
+        `;
+        item.addEventListener('click', () => selectCue(i));
+        container.appendChild(item);
+      });
+
+      document.getElementById('audit-stats').textContent = `Audit: ${reviewedCount}/${cuesEN.length} Reviewed`;
+    }
+
+    function selectCue(idx) {
+      currentIdx = idx;
+      const en = cuesEN[idx];
+      const am = cuesAM[idx] || { text: '', reviewed: false };
+
+      document.getElementById('cue-start').value = en.start;
+      document.getElementById('cue-end').value = en.end;
+      document.getElementById('cue-speaker').value = en.speaker || 'Jeremie Patonnier';
+      document.getElementById('cue-text-en').value = en.text;
+      document.getElementById('cue-text-am').value = am.text || '';
+      document.getElementById('cue-reviewed-check').checked = !!am.reviewed;
+
+      const banner = document.getElementById('cue-status-banner');
+      if (am.reviewed) {
+        banner.className = 'status-banner reviewed';
+        banner.innerHTML = '<span>✅ Status: Human-Reviewed &amp; Certified</span>';
+      } else {
+        banner.className = 'status-banner unreviewed';
+        banner.innerHTML = '<span>⚠️ Status: Machine-Generated Draft (Ethiopic fidäl)</span>';
+      }
+
+      // Update active list styling
+      document.querySelectorAll('.cue-item').forEach((el, i) => {
+        el.classList.toggle('active', i === idx);
+      });
+
+      announce(`Loaded cue ${idx+1}`);
+    }
+
+    document.getElementById('save-cue-btn').addEventListener('click', () => {
+      if (currentIdx >= cuesEN.length) return;
+      cuesEN[currentIdx].start = parseFloat(document.getElementById('cue-start').value);
+      cuesEN[currentIdx].end = parseFloat(document.getElementById('cue-end').value);
+      cuesEN[currentIdx].speaker = document.getElementById('cue-speaker').value;
+      cuesEN[currentIdx].text = document.getElementById('cue-text-en').value;
+
+      if (!cuesAM[currentIdx]) cuesAM[currentIdx] = {};
+      cuesAM[currentIdx].start = cuesEN[currentIdx].start;
+      cuesAM[currentIdx].end = cuesEN[currentIdx].end;
+      cuesAM[currentIdx].text = document.getElementById('cue-text-am').value;
+      cuesAM[currentIdx].reviewed = document.getElementById('cue-reviewed-check').checked;
+
+      announce(`Saved cue ${currentIdx+1}`);
+      renderCueList();
+      if (currentIdx + 1 < cuesEN.length) selectCue(currentIdx + 1);
+    });
+
+    document.getElementById('export-vtt-btn').addEventListener('click', () => {
+      let vtt = "WEBVTT\\n\\n";
+      cuesAM.forEach((c, i) => {
+        const s = formatVttTime(c.start);
+        const e = formatVttTime(c.end);
+        vtt += `${i+1}\\n${s} --> ${e}\\n${c.text}\\n\\n`;
+      });
+      const blob = new Blob([vtt], { type: 'text/vtt' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'captions-am-reviewed.vtt';
+      a.click();
+      announce('Exported Amharic WebVTT');
+    });
+
+    function formatVttTime(sec) {
+      const h = Math.floor(sec / 3600).toString().padStart(2, '0');
+      const m = Math.floor((sec % 3600) / 60).toString().padStart(2, '0');
+      const s = (sec % 60).toFixed(3).padStart(6, '0');
+      return `${h}:${m}:${s}`;
+    }
+
+    function announce(msg) {
+      document.getElementById('sr-status').textContent = msg;
+    }
+
+    function escapeHtml(str) {
+      return (str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    loadCues();
+  </script>
+</body>
+</html>
