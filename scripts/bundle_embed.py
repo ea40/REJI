@@ -12,12 +12,16 @@ def build_bundle():
 
     player_path = repo_root / "frontend" / "digital-bridge-player.js"
     job_card_path = repo_root / "frontend" / "digital-bridge-job-card.js"
+    arbiter_path = repo_root / "frontend" / "assets" / "speech-arbiter.js"
 
     with open(player_path, "r", encoding="utf-8") as f:
         player_code = f.read()
 
     with open(job_card_path, "r", encoding="utf-8") as f:
         job_card_code = f.read()
+
+    with open(arbiter_path, "r", encoding="utf-8") as f:
+        arbiter_code = f.read()
 
     bundle_header = """/**
  * Digital Bridge Accessible Web Components (<db-player> & <db-job-card>)
@@ -35,7 +39,7 @@ def build_bundle():
  * Licence: MIT / Open Source
  */
 """
-    bundled_content = f"{bundle_header}\n\n/* ═══ 1. DB PLAYER WEB COMPONENT ═══ */\n{player_code}\n\n/* ═══ 2. DB JOB CARD WEB COMPONENT ═══ */\n{job_card_code}\n"
+    bundled_content = f"{bundle_header}\n\n/* ═══ 0. SHARED SPEECH ARBITER ═══ */\n{arbiter_code}\n\n/* ═══ 1. DB PLAYER WEB COMPONENT ═══ */\n{player_code}\n\n/* ═══ 2. DB JOB CARD WEB COMPONENT ═══ */\n{job_card_code}\n"
 
     output_file = dist_dir / "db-player.bundle.js"
     with open(output_file, "w", encoding="utf-8") as f:

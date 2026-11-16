@@ -779,6 +779,15 @@ const COMPONENT_STYLES = /* css */ `
     color: var(--text-muted);
     margin-left: 8px;
   }
+  .ad-voice-notice {
+    flex-basis: 100%;
+    font-size: 12px;
+    color: var(--text);
+    background: #7C2D12;
+    border: 1px solid #F97316;
+    border-radius: 4px;
+    padding: 4px 8px;
+  }
 
   /* ---- Motor preset overrides ---- */
   :host(.motor) button,
@@ -1058,6 +1067,10 @@ const COMPONENT_HTML = /* html */ `
           <span>Announce to SR</span>
         </label>
         <label style="display:flex;align-items:center;gap:4px;cursor:pointer;">
+          <input type="checkbox" id="ad-extended" checked>
+          <span>Extended AD</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:4px;cursor:pointer;">
           <input type="checkbox" id="cap-kb-enable" checked>
           <span>Shortcuts</span>
         </label>
@@ -1096,6 +1109,7 @@ const COMPONENT_HTML = /* html */ `
     <button type="button" id="braille-btn" aria-label="Braille Export — Download .brf transcript">⠿ Braille Export</button>
     <button type="button" id="offline-btn" aria-label="Offline Pack — Download 3G lesson bundle (12.4 MB)">💾 Offline Pack (12.4 MB)</button>
     <span class="download-progress" id="dl-progress" aria-live="polite"></span>
+    <span class="ad-voice-notice" id="ad-voice-notice" role="status" hidden></span>
   </div>
 
   <!-- Keyboard help modal dialog -->
@@ -1186,6 +1200,12 @@ class DigitalBridgePlayer extends HTMLElement {
     this._srcLow = null;
     this._audioSrc = null;
     this._lastAnnouncedCaption = '';
+    this._adExtended = true;          // extended AD: hold the video until the cue finishes
+    this._adSpeechSeq = 0;
+    this._adExtendedPause = false;
+    this._adUtteranceRefs = [];
+    this._adVoiceWarned = false;
+    this._adSpeechSyncBound = false;
 
     /* ---- Built-in i18n dictionaries for resilient offline/fallback operation ---- */
     this._i18n = {
@@ -1248,7 +1268,7 @@ class DigitalBridgePlayer extends HTMLElement {
             mockTime = Math.max(0, Math.min(180, Number(t) || 0));
             this._renderCaptions(mockTime);
             this._highlightTranscriptCue(mockTime);
-            this._highlightChat(mockTime);
+            if (this._chatLog.length) this._highlightChatMsg(mockTime);
             this._onTimeUpdate();
           },
           configurable: true,
@@ -1443,8 +1463,9 @@ class DigitalBridgePlayer extends HTMLElement {
     if (this._audioCtx) {
       this._audioCtx.close().catch(() => {});
     }
-    // Cancel any speech
-    if (window.speechSynthesis) speechSynthesis.cancel();
+    // Cancel audio-description speech only; page navigation owns the UI channel.
+    if (window.DBSpeech) window.DBSpeech.cancel('media');
+    else if (window.speechSynthesis) speechSynthesis.cancel();
   }
 
   /* ================================================================
@@ -1504,6 +1525,8 @@ class DigitalBridgePlayer extends HTMLElement {
       capMicBtn:      q('#cap-mic-btn'),
       capSrAnnounce:  q('#cap-sr-announce'),
       capKbEnable:    q('#cap-kb-enable'),
+      adExtended:     q('#ad-extended'),
+      adVoiceNotice:  q('#ad-voice-notice'),
       ethslStandby:   q('#ethsl-standby'),
       speedBtn:       q('#speed-btn'),
       transcriptToggleBtn: q('#transcript-toggle-btn'),
@@ -1537,6 +1560,7 @@ class DigitalBridgePlayer extends HTMLElement {
         if (prefs.captionTheme) { this._captionTheme = prefs.captionTheme; this._els.capTheme.value = prefs.captionTheme; }
         if (prefs.captionTrack) { this._captionTrack = prefs.captionTrack; this._els.capTrack.value = prefs.captionTrack; }
         if (prefs.volume != null) { this._els.volumeSlider.value = prefs.volume; this._els.video.volume = prefs.volume; }
+        if (prefs.adExtended === false) this._adExtended = false;
       }
     } catch (_) { /* ignore corrupt data */ }
   }
@@ -1551,6 +1575,7 @@ class DigitalBridgePlayer extends HTMLElement {
         captionTheme: this._captionTheme,
         captionTrack: this._captionTrack,
         volume: parseFloat(this._els.volumeSlider.value),
+        adExtended: this._adExtended,
       }));
     } catch (_) { /* quota exceeded — ignore */ }
 
@@ -1700,6 +1725,14 @@ class DigitalBridgePlayer extends HTMLElement {
     if (els.capKbEnable) {
       els.capKbEnable.addEventListener('change', () => {
         this._shortcutsDisabled = !els.capKbEnable.checked;
+      });
+    }
+    if (els.adExtended) {
+      els.adExtended.checked = this._adExtended;
+      els.adExtended.addEventListener('change', () => {
+        this._adExtended = els.adExtended.checked;
+        this._savePreferences();
+        this._announceToSR(`Extended audio description ${this._adExtended ? 'on' : 'off'}`);
       });
     }
 
@@ -2458,38 +2491,181 @@ class DigitalBridgePlayer extends HTMLElement {
       if (raw) this._adCues = JSON.parse(raw);
     } catch (_) { this._adCues = []; }
     this._lastSpokenADIndex = -1;
+    this._adSpeechSeq = 0;
+    this._adExtendedPause = false;
+    this._bindADSpeechSync();
+
+    if (!window.speechSynthesis) {
+      this._onADSpeechUnavailable('This browser has no speech synthesiser, so audio description cannot be spoken.');
+    } else if (window.DBSpeech && !window.DBSpeech.hasVoice()) {
+      this._onADSpeechUnavailable('No speech voice is installed, so audio description cannot be spoken.');
+    }
   }
 
-  /** Speak an AD cue at the right time using Web Speech API. */
+  /** Say (and show) that audio description has no usable voice. Never silent. */
+  _onADSpeechUnavailable(message) {
+    const text = message || 'No speech voice is available for audio description.';
+    if (!this._adVoiceWarned) {
+      this._adVoiceWarned = true;
+      const notice = this._els.adVoiceNotice;
+      if (notice) {
+        notice.textContent = text + ' Install a system voice, or use the recorded audio description track.';
+        notice.hidden = false;
+      }
+    }
+    this._announceToSR(text, true);
+  }
+
+  /** Speak the AD cue that starts at the current time. */
   _speakADCue(time) {
-    if (!window.speechSynthesis || !this._adCues.length) return;
+    if (!this._adCues.length) return;
+    if (!window.speechSynthesis) {
+      this._onADSpeechUnavailable('This browser has no speech synthesiser, so audio description cannot be spoken.');
+      return;
+    }
     for (let i = 0; i < this._adCues.length; i++) {
       const cue = this._adCues[i];
-      if (i > this._lastSpokenADIndex && time >= cue.time && time < cue.time + 1) {
+      if (i <= this._lastSpokenADIndex) continue;
+      if (time >= cue.time && time < cue.time + 2) {
         this._lastSpokenADIndex = i;
-        const voices = speechSynthesis.getVoices ? speechSynthesis.getVoices() : [];
-        const localVoice = voices.find(v => v.localService === true) || voices[0];
-
-        // Extended AD: pause video if text is long (> 50 chars) so learner hears full description
-        const vid = this._els.video;
-        const shouldExtendedPause = cue.text.length > 50 && vid && !vid.paused;
-        if (shouldExtendedPause) {
-          vid.pause();
-        }
-
-        const utt = new SpeechSynthesisUtterance(cue.text);
-        if (localVoice) utt.voice = localVoice;
-        utt.rate = 1.1;
-        utt.volume = 1.0;
-        utt.onend = () => {
-          if (shouldExtendedPause && vid && vid.paused) {
-            vid.play().catch(() => {});
-          }
-        };
-        speechSynthesis.speak(utt);
+        this._playADCueSpeech(cue, i);
         break;
       }
     }
+  }
+
+  /**
+   * Speak one cue in full. When the cue is longer than the gap before the next
+   * cue, hold the video (extended audio description) instead of truncating.
+   */
+  _playADCueSpeech(cue, index) {
+    const vid = this._els.video;
+    const text = String(cue.text || '').trim();
+    if (!text) return;
+
+    const nextCue = this._adCues[index + 1];
+    const gap = nextCue ? Math.max(0, nextCue.time - cue.time) : 6;
+    const estimated = DigitalBridgePlayer._estimateSpeechSeconds(text);
+    const needsExtended = this._adExtended && vid && !vid.paused && estimated > gap + 0.4;
+
+    if (needsExtended) {
+      this._adExtendedPause = true;
+      vid.pause();
+    }
+
+    const seq = ++this._adSpeechSeq;
+    const finished = () => {
+      if (seq !== this._adSpeechSeq) return;
+      if (this._adExtendedPause) {
+        this._adExtendedPause = false;
+        if (vid && vid.paused && this._adOn) vid.play().catch(() => {});
+      }
+    };
+
+    const started = this._adSpeak(text, finished);
+    if (!started) finished();
+  }
+
+  /** Route AD speech through the shared arbiter, or a minimal local fallback. */
+  _adSpeak(text, onend) {
+    if (window.DBSpeech) {
+      return window.DBSpeech.speakMedia(text, {
+        rate: 1.05,
+        onend,
+        onfailure: () => {
+          this._onADSpeechUnavailable('No speech voice is installed, so audio description cannot be spoken.');
+          if (onend) onend();
+        }
+      });
+    }
+
+    // Single-script installs without the arbiter: keep utterance references and
+    // split long cues so the browser cannot cut them off or collect them.
+    if (!window.speechSynthesis || !window.SpeechSynthesisUtterance) {
+      this._onADSpeechUnavailable('This browser has no speech synthesiser, so audio description cannot be spoken.');
+      return false;
+    }
+    const voices = speechSynthesis.getVoices ? speechSynthesis.getVoices() : [];
+    if (!voices.length) {
+      this._onADSpeechUnavailable('No speech voice is installed, so audio description cannot be spoken.');
+      return false;
+    }
+
+    this._adUtteranceRefs = this._adUtteranceRefs || [];
+    const parts = String(text).match(/[^.!?]+[.!?]*/g) || [String(text)];
+    const localVoice = voices.find(v => v.localService === true) || voices[0];
+    let at = 0;
+    const speakNext = () => {
+      if (at >= parts.length) {
+        if (onend) onend();
+        return;
+      }
+      const chunk = parts[at++].trim();
+      if (!chunk) { speakNext(); return; }
+      const utt = new window.SpeechSynthesisUtterance(chunk);
+      this._adUtteranceRefs.push(utt);
+      if (this._adUtteranceRefs.length > 20) this._adUtteranceRefs.shift();
+      utt.voice = localVoice;
+      utt.rate = 1.05;
+      utt.volume = 1;
+      utt.onend = speakNext;
+      utt.onerror = speakNext;
+      speechSynthesis.speak(utt);
+    };
+    speakNext();
+    return true;
+  }
+
+  /** Rough spoken length of a cue, used to decide on extended AD. */
+  static _estimateSpeechSeconds(text) {
+    const words = String(text).trim().split(/[ ]+/).filter(Boolean).length;
+    return words * 0.36 + 0.4;
+  }
+
+  /** Pause, resume and re-sync AD speech with the video. */
+  _bindADSpeechSync() {
+    if (this._adSpeechSyncBound) return;
+    this._adSpeechSyncBound = true;
+    const vid = this._els.video;
+
+    this._adSpeechPlayHandler = () => {
+      if (this._adOn && window.DBSpeech) window.DBSpeech.resume('media');
+    };
+    this._adSpeechPauseHandler = () => {
+      // An extended-AD pause is ours: keep speaking through it.
+      if (this._adOn && !this._adExtendedPause && window.DBSpeech) window.DBSpeech.pause('media');
+    };
+    this._adSpeechSeekHandler = () => {
+      if (!this._adOn) return;
+      this._adSpeechSeq++;
+      this._adExtendedPause = false;
+      if (window.DBSpeech) window.DBSpeech.cancel('media');
+      else if (window.speechSynthesis) speechSynthesis.cancel();
+      this._lastSpokenADIndex = this._adIndexAt(vid.currentTime) - 1;
+    };
+
+    vid.addEventListener('play', this._adSpeechPlayHandler);
+    vid.addEventListener('pause', this._adSpeechPauseHandler);
+    vid.addEventListener('seeked', this._adSpeechSeekHandler);
+  }
+
+  _unbindADSpeechSync() {
+    const vid = this._els.video;
+    if (!vid || !this._adSpeechSyncBound) return;
+    if (this._adSpeechPlayHandler) vid.removeEventListener('play', this._adSpeechPlayHandler);
+    if (this._adSpeechPauseHandler) vid.removeEventListener('pause', this._adSpeechPauseHandler);
+    if (this._adSpeechSeekHandler) vid.removeEventListener('seeked', this._adSpeechSeekHandler);
+    this._adSpeechSyncBound = false;
+  }
+
+  /** Index of the last AD cue at or before `time`. */
+  _adIndexAt(time) {
+    let found = -1;
+    for (let i = 0; i < this._adCues.length; i++) {
+      if (this._adCues[i].time <= time) found = i;
+      else break;
+    }
+    return found;
   }
 
   /** Disable AD. */
@@ -2508,8 +2684,12 @@ class DigitalBridgePlayer extends HTMLElement {
     }
     if (this._adPlayHandler) vid.removeEventListener('play', this._adPlayHandler);
     if (this._adPauseHandler) vid.removeEventListener('pause', this._adPauseHandler);
-    // Cancel speech
-    if (window.speechSynthesis) speechSynthesis.cancel();
+    // Cancel audio-description speech only — never the navigation voice.
+    this._adSpeechSeq++;
+    this._adExtendedPause = false;
+    this._unbindADSpeechSync();
+    if (window.DBSpeech) window.DBSpeech.cancel('media');
+    else if (window.speechSynthesis) speechSynthesis.cancel();
     this._lastSpokenADIndex = -1;
   }
 
