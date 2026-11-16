@@ -1,0 +1,34 @@
+# Render Blueprint — Digital Bridge
+#
+# Deploys the whole repository as one Render static site, so every entry point
+# works exactly as it does locally (paths are relative):
+#
+#   /                              → documentation hub (index.html)
+#   /frontend/demo.html            → player + career gateway demo
+#   /frontend/studio.html          → caption review studio
+#   /savanna/pages/concept-with-navigation.html
+#   /savanna/pages/jobs.html
+#   /savanna/pages/certificate.html
+#   /demo/blank.html, /demo/embed.html
+#
+# The FastAPI service in backend/ is intentionally not declared here: the
+# static site has no /api proxy, and the API image needs the media assets that
+# live outside its Docker build context (docker-compose mounts them). Add a
+# `runtime: docker` service if you want it hosted separately.
+
+services:
+  - type: web
+    name: digital-bridge
+    runtime: static
+    plan: free
+    buildCommand: "true"
+    staticPublishPath: .
+    previews:
+      generation: automatic
+    headers:
+      - path: /frontend/assets/*
+        name: Cache-Control
+        value: public, max-age=3600
+      - path: /savanna/assets/*
+        name: Cache-Control
+        value: public, max-age=3600
