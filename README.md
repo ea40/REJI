@@ -5,8 +5,8 @@
 
 [![WCAG 2.2 AA](https://img.shields.io/badge/WCAG-2.2_AA-green?style=flat-square&logo=w3c)](./CONFORMANCE.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](./LICENSE)
-[![Playwright Suite](https://img.shields.io/badge/Playwright-31_Passed-purple?style=flat-square)](./tests/)
-[![FastAPI Pytest](https://img.shields.io/badge/Pytest-21_Passed-darkgreen?style=flat-square)](./backend/test_api.py)
+[![Playwright Suite](https://img.shields.io/badge/Playwright-62_Passed-purple?style=flat-square)](./tests/)
+[![FastAPI Pytest](https://img.shields.io/badge/Pytest-21_claimed,_not_run_here-lightgrey?style=flat-square)](./backend/test_api.py)
 [![Docker Ready](https://img.shields.io/badge/Docker-Compose-blue?style=flat-square&logo=docker)](./docker-compose.yml)
 
 ---
@@ -154,8 +154,11 @@ All measurements conducted locally using Google Chrome DevTools Network throttli
 | Dual Captions (`captions-en.vtt` + `am.vtt`) | 10.6 KB | 0.2s |
 | Speech-optimized Audio (`lesson_audio.opus`, 28 kbps) | 744 KB (3.5 KB/s stream) | Plays without buffering |
 | Low-Bandwidth Video (`lesson_144p.mp4`) | 1.47 MB | 29.4s (progressive stream) |
-| Complete Offline Pack ZIP (`offline_pack.zip`) | 810 KB | 16.2s (one-time download) |
+| Complete Offline Pack ZIP | built on demand by the API; **not measured in the final session** | — |
 
+- **Offline pack:** `GET /api/v1/lessons/{id}/offline-pack` streams a ZIP assembled on demand from
+  `output_pack/` (measured components: 744 KB Opus audio, 28 KB tagged PDF, 25 KB offline reader,
+  4–6 KB per caption file, 15 KB poster). The previously quoted 810 KB total was not re-measured.
 - **Zero External Fonts Required:** Uses system font stacks (`'Noto Sans Ethiopic', 'Segoe UI', system-ui`) on first paint; zero kilobyte webfont blocking penalty.
 - **Bandwidth Detection:** Inspects `navigator.connection.effectiveType` to suggest audio-only and low-bandwidth presets when 2G/3G networks are detected.
 
@@ -197,7 +200,7 @@ Digital Bridge is designed for economic sovereignty and zero cloud lock-in:
 - [x] Accessible Career Gateway (`<db-job-card>`) at `savanna/pages/jobs.html` and verifiable certificate page (`certificate.html`).
 - [x] Cryptographic Ed25519 signature verification for Open Badges 3.0 / W3C Verifiable Credentials via PyNaCl.
 - [x] English Grade 1 ASCII Braille export (`.brf`, 40 cells/line).
-- [x] Automated test suites: 31/31 Playwright tests passed; 21/21 pytest tests passed.
+- [x] Automated test suite: 62/62 Playwright tests passed on 16 Nov 2026 (`cd tests && npm test`).
 
 ### NOT Finished (Honest Disclosure)
 - [ ] **Native Speaker Amharic Review:** Amharic caption files and UI dictionaries are machine-translated drafts flagged with `"reviewed": false`. Requires in-person native Amharic linguist sign-off.
@@ -206,6 +209,98 @@ Digital Bridge is designed for economic sovereignty and zero cloud lock-in:
 - [ ] **Physical Co-Designer Device Testing:** Testing completed with automated axe-core and synthetic keyboard/reflow emulation; formal in-person session with a blind NVDA user and a deaf TalkBack user is pending (blank log provided in `docs/co-design-log.md`).
 
 ---
+
+## Spoken navigation (text to speech) — for blind learners
+
+`frontend/assets/tts-navigator.js` (with `frontend/assets/speech-arbiter.js`) adds a keyboard-driven
+speaking layer. Speech is **on by default**, because the primary user is blind; people who are not
+blind, or who already use a screen reader, can turn it off and the choice is remembered per browser.
+
+- The visible **Keys and speech** button is the first Tab stop on every page, so no shortcut is needed.
+- `?`, or `G` then `K`, opens the spoken key guide.
+- `G` then `S` turns speech on or off. `Escape` stops speech immediately, on every page.
+- `Alt+Shift+T` / `Alt+Shift+H` still work, but only as aliases: Windows uses Alt+Shift to switch
+  keyboard layout (Amharic layouts included), so the operating system can swallow them. Never rely on
+  them as the only route.
+- Shortcuts are read from `event.code`, not `event.key`, so an Amharic or other non-Latin layout
+  cannot break them. Composing input (`isComposing`) and browser-owned Ctrl/Meta chords are ignored.
+- Every single-letter shortcut can be switched off (WCAG 2.1.4) from the panel, the key guide or the
+  first-visit notice; the setting is stored in `localStorage` as `db-tts-letter-keys`.
+- The first-visit notice offers **"I already use NVDA, JAWS or TalkBack"**, which turns this layer's
+  speech and its letter keys off, so nothing is spoken twice. Screen readers are never detected
+  automatically.
+
+### Keyboard and speech shortcuts
+
+| Key | Action |
+|---|---|
+| `Tab` / `Shift+Tab` | Move to the next / previous control and hear it spoken |
+| `H` / `Shift+H` | Next / previous heading |
+| `D` / `Shift+D` | Next / previous page region |
+| `L` / `Shift+L` | Next / previous link |
+| `B` / `Shift+B` | Next / previous button |
+| `F` / `Shift+F` | Next / previous form field |
+| `T` / `Shift+T` | Next / previous block of text |
+| `E` | Hear the focused item again |
+| `R` | Hear a summary of the page |
+| `+` / `-` | Speak faster / slower |
+| `?` | Open or close the key guide |
+| `G` then `K` | Open or close the key guide (leader sequence) |
+| `G` then `S` | Turn speech on / off (leader sequence) |
+| `Alt+Shift+H` / `Alt+Shift+T` | Legacy aliases for the two shortcuts above |
+| `Esc` | Stop speech immediately, close dialogs |
+| `Enter` / `Space` | Activate the focused control |
+| `Space` or `K` (player focused) | Play / pause the lesson |
+| `←` / `→`, `J` / `L` | Seek 5 s / 10 s |
+| `M`, `C`, `S`, `A`, `F` (player focused) | Mute, captions, sign language, audio description, fullscreen |
+
+### Audio description speech
+
+One owner for `speechSynthesis` (`speech-arbiter.js`) with two channels: `media` (audio description)
+and `ui` (navigation).
+
+- Navigation announcements never cancel audio description; while a cue is speaking they go to the
+  polite live region instead.
+- Long cues are split into sentence-sized utterances (Chrome cuts long utterances), and utterance
+  objects are held in a reference list so they are not garbage-collected before `onend`.
+- Speech pauses with the video, resumes on play, and re-syncs on seek.
+- A cue longer than the gap before the next cue pauses the video instead of being truncated
+  ("Extended AD" in the caption settings, on by default).
+- With no installed voice the player shows a visible warning and announces it in the live region; it
+  never fails silently.
+
+The same arbiter is bundled inside `dist/db-player.bundle.js`, so a single-script install keeps these
+guarantees.
+
+## Tests
+
+```bash
+cd tests && npm ci && npm test      # Playwright + axe-core suite
+cd backend && python -m pytest -q   # FastAPI suite
+```
+
+The Playwright suite covers the keyboard and speech routes, the WCAG 2.1.4 switch, the first-visit
+notice, focus not obscured at 320 px and 200 % zoom, the guide dialog focus trap, audio-description
+speech arbitration (no cancel during a cue), pause/resume/seek sync and the no-voice fallback.
+
+## Screenshots
+
+![Digital Bridge documentation hub with the spoken-navigation panel](docs/screenshot-portal.png)
+
+![The spoken keyboard guide listing every shortcut](docs/screenshot-keyboard-guide.png)
+
+## Team and credits
+
+Contributors recorded in this repository's history:
+
+| Name | Git identity |
+|---|---|
+| Godoleyas | `Godoleyas <69921474+Godoleyas@users.noreply.github.com>` |
+| Emran Abduljelil | `Emran Abduljelil <emran@mastermind.os>` |
+| ea40 | `ea40 <144016446+ea40@users.noreply.github.com>` |
+
+Roles beyond the commit history are not recorded here; the team lead should confirm names and roles
+before submission.
 
 ## Libraries and Licences
 
